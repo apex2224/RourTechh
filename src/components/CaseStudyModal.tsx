@@ -1,6 +1,6 @@
-import React from 'react';
-import { X, ArrowRight, Quote, CheckCircle, Code, Award, ExternalLink } from 'lucide-react';
-import { CaseStudy } from '../types';
+import React from "react";
+import { X, ArrowRight, Quote, CheckCircle, Code } from "lucide-react";
+import { CaseStudy } from "../types";
 
 interface CaseStudyModalProps {
   project: CaseStudy | null;
@@ -25,11 +25,12 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
       <div className="absolute inset-0" onClick={onClose} />
 
       <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-[#E8E8E8] max-h-[92vh] overflow-y-auto z-10 flex flex-col">
-        
         {/* Modal Top Bar */}
         <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-[#E8E8E8] flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs text-[#666666]">
-            <span className="font-semibold text-[#111111]">{project.client}</span>
+            <span className="font-semibold text-[#111111]">
+              {project.client}
+            </span>
             <span aria-hidden="true">·</span>
             <span>{project.category}</span>
             <span aria-hidden="true">·</span>
@@ -47,10 +48,12 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
 
         {/* Modal Content */}
         <div className="p-6 sm:p-10 space-y-10">
-          
           {/* Main Title & Executive Summary */}
           <div>
-            <h2 id="case-study-title" className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#111111] font-display text-balance mb-4">
+            <h2
+              id="case-study-title"
+              className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#111111] font-display text-balance mb-4"
+            >
               {project.title}
             </h2>
             <p className="text-base sm:text-lg text-[#555555] leading-relaxed">
@@ -78,7 +81,7 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
                 loading="lazy"
                 referrerPolicy="no-referrer"
                 onError={(e) => {
-                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.style.display = "none";
                 }}
               />
             )}
@@ -133,7 +136,10 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {project.processSteps.map((step, idx) => (
-                <div key={idx} className="p-4 bg-[#F8F8F6] border border-[#E8E8E8] rounded-lg">
+                <div
+                  key={idx}
+                  className="p-4 bg-[#F8F8F6] border border-[#E8E8E8] rounded-lg"
+                >
                   <span className="text-xs font-bold text-[#FF5B4D] font-mono-data block mb-1">
                     {step.phase}
                   </span>
@@ -195,7 +201,6 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
               ))}
             </ul>
           </div>
-
         </div>
 
         {/* Modal Bottom CTA Bar */}
@@ -222,7 +227,6 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

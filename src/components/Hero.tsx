@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-
+const digitalagencyImg = "/assets/images/hero_digital_agency_1791271576191.jpg";
 import { ArrowDown, ArrowUpRight, Play, Pause, Sparkles } from "lucide-react";
 
 interface HeroProps {
@@ -52,12 +52,11 @@ export const Hero: React.FC<HeroProps> = ({
       });
     }
 
-    let t = 0;
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
       // Draw subtle ambient organic wave gradients
-      t += 0.008;
+
       const gradient = ctx.createRadialGradient(
         width * 0.7,
         height * 0.4,
@@ -242,7 +241,7 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="relative rounded-xl overflow-hidden border border-[#E8E8E8] bg-white shadow-md">
               <div className="relative aspect-[16/10] overflow-hidden bg-[#F2F2EE]">
                 <img
-                  src="/src/assets/images/hero_digital_agency_1791271576191.jpg"
+                  src={digitalagencyImg}
                   alt="RourTech digital agency providing web development, website design and SEO solutions"
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                   loading="eager"
@@ -302,7 +301,7 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="hidden sm:flex absolute -bottom-5 -left-5 bg-[#FFFFFF] border border-[#E8E8E8] rounded-lg p-3 shadow-lg max-w-xs items-center gap-3">
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
               <p className="text-xs text-[#333333] leading-tight">
-                Let's discuss your next{" "}
+                Don&apos;t miss out
                 <strong className="text-[#111111]">digital project</strong>.
               </p>
             </div>

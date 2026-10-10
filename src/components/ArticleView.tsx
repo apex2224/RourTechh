@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Clock, Share2, Check, ArrowRight, ExternalLink } from 'lucide-react';
-import { BlogPost, ServiceItem } from '../types';
-import { servicesData } from '../data/servicesData';
+import React, { useEffect, useState } from "react";
+import { ArrowLeft, Share2, Check, ArrowRight } from "lucide-react";
+import { BlogPost, ServiceItem } from "../types";
+import { servicesData } from "../data/servicesData";
 
 interface ArticleViewProps {
   post: BlogPost;
@@ -28,10 +28,10 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
 
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute('content', post.seoDescription || post.excerpt);
+      metaDesc.setAttribute("content", post.seoDescription || post.excerpt);
     }
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
     return () => {
       document.title = originalTitle;
@@ -43,13 +43,16 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
     const handleScroll = () => {
       const totalScroll = document.documentElement.scrollTop;
       const windowHeight =
-        document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
       if (windowHeight > 0) {
-        setScrollProgress(Math.min(100, Math.max(0, (totalScroll / windowHeight) * 100)));
+        setScrollProgress(
+          Math.min(100, Math.max(0, (totalScroll / windowHeight) * 100)),
+        );
       }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleShare = () => {
@@ -65,7 +68,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
     : undefined;
 
   const relatedPosts = allPosts
-    .filter((p) => p.id !== post.id && p.status === 'published')
+    .filter((p) => p.id !== post.id && p.status === "published")
     .slice(0, 2);
 
   return (
@@ -75,28 +78,28 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Article',
+            "@context": "https://schema.org",
+            "@type": "Article",
             headline: post.title,
             description: post.seoDescription,
             image: post.featuredImage,
             author: {
-              '@type': 'Person',
+              "@type": "Person",
               name: post.author.name,
               jobTitle: post.author.role,
             },
             publisher: {
-              '@type': 'Organization',
-              name: 'Vanguard Digital',
+              "@type": "Organization",
+              name: "Vanguard Digital",
               logo: {
-                '@type': 'ImageObject',
-                url: 'https://vanguarddigital.agency/logo.png',
+                "@type": "ImageObject",
+                url: "https://vanguarddigital.agency/logo.png",
               },
             },
             datePublished: post.publishDate,
             mainEntityOfPage: {
-              '@type': 'WebPage',
-              '@id': `https://vanguarddigital.agency/blog/${post.slug}`,
+              "@type": "WebPage",
+              "@id": `https://vanguarddigital.agency/blog/${post.slug}`,
             },
           }),
         }}
@@ -114,7 +117,6 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Navigation Breadcrumb & Back */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#E8E8E8]">
           <button
@@ -148,7 +150,9 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
         <header className="mb-10">
           {/* Metadata kicker (clean unboxed text, no pills) */}
           <div className="flex items-center gap-2 text-xs text-[#777777] mb-4">
-            <span className="font-semibold text-[#FF5B4D]">{post.category}</span>
+            <span className="font-semibold text-[#FF5B4D]">
+              {post.category}
+            </span>
             <span aria-hidden="true">·</span>
             <span>{post.publishDate}</span>
             <span aria-hidden="true">·</span>
@@ -171,8 +175,12 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
               className="w-11 h-11 rounded-full object-cover border border-[#E8E8E8]"
             />
             <div>
-              <div className="text-sm font-bold text-[#111111]">{post.author.name}</div>
-              <div className="text-xs text-[#666666]">{post.author.role} · Vanguard Digital</div>
+              <div className="text-sm font-bold text-[#111111]">
+                {post.author.name}
+              </div>
+              <div className="text-xs text-[#666666]">
+                {post.author.role} · Vanguard Digital
+              </div>
             </div>
           </div>
         </header>
@@ -190,24 +198,27 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
 
         {/* Article Body */}
         <div className="bg-white p-6 sm:p-12 rounded-2xl border border-[#E8E8E8] shadow-xs prose prose-neutral max-w-none text-[#333333] leading-relaxed">
-          {post.content.split('\n\n').map((paragraph, index) => {
+          {post.content.split("\n\n").map((paragraph, index) => {
             const trimmed = paragraph.trim();
 
-            if (trimmed.startsWith('### ')) {
+            if (trimmed.startsWith("### ")) {
               return (
                 <h3
                   key={index}
                   className="text-2xl font-bold text-[#111111] font-display mt-8 mb-4 pt-4 border-t border-[#F0F0EE] first:border-0 first:pt-0"
                 >
-                  {trimmed.replace('### ', '')}
+                  {trimmed.replace("### ", "")}
                 </h3>
               );
             }
 
-            if (trimmed.startsWith('```')) {
-              const codeLines = trimmed.replace(/```[a-z]*\n?/g, '').trim();
+            if (trimmed.startsWith("```")) {
+              const codeLines = trimmed.replace(/```[a-z]*\n?/g, "").trim();
               return (
-                <div key={index} className="my-6 rounded-lg bg-[#141414] p-4 overflow-x-auto text-xs font-mono text-neutral-200">
+                <div
+                  key={index}
+                  className="my-6 rounded-lg bg-[#141414] p-4 overflow-x-auto text-xs font-mono text-neutral-200"
+                >
                   <pre>
                     <code>{codeLines}</code>
                   </pre>
@@ -215,23 +226,29 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
               );
             }
 
-            if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
-              const items = trimmed.split('\n');
+            if (trimmed.startsWith("* ") || trimmed.startsWith("- ")) {
+              const items = trimmed.split("\n");
               return (
-                <ul key={index} className="my-4 space-y-2 list-disc pl-5 text-sm text-[#444444]">
+                <ul
+                  key={index}
+                  className="my-4 space-y-2 list-disc pl-5 text-sm text-[#444444]"
+                >
                   {items.map((li, liIdx) => (
-                    <li key={liIdx}>{li.replace(/^[\*\-]\s+/, '')}</li>
+                    <li key={liIdx}>{li.replace(/^[\*\-]\s+/, "")}</li>
                   ))}
                 </ul>
               );
             }
 
-            if (trimmed === '---') {
+            if (trimmed === "---") {
               return <hr key={index} className="my-8 border-[#E8E8E8]" />;
             }
 
             return (
-              <p key={index} className="text-base text-[#444444] leading-relaxed my-4">
+              <p
+                key={index}
+                className="text-base text-[#444444] leading-relaxed my-4"
+              >
                 {trimmed}
               </p>
             );
@@ -239,9 +256,14 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
 
           {/* Tags */}
           <div className="mt-12 pt-6 border-t border-[#E8E8E8] flex flex-wrap items-center gap-2 text-xs text-[#666666]">
-            <span className="font-semibold text-[#111111]">Indexed Topics:</span>
+            <span className="font-semibold text-[#111111]">
+              Indexed Topics:
+            </span>
             {post.tags.map((tag) => (
-              <span key={tag} className="px-2.5 py-1 bg-[#F8F8F6] border border-[#E8E8E8] rounded-md font-mono-data text-[#444444]">
+              <span
+                key={tag}
+                className="px-2.5 py-1 bg-[#F8F8F6] border border-[#E8E8E8] rounded-md font-mono-data text-[#444444]"
+              >
                 #{tag}
               </span>
             ))}
@@ -284,11 +306,15 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
                 onClick={() => onSelectPost(rel)}
                 className="bg-white p-6 rounded-xl border border-[#E8E8E8] hover:border-[#D1D1CB] transition-all cursor-pointer group"
               >
-                <div className="text-xs text-[#FF5B4D] font-semibold mb-2">{rel.category}</div>
+                <div className="text-xs text-[#FF5B4D] font-semibold mb-2">
+                  {rel.category}
+                </div>
                 <h4 className="text-base font-bold text-[#111111] font-display group-hover:text-[#FF5B4D] transition-colors mb-2">
                   {rel.title}
                 </h4>
-                <p className="text-xs text-[#666666] line-clamp-2 mb-4">{rel.excerpt}</p>
+                <p className="text-xs text-[#666666] line-clamp-2 mb-4">
+                  {rel.excerpt}
+                </p>
                 <div className="text-xs font-semibold text-[#111111] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                   <span>Read Dispatch</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -297,7 +323,6 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
             ))}
           </div>
         </div>
-
       </div>
     </article>
   );

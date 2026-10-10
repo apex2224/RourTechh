@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Gauge, Palette, Search, Cpu, Smartphone, ShieldCheck, 
-  ArrowRight, CheckCircle2, TrendingUp, Sparkles, BarChart3 
+  ArrowRight, CheckCircle2, BarChart3 
 } from 'lucide-react';
 
 export const WhyChooseUs: React.FC = () => {
