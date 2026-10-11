@@ -24,7 +24,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
   // Dynamic SEO metadata updates
   useEffect(() => {
     const originalTitle = document.title;
-    document.title = post.seoTitle || `${post.title} | Vanguard Digital`;
+    document.title = post.seoTitle || `${post.title} | RouRb Tech`;
 
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
@@ -90,7 +90,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
             },
             publisher: {
               "@type": "Organization",
-              name: "Vanguard Digital",
+              name: "RouRb Tech",
               logo: {
                 "@type": "ImageObject",
                 url: "https://vanguarddigital.agency/logo.png",
@@ -179,7 +179,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
                 {post.author.name}
               </div>
               <div className="text-xs text-[#666666]">
-                {post.author.role} · Vanguard Digital
+                {post.author.role} · RouRb Tech
               </div>
             </div>
           </div>

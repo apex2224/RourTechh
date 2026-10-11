@@ -1,9 +1,9 @@
-export type ServiceId = 
-  | 'web-development' 
-  | 'ui-ux-design' 
-  | 'seo-optimization' 
-  | 'ecommerce-development' 
-  | 'custom-software' 
+export type ServiceId =
+  | 'web-development'
+  | 'ui-ux-design'
+  | 'seo-optimization'
+  | 'ecommerce-development'
+  | 'custom-software'
   | 'maintenance-support';
 
 export interface ServiceItem {

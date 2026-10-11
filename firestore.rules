@@ -1,0 +1,141 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.uid in [
+          "b5qLyjwsiFXmTPCX2emWwefnKIv1",
+          "LGrIo74UYDMCldaDEQuDutWIZhn1"
+        ];
+    }
+
+    function validBudget(budget) {
+      return budget is string
+        && (
+          budget == "$10,000 – $25,000"
+          || budget == "$25,000 – $50,000"
+          || budget == "$50,000 – $100,000"
+          || budget == "$100,000+"
+        );
+    }
+
+    function validInquiry(inquiryId) {
+      let data = request.resource.data;
+      let selectedService = data.get("service", null);
+      return data.keys().hasAll([
+          "id", "createdAt", "name", "email", "company", "service",
+          "budget", "description", "status"
+        ])
+        && data.keys().hasOnly([
+          "id", "createdAt", "name", "email", "company", "service",
+          "budget", "description", "status"
+        ])
+        && data.id is string
+        && data.id == inquiryId
+        && data.createdAt == request.time
+        && data.name is string
+        && data.name.size() > 0
+        && data.name.size() <= 120
+        && data.email is string
+        && data.email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
+        && data.company is string
+        && data.company.size() > 0
+        && data.company.size() <= 160
+        && (
+          selectedService == "Web Development"
+          || selectedService == "UI/UX Design & Design Systems"
+          || selectedService == "SEO & Website Optimization"
+          || selectedService == "E-commerce Development"
+          || selectedService == "Custom Software Solutions"
+          || selectedService == "Website Maintenance & Support"
+          || selectedService == "Custom Enterprise Scope"
+        )
+        && data.budget is string
+        && validBudget(data.budget)
+        && data.description is string
+        && data.description.size() >= 15
+        && data.description.size() <= 5000
+        && data.status == "new";
+    }
+
+    function validArticle(articleId) {
+      let data = request.resource.data;
+      return data.keys().hasAll([
+          "id", "slug", "title", "seoTitle", "seoDescription", "category",
+          "tags", "author", "featuredImage", "publishDate", "readTime",
+          "excerpt", "content", "status"
+        ])
+        && data.keys().hasOnly([
+          "id", "slug", "title", "seoTitle", "seoDescription", "category",
+          "tags", "author", "featuredImage", "publishDate", "readTime",
+          "excerpt", "content", "status", "relatedServiceId",
+          "relatedPostSlugs"
+        ])
+        && data.id is string
+        && data.id == articleId
+        && data.slug is string
+        && data.slug.matches("^[a-z0-9]+(-[a-z0-9]+)*$")
+        && data.title is string
+        && data.title.size() > 0
+        && data.title.size() <= 200
+        && data.seoTitle is string
+        && data.seoTitle.size() <= 250
+        && data.seoDescription is string
+        && data.seoDescription.size() <= 500
+        && (
+          data.category == "Web Development"
+          || data.category == "UI/UX"
+          || data.category == "SEO"
+          || data.category == "Technology"
+          || data.category == "E-commerce"
+        )
+        && data.tags is list
+        && data.tags.size() <= 30
+        && data.author is map
+        && data.author.keys().hasAll(["name", "role", "avatar"])
+        && data.author.keys().hasOnly(["name", "role", "avatar"])
+        && data.author.name is string
+        && data.author.role is string
+        && data.author.avatar is string
+        && data.featuredImage is string
+        && data.publishDate is string
+        && data.readTime is string
+        && data.excerpt is string
+        && data.content is string
+        && data.content.size() <= 100000
+        && (data.status == "published" || data.status == "draft");
+    }
+
+    match /inquiries/{inquiryId} {
+      allow create: if validInquiry(inquiryId);
+      allow get, list: if isAdmin();
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(["status"])
+        && (
+          request.resource.data.status == "new"
+          || request.resource.data.status == "reviewed"
+          || request.resource.data.status == "contacted"
+          || request.resource.data.status == "proposal_sent"
+        );
+      allow delete: if isAdmin();
+    }
+
+    match /articles/{articleId} {
+      allow get, list: if isAdmin() || resource.data.status == "published";
+      allow create, update: if isAdmin() && validArticle(articleId);
+      allow delete: if isAdmin();
+    }
+
+    match /cmsMetadata/{documentId} {
+      allow get: if documentId == "blog";
+      allow list: if false;
+      allow create, update: if documentId == "blog"
+        && isAdmin()
+        && request.resource.data.keys().hasOnly(["initialized"])
+        && request.resource.data.initialized == true;
+      allow delete: if false;
+    }
+  }
+}

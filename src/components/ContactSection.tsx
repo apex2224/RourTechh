@@ -366,6 +366,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       id="inquiry-name"
                       type="text"
                       value={name}
+                      maxLength={120}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Sarah Jenkins"
                       className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#999999] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors ${
@@ -428,6 +429,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     id="inquiry-company"
                     type="text"
                     value={company}
+                    maxLength={160}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="Acme Corp or Stealth Startup"
                     className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#999999] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors ${
@@ -508,6 +510,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     id="inquiry-desc"
                     rows={4}
                     value={description}
+                    maxLength={5000}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe your current system, objectives, target launch date, and any known technical constraints..."
                     className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#999999] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors resize-y ${

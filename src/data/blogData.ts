@@ -5,7 +5,7 @@ export const initialBlogPosts: BlogPost[] = [
     id: 'post-1',
     slug: 'how-to-build-an-seo-friendly-website',
     title: 'How to Build an SEO-Friendly Web Application: The Core Web Vitals Blueprint',
-    seoTitle: 'How to Build an SEO-Friendly Web Application | Vanguard Digital Insights',
+    seoTitle: 'How to Build an SEO-Friendly Web Application | RouRb Tech Insights',
     seoDescription: 'A technical guide to engineering web applications optimized for search bots, sub-second LCP, perfect INP, and Schema.org structured graphs.',
     category: 'SEO',
     tags: ['Technical SEO', 'Core Web Vitals', 'Next.js', 'Performance', 'Structured Data'],

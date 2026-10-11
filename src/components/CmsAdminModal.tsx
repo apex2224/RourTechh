@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { FirebaseError } from "firebase/app";
 import {
   GoogleAuthProvider,
   onAuthStateChanged,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -15,6 +17,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
+import { isAdminUser } from "@/lib/adminAuthorization";
 
 import {
   X,
@@ -40,7 +43,7 @@ interface CmsAdminModalProps {
 
   posts: BlogPost[];
 
-  onUpdatePosts: (newPosts: BlogPost[]) => void;
+  onUpdatePosts: (newPosts: BlogPost[]) => Promise<void>;
 
   onViewArticle: (post: BlogPost) => void;
 }
@@ -64,12 +67,12 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
   >(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState("");
+  const [passwordResetMessage, setPasswordResetMessage] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [inquiriesLoading, setInquiriesLoading] = useState(false);
   const [inquiriesError, setInquiriesError] = useState("");
-  const ADMIN_UID = process.env.NEXT_PUBLIC_FIREBASE_ADMIN_UID;
-
+  const [articlesError, setArticlesError] = useState("");
   // Articles state
 
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
@@ -118,7 +121,34 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
-  // Authenticate users and restrict CMS access to the configured admin UID.
+  const getAuthErrorMessage = (error: unknown) => {
+    const code = error instanceof FirebaseError ? error.code : "";
+
+    switch (code) {
+      case "auth/invalid-credential":
+      case "auth/wrong-password":
+      case "auth/user-not-found":
+        return "The email or password is incorrect. Check your details or reset your password.";
+      case "auth/invalid-email":
+        return "Enter a valid email address and try again.";
+      case "auth/user-disabled":
+        return "This account has been disabled. Contact the site administrator.";
+      case "auth/too-many-requests":
+        return "Too many attempts. Wait a few minutes before trying again.";
+      case "auth/operation-not-allowed":
+        return "Email/password sign-in is disabled for this Firebase project. Enable the Email/Password provider in Firebase Authentication settings.";
+      case "auth/invalid-api-key":
+      case "auth/api-key-not-valid":
+      case "auth/app-not-authorized":
+        return "Firebase configuration is invalid for this app. Verify its web API key and authorized domains in Firebase Console.";
+      case "auth/network-request-failed":
+        return "Could not reach Firebase. Check your internet connection and try again.";
+      default:
+        return "Could not sign in. Please try again or contact the site administrator.";
+    }
+  };
+
+  // Authenticate users and restrict CMS access to the configured admin UIDs.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setAuthLoading(false);
@@ -126,21 +156,25 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
         setCurrentUser(null);
         return;
       }
-      if (!ADMIN_UID || user.uid !== ADMIN_UID) {
-        await signOut(auth);
+      if (!isAdminUser(user)) {
         setCurrentUser(null);
         setAuthError("This account is not authorized to access the CMS.");
+        try {
+          await signOut(auth);
+        } catch (error) {
+          console.error("Could not sign out the unauthorized account:", error);
+        }
         return;
       }
       setAuthError("");
       setCurrentUser(user);
     });
     return unsubscribe;
-  }, [ADMIN_UID]);
+  }, []);
 
   // Load real inquiry documents from Firestore, not localStorage or mock data.
   useEffect(() => {
-    if (!isOpen || !currentUser || currentUser.uid !== ADMIN_UID) return;
+    if (!isOpen || !isAdminUser(currentUser)) return;
     let cancelled = false;
     const loadInquiries = async () => {
       setInquiriesLoading(true);
@@ -175,50 +209,65 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [isOpen, currentUser, ADMIN_UID]);
+  }, [isOpen, currentUser]);
 
   const handleEmailPasswordLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     setAuthError("");
-    if (!ADMIN_UID) {
-      setAuthError(
-        "Add NEXT_PUBLIC_FIREBASE_ADMIN_UID to .env.local and use the same UID in Firestore rules.",
-      );
-      return;
-    }
+    setPasswordResetMessage("");
     try {
       const result = await signInWithEmailAndPassword(
         auth,
-        adminEmail,
+        adminEmail.trim(),
         adminPassword,
       );
-      if (result.user.uid !== ADMIN_UID) {
+      if (!isAdminUser(result.user)) {
         await signOut(auth);
         setAuthError("This account is not authorized to access the CMS.");
       }
     } catch (error) {
       console.error("Email/password admin login failed:", error);
+      setAuthError(getAuthErrorMessage(error));
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    setAuthError("");
+    setPasswordResetMessage("");
+    const email = adminEmail.trim();
+    if (!email) {
       setAuthError(
-        "Login failed. Check your credentials and Firebase Authentication settings.",
+        "Enter your email address first, then choose Forgot password.",
       );
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setPasswordResetMessage(
+        "If an account exists for this email, a password reset link has been sent.",
+      );
+    } catch (error) {
+      console.error("Password reset request failed:", error);
+      const code = error instanceof FirebaseError ? error.code : "";
+      if (code === "auth/user-not-found") {
+        setPasswordResetMessage(
+          "If an account exists for this email, a password reset link has been sent.",
+        );
+      } else {
+        setAuthError(getAuthErrorMessage(error));
+      }
     }
   };
 
   const handleGoogleLogin = async () => {
     setAuthError("");
-    if (!ADMIN_UID) {
-      setAuthError(
-        "Add NEXT_PUBLIC_FIREBASE_ADMIN_UID to .env.local and use the same UID in Firestore rules.",
-      );
-      return;
-    }
+    setPasswordResetMessage("");
     try {
       const result = await signInWithPopup(auth, new GoogleAuthProvider());
-      if (result.user.uid !== ADMIN_UID) {
+      if (!isAdminUser(result.user)) {
         await signOut(auth);
-        setAuthError(
-          "This Google account is not authorized to access the CMS.",
-        );
+        setAuthError("This Google account is not authorized to access the CMS.");
       }
     } catch (error) {
       console.error("Google admin login failed:", error);
@@ -240,7 +289,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
     );
   }
 
-  if (!currentUser || currentUser.uid !== ADMIN_UID) {
+  if (!isAdminUser(currentUser)) {
     return (
       <div
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
@@ -277,6 +326,15 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
                 autoComplete="current-password"
               />
             </label>
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={handlePasswordReset}
+                className="text-xs font-semibold text-[#555555] underline hover:text-[#FF5B4D]"
+              >
+                Forgot password?
+              </button>
+            </div>
             <button
               type="submit"
               className="w-full rounded-lg bg-[#FF5B4D] px-4 py-2.5 text-sm font-semibold text-white"
@@ -296,10 +354,9 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
               {authError}
             </p>
           )}
-          {!ADMIN_UID && (
-            <p className="mt-3 text-xs text-amber-700">
-              Admin UID is not configured. Add NEXT_PUBLIC_FIREBASE_ADMIN_UID to
-              .env.local and use that exact UID in Firestore rules.
+          {passwordResetMessage && (
+            <p role="status" className="mt-4 text-sm text-emerald-700">
+              {passwordResetMessage}
             </p>
           )}
           <button
@@ -382,20 +439,15 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
     setRelatedServiceId(p.relatedServiceId || "");
   };
 
-  const handleSavePost = (e: React.FormEvent) => {
+  const handleSavePost = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title.trim()) return;
 
-    const finalSlug = slug.trim()
-      ? slug
-          .trim()
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-      : title
-          .trim()
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-");
+    const finalSlug = (slug.trim() || title.trim())
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
 
     const tagsArray = tagsStr
 
@@ -412,8 +464,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
       title: title.trim(),
 
-      seoTitle:
-        seoTitle.trim() || `${title.trim()} | Vanguard Digital Insights`,
+      seoTitle: seoTitle.trim() || `${title.trim()} | RouRb Tech Insights`,
 
       seoDescription: seoDescription.trim() || excerpt.trim().slice(0, 155),
 
@@ -451,7 +502,9 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
       status,
 
-      relatedServiceId: (relatedServiceId as ServiceId) || undefined,
+      ...(relatedServiceId
+        ? { relatedServiceId: relatedServiceId as ServiceId }
+        : {}),
     };
 
     let nextPosts: BlogPost[];
@@ -462,21 +515,27 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       nextPosts = [updatedPost, ...posts];
     }
 
-    onUpdatePosts(nextPosts);
-
-    setEditingPost(null);
-
-    setIsCreating(false);
+    setArticlesError("");
+    try {
+      await onUpdatePosts(nextPosts);
+      setEditingPost(null);
+      setIsCreating(false);
+    } catch (error) {
+      console.error("Failed to save article to Firestore:", error);
+      setArticlesError("Could not save the article. Please try again.");
+    }
   };
 
-  const handleDeletePost = (id: string) => {
+  const handleDeletePost = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this article?")) {
       const nextPosts = posts.filter((p) => p.id !== id);
-
-      onUpdatePosts(nextPosts);
-
-      if (editingPost?.id === id) {
-        setEditingPost(null);
+      setArticlesError("");
+      try {
+        await onUpdatePosts(nextPosts);
+        if (editingPost?.id === id) setEditingPost(null);
+      } catch (error) {
+        console.error("Failed to delete article from Firestore:", error);
+        setArticlesError("Could not delete the article. Please try again.");
       }
     }
   };
@@ -578,7 +637,7 @@ ${published
   // Generate robots.txt
 
   const generateRobotsTxt = () => {
-    return `# Vanguard Digital Production Robots.txt
+    return `# RouRb Tech Production Robots.txt
 
 User-agent: *
 
@@ -696,6 +755,11 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
 
           {activeTab === "articles" && (
             <div>
+              {articlesError && (
+                <p role="alert" className="mb-4 text-sm text-red-600">
+                  {articlesError}
+                </p>
+              )}
               {isCreating || editingPost ? (
                 /* Article Editor Form */
 
@@ -745,6 +809,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         required
+                        maxLength={200}
                         placeholder="e.g. Next.js 15 Server Action Architecture"
                         className="w-full px-3 py-2 bg-white border border-[#E8E8E8] rounded-lg text-sm text-[#111111]"
                       />
@@ -1182,7 +1247,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                         </span>
 
                         <a
-                          href={`mailto:${inq.email}?subject=Vanguard Digital — Project Discovery for ${inq.company}`}
+                          href={`mailto:${inq.email}?subject=RouRb Tech — Project Discovery for ${inq.company}`}
                           className="font-semibold text-[#FF5B4D] hover:underline"
                         >
                           Send Direct Email Reply →
@@ -1229,8 +1294,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                   </div>
 
                   <h4 className="text-lg text-[#1a0dab] hover:underline cursor-pointer font-medium leading-tight mb-1">
-                    Vanguard Digital — Engineering High-Performance Digital
-                    Products
+                    RouRb Tech — Engineering High-Performance Digital Products
                   </h4>
 
                   <p className="text-xs text-[#4d5156] leading-snug">

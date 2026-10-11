@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "./Header";
 import { Hero } from "./Hero";
@@ -14,38 +14,34 @@ import { FAQSection } from "./FAQSection";
 import { BlogSection } from "./BlogSection";
 import { NewsletterSection } from "./NewsletterSection";
 import { Footer } from "./Footer";
-import { CmsAdminModal } from "./CmsAdminModal";
 import { initialBlogPosts } from "@/data/blogData";
 import { BlogPost } from "@/types";
+import { loadPublishedBlogPosts } from "@/lib/blogPosts";
 
 export default function HomeClient() {
   const router = useRouter();
 
-  const [posts, setPosts] = useState<BlogPost[]>(() => {
-    if (typeof window === "undefined") return initialBlogPosts;
-    try {
-      const stored = localStorage.getItem("vanguard_posts");
-      if (stored) return JSON.parse(stored);
-    } catch (e) {
-      console.error("Error loading posts from localStorage", e);
-    }
-    return initialBlogPosts;
-  });
+  const [posts, setPosts] = useState<BlogPost[]>(initialBlogPosts);
 
   const [prefilledService, setPrefilledService] = useState<string>("");
-  const [cmsModalOpen, setCmsModalOpen] = useState(false);
   const [activeCaseStudyId, setActiveCaseStudyId] = useState<string | null>(
     null,
   );
 
-  const handleUpdatePosts = (newPosts: BlogPost[]) => {
-    setPosts(newPosts);
-    try {
-      localStorage.setItem("vanguard_posts", JSON.stringify(newPosts));
-    } catch (e) {
-      console.error("Error saving posts to localStorage", e);
-    }
-  };
+  useEffect(() => {
+    let cancelled = false;
+    loadPublishedBlogPosts()
+      .then((publishedPosts) => {
+        if (!cancelled && publishedPosts) setPosts(publishedPosts);
+      })
+      .catch((error) => {
+        console.error("Could not load published articles from Firestore:", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleScrollToContact = () => {
     setTimeout(() => {
@@ -75,7 +71,6 @@ export default function HomeClient() {
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
       <Header
         onOpenContact={handleScrollToContact}
-        onOpenCms={() => setCmsModalOpen(true)}
         onNavigateHome={() => router.push("/")}
         isArticleView={false}
       />
@@ -111,16 +106,7 @@ export default function HomeClient() {
 
       <Footer
         onOpenContact={handleScrollToContact}
-        onOpenCms={() => setCmsModalOpen(true)}
         onSelectService={handleSelectServiceForInquiry}
-      />
-
-      <CmsAdminModal
-        isOpen={cmsModalOpen}
-        onClose={() => setCmsModalOpen(false)}
-        posts={posts}
-        onUpdatePosts={handleUpdatePosts}
-        onViewArticle={handleSelectArticle}
       />
     </div>
   );

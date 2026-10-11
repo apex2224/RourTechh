@@ -18,6 +18,25 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## CMS and Firestore access
+
+Set `NEXT_PUBLIC_FIREBASE_ADMIN_UIDS` to the comma-separated authorized Firebase
+Authentication UIDs in `.env.local` and add the same UIDs to the Firestore
+`isAdmin()` rule in `firestore.rules`. UIDs are identifiers, not credentials;
+Firestore Security Rules enforce access independently of the client-side check.
+Configure the same variable in the production environment.
+
+Deploy the rules to the same Firebase project configured by
+`NEXT_PUBLIC_FIREBASE_PROJECT_ID` (the CLI has no active project configured in
+this workspace):
+
+```bash
+firebase deploy --only firestore:rules --project YOUR_FIREBASE_PROJECT_ID
+```
+
+The CMS is available at `/admin`. Email/Password and Google sign-in are both
+restricted to the configured UID.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More

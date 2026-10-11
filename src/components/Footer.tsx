@@ -4,13 +4,11 @@ import { servicesData } from "../data/servicesData";
 
 interface FooterProps {
   onOpenContact: () => void;
-  onOpenCms: () => void;
   onSelectService: (serviceTitle: string) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
   onOpenContact,
-  onOpenCms,
   onSelectService,
 }) => {
   return (
@@ -27,7 +25,7 @@ export const Footer: React.FC<FooterProps> = ({
               }}
               className="text-2xl font-bold tracking-tight text-[#111111] font-display block"
             >
-              Vanguard Digital
+              RouRb Tech
             </a>
             <p className="text-sm text-[#555555] max-w-md leading-relaxed font-body">
               Engineering high-performance digital products, bespoke web
@@ -154,32 +152,24 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Administration & Internal Tools */}
           <div>
             <h4 className="font-bold uppercase tracking-wider text-[#111111] mb-4">
-              Operations & SEO
+              Public SEO Resources
             </h4>
             <ul className="space-y-2.5">
               <li>
-                <button
-                  onClick={onOpenCms}
+                <a
+                  href="/sitemap.xml"
                   className="text-[#FF5B4D] hover:underline font-semibold cursor-pointer"
                 >
-                  Open CMS & SEO Manager
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={onOpenCms}
-                  className="text-[#666666] hover:text-[#111111] transition-colors cursor-pointer"
-                >
                   Inspect /sitemap.xml
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={onOpenCms}
+                <a
+                  href="/robots.txt"
                   className="text-[#666666] hover:text-[#111111] transition-colors cursor-pointer"
                 >
                   Inspect /robots.txt
-                </button>
+                </a>
               </li>
               <li>
                 <span className="text-[#888888]">
@@ -192,18 +182,18 @@ export const Footer: React.FC<FooterProps> = ({
 
         {/* Bottom Tier: Quiet Copyright & Policies */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#888888] gap-4">
-          <p>© 2026 Vanguard Digital Agency. All rights reserved.</p>
+          <p>© 2026 RouRb Tech Agency. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <span>Client IP Protected</span>
             <span aria-hidden="true">·</span>
             <span>Zero Tracking Telemetry</span>
             <span aria-hidden="true">·</span>
-            <button
-              onClick={onOpenCms}
+            <a
+              href="/sitemap.xml"
               className="hover:text-[#111111] transition-colors"
             >
-              Editorial CMS Console
-            </button>
+              XML Sitemap
+            </a>
           </div>
         </div>
       </div>

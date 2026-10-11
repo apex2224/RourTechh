@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Menu, X, ArrowUpRight, Settings } from "lucide-react";
+import { Menu, X, ArrowUpRight } from "lucide-react";
 
 interface HeaderProps {
   onOpenContact: () => void;
-  onOpenCms: () => void;
   activeSection?: string;
   onNavigateHome?: () => void;
   isArticleView?: boolean;
@@ -11,7 +10,6 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   onOpenContact,
-  onOpenCms,
   onNavigateHome,
   isArticleView = false,
 }) => {
@@ -62,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
             }
           }}
           className="text-xl sm:text-2xl font-bold tracking-tight text-[#111111] font-display flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] rounded"
-          aria-label="Vanguard Digital Home"
+          aria-label="RouRb Tech Home"
         >
           <span>RouR Tech</span>
         </a>
@@ -86,15 +84,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Zone 3: 1-2 primary actions */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={onOpenCms}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#666666] hover:text-[#111111] hover:bg-black/5 rounded-md transition-colors"
-            title="Open CMS Content & SEO Manager"
-          >
-            <Settings className="w-3.5 h-3.5" />
-            <span>CMS Admin</span>
-          </button>
-
           <button
             onClick={onOpenContact}
             className="px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white bg-[#FF5B4D] hover:bg-[#E84E40] active:scale-[0.98] rounded-lg transition-all duration-150 shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
@@ -135,16 +124,6 @@ export const Header: React.FC<HeaderProps> = ({
               </a>
             ))}
             <div className="pt-2 border-t border-[#E8E8E8] flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenCms();
-                }}
-                className="w-full text-left px-3 py-2 text-sm text-[#666666] hover:text-[#111111] hover:bg-[#F8F8F6] rounded-md flex items-center gap-2"
-              >
-                <Settings className="w-4 h-4" />
-                <span>CMS Content & SEO Manager</span>
-              </button>
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);

@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { initialBlogPosts } from '@/data/blogData';
 import BlogPostClient from '@/components/BlogPostClient';
-import { notFound } from 'next/navigation';
 
 interface Props {
   params: { slug: string };
@@ -13,7 +12,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = initialBlogPosts.find((p) => p.slug === params.slug);
-  if (!post) return { title: 'Post Not Found' };
+  if (!post) return { title: 'RourTech Insights' };
   return {
     title: post.seoTitle,
     description: post.seoDescription,
@@ -22,6 +21,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default function BlogPostPage({ params }: Props) {
   const post = initialBlogPosts.find((p) => p.slug === params.slug);
-  if (!post) notFound();
-  return <BlogPostClient post={post} allPosts={initialBlogPosts} />;
+  return (
+    <BlogPostClient
+      slug={params.slug}
+      initialPost={post ?? null}
+      initialPosts={initialBlogPosts}
+    />
+  );
 }

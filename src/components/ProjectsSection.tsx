@@ -222,7 +222,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         </div>
                       ) : (
                         <>
-                          <image
+                          <img
                             src={project.image}
                             alt={`${project.title} — ${project.category} project by RourTech`}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-104"

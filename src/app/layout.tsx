@@ -2,7 +2,7 @@
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Vanguard Digital — Engineering High-Performance Digital Products",
+  title: "RouRb Tech — Engineering High-Performance Digital Products",
   description:
     "We engineer high-performance digital products — from blazing-fast web apps to conversion-optimised e-commerce platforms.",
   keywords: [
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     "digital agency",
   ],
   openGraph: {
-    title: "Vanguard Digital — Engineering High-Performance Digital Products",
+    title: "RouRb Tech — Engineering High-Performance Digital Products",
     description: "We engineer high-performance digital products.",
     type: "website",
   },
