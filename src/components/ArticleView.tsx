@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ArrowLeft, Share2, Check, ArrowRight } from "lucide-react";
 import { BlogPost, ServiceItem } from "../types";
 import { servicesData } from "../data/servicesData";
+import { BlogFeaturedImage } from "./BlogFeaturedImage";
 
 interface ArticleViewProps {
   post: BlogPost;
@@ -24,17 +25,46 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
   // Dynamic SEO metadata updates
   useEffect(() => {
     const originalTitle = document.title;
+    const description = post.seoDescription || post.excerpt;
+    const imageUrl = post.featuredImage
+      ? new URL(post.featuredImage, window.location.origin).href
+      : "";
     document.title = post.seoTitle || `${post.title} | RouRb Tech`;
-
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute("content", post.seoDescription || post.excerpt);
-    }
+    const metadata = [
+      ["name", "description", description],
+      ["property", "og:title", post.title],
+      ["property", "og:description", description],
+      ["property", "og:type", "article"],
+      ["property", "og:image", imageUrl],
+      ["name", "twitter:card", post.featuredImage ? "summary_large_image" : "summary"],
+      ["name", "twitter:title", post.title],
+      ["name", "twitter:description", description],
+      ["name", "twitter:image", imageUrl],
+    ] as const;
+    const previousMetadata = metadata.map(([attribute, name, value]) => {
+      const selector = `meta[${attribute}="${name}"]`;
+      let element = document.head.querySelector<HTMLMetaElement>(selector);
+      const created = !element;
+      if (!element) {
+        element = document.createElement("meta");
+        element.setAttribute(attribute, name);
+        document.head.appendChild(element);
+      }
+      const previousContent = element.getAttribute("content");
+      if (value) element.setAttribute("content", value);
+      else element.removeAttribute("content");
+      return { element, created, previousContent };
+    });
 
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     return () => {
       document.title = originalTitle;
+      previousMetadata.forEach(({ element, created, previousContent }) => {
+        if (created) element.remove();
+        else if (previousContent === null) element.removeAttribute("content");
+        else element.setAttribute("content", previousContent);
+      });
     };
   }, [post]);
 
@@ -82,7 +112,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
             "@type": "Article",
             headline: post.title,
             description: post.seoDescription,
-            image: post.featuredImage,
+            ...(post.featuredImage ? { image: post.featuredImage } : {}),
             author: {
               "@type": "Person",
               name: post.author.name,
@@ -186,15 +216,12 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
         </header>
 
         {/* Featured Image */}
-        <div className="rounded-2xl overflow-hidden border border-[#E8E8E8] bg-[#ECECE8] aspect-[16/9] mb-12 shadow-sm">
-          <img
-            src={post.featuredImage}
-            alt={post.title}
-            className="w-full h-full object-cover"
-            loading="eager"
-            referrerPolicy="no-referrer"
-          />
-        </div>
+        <BlogFeaturedImage
+          imageUrl={post.featuredImage}
+          alt={post.title}
+          className="rounded-2xl border border-[#E8E8E8] aspect-[16/9] mb-12 shadow-sm"
+          imageClassName="h-full w-full object-cover"
+        />
 
         {/* Article Body */}
         <div className="bg-white p-6 sm:p-12 rounded-2xl border border-[#E8E8E8] shadow-xs prose prose-neutral max-w-none text-[#333333] leading-relaxed">

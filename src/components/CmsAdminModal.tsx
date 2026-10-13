@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FirebaseError } from "firebase/app";
 import {
   GoogleAuthProvider,
@@ -16,8 +16,16 @@ import {
   updateDoc,
   doc,
 } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
+import type { StorageReference } from "firebase/storage";
+import { auth, db, storage } from "@/lib/firebase";
 import { isAdminUser } from "@/lib/adminAuthorization";
+import { BlogFeaturedImage } from "@/components/BlogFeaturedImage";
 
 import {
   X,
@@ -44,8 +52,6 @@ interface CmsAdminModalProps {
   posts: BlogPost[];
 
   onUpdatePosts: (newPosts: BlogPost[]) => Promise<void>;
-
-  onViewArticle: (post: BlogPost) => void;
 }
 
 export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
@@ -56,8 +62,6 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
   posts,
 
   onUpdatePosts,
-
-  onViewArticle,
 }) => {
   const [activeTab, setActiveTab] = useState<
     "articles" | "inquiries" | "seo-sitemap"
@@ -99,9 +103,17 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
   const [tagsStr, setTagsStr] = useState("");
 
-  const [featuredImage, setFeaturedImage] = useState(
-    "/src/assets/images/blog_seo_web_performance_1791271638172.jpg",
-  );
+  const [featuredImage, setFeaturedImage] = useState("");
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [selectedImagePreview, setSelectedImagePreview] = useState<
+    string | null
+  >(null);
+  const featuredImageInputRef = useRef<HTMLInputElement>(null);
+  const [featuredImageError, setFeaturedImageError] = useState("");
+  const [isSavingArticle, setIsSavingArticle] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewPostOverride, setPreviewPostOverride] =
+    useState<BlogPost | null>(null);
 
   const [status, setStatus] = useState<"published" | "draft">("published");
 
@@ -120,6 +132,17 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
   // Copy helper
 
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!selectedImageFile) {
+      setSelectedImagePreview(null);
+      return;
+    }
+
+    const previewUrl = URL.createObjectURL(selectedImageFile);
+    setSelectedImagePreview(previewUrl);
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [selectedImageFile]);
 
   const getAuthErrorMessage = (error: unknown) => {
     const code = error instanceof FirebaseError ? error.code : "";
@@ -373,6 +396,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
   const handleStartCreate = () => {
     setIsCreating(true);
+    setPreviewPostOverride(null);
 
     setEditingPost(null);
 
@@ -394,9 +418,10 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
     setTagsStr("Web Development, Next.js, Architecture");
 
-    setFeaturedImage(
-      "/src/assets/images/blog_seo_web_performance_1791271638172.jpg",
-    );
+    setFeaturedImage("");
+    setSelectedImageFile(null);
+    if (featuredImageInputRef.current) featuredImageInputRef.current.value = "";
+    setFeaturedImageError("");
 
     setStatus("published");
 
@@ -409,6 +434,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
   const handleStartEdit = (p: BlogPost) => {
     setEditingPost(p);
+    setPreviewPostOverride(null);
 
     setIsCreating(false);
 
@@ -428,7 +454,10 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
     setTagsStr(p.tags.join(", "));
 
-    setFeaturedImage(p.featuredImage);
+    setFeaturedImage(p.featuredImage || "");
+    setSelectedImageFile(null);
+    if (featuredImageInputRef.current) featuredImageInputRef.current.value = "";
+    setFeaturedImageError("");
 
     setStatus(p.status);
 
@@ -439,52 +468,36 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
     setRelatedServiceId(p.relatedServiceId || "");
   };
 
-  const handleSavePost = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!title.trim()) return;
-
-    const finalSlug = (slug.trim() || title.trim())
+  const createPostFromForm = (
+    imageUrl: string,
+    id = editingPost?.id || `post-${Date.now()}`,
+  ): BlogPost => {
+    const cleanTitle = title.trim();
+    const finalSlug = (slug.trim() || cleanTitle)
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
-
     const tagsArray = tagsStr
-
       .split(",")
-
-      .map((t) => t.trim())
-
+      .map((tag) => tag.trim())
       .filter(Boolean);
 
-    const updatedPost: BlogPost = {
-      id: editingPost ? editingPost.id : `post-${Date.now()}`,
-
+    return {
+      id,
       slug: finalSlug,
-
-      title: title.trim(),
-
-      seoTitle: seoTitle.trim() || `${title.trim()} | RouRb Tech Insights`,
-
-      seoDescription: seoDescription.trim() || excerpt.trim().slice(0, 155),
-
+      title: cleanTitle || "Untitled article",
+      seoTitle: seoTitle.trim() || `${cleanTitle} | RouRb Tech Insights`,
+      seoDescription:
+        seoDescription.trim() || excerpt.trim().slice(0, 155),
       category,
-
       tags: tagsArray.length > 0 ? tagsArray : ["Engineering"],
-
       author: {
         name: authorName.trim() || "Vanguard Editorial",
-
         role: authorRole.trim() || "Principal Solutions Architect",
-
         avatar:
           "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
       },
-
-      featuredImage:
-        featuredImage.trim() ||
-        "/src/assets/images/blog_seo_web_performance_1791271638172.jpg",
-
+      featuredImage: imageUrl.trim(),
       publishDate:
         editingPost?.publishDate ||
         new Date().toLocaleDateString("en-US", {
@@ -492,37 +505,143 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
           day: "numeric",
           year: "numeric",
         }),
-
       readTime: `${Math.max(3, Math.ceil(content.split(/\s+/).length / 200))} min read`,
-
       excerpt:
-        excerpt.trim() || content.slice(0, 160).replace(/[#\*`-]/g, "") + "...",
-
+        excerpt.trim() ||
+        content.slice(0, 160).replace(/[#\*`-]/g, "") + "...",
       content: content.trim(),
-
       status,
-
       ...(relatedServiceId
         ? { relatedServiceId: relatedServiceId as ServiceId }
         : {}),
     };
+  };
 
-    let nextPosts: BlogPost[];
+  const getFeaturedImageUploadError = (error: unknown) => {
+    const code = error instanceof FirebaseError ? error.code : "";
+    if (
+      code === "storage/bucket-not-found" ||
+      code === "storage/project-not-found"
+    ) {
+      return "Firebase Storage is not enabled for this project or its configured bucket was not found. Enable Storage and create the configured bucket in Firebase Console.";
+    }
+    if (code === "storage/unauthorized") {
+      return "Firebase Storage denied this upload. Deploy the Storage rules from storage.rules and verify this signed-in account is an authorized admin.";
+    }
+    if (code === "storage/canceled") {
+      return "The image upload was canceled. Choose the image again to retry.";
+    }
+    return `Could not upload the featured image${code ? ` (${code})` : ""}. Confirm Firebase Storage is enabled, its configured bucket exists, and storage.rules is deployed.`;
+  };
 
-    if (editingPost) {
-      nextPosts = posts.map((p) => (p.id === editingPost.id ? updatedPost : p));
-    } else {
-      nextPosts = [updatedPost, ...posts];
+  const handleFeaturedImageSelection = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.currentTarget.files?.[0];
+    if (!file) return;
+
+    const extension = file.name.split(".").pop()?.toLowerCase();
+    const supportedTypes = ["image/jpeg", "image/png", "image/webp"];
+    const supportedExtensions = ["jpg", "jpeg", "png", "webp"];
+    if (
+      !supportedTypes.includes(file.type) ||
+      !extension ||
+      !supportedExtensions.includes(extension)
+    ) {
+      setFeaturedImageError(
+        "Choose a JPG, JPEG, PNG, or WebP image file.",
+      );
+      event.currentTarget.value = "";
+      return;
     }
 
+    if (file.size > 5 * 1024 * 1024) {
+      setFeaturedImageError("The image must be 5 MB or smaller.");
+      event.currentTarget.value = "";
+      return;
+    }
+
+    setFeaturedImageError("");
+    setFeaturedImage("");
+    setSelectedImageFile(file);
+  };
+
+  const handleSavePost = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!title.trim()) return;
+
+    const imageUrl = featuredImage.trim();
+    if (!selectedImageFile && imageUrl) {
+      try {
+        const parsedUrl = new URL(imageUrl, window.location.origin);
+        if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+          throw new Error("Unsupported image URL scheme");
+        }
+      } catch {
+        setFeaturedImageError(
+          "Enter a valid HTTP(S) image URL, or remove it and upload an image file.",
+        );
+        return;
+      }
+    }
+
+    const postId = editingPost?.id || `post-${Date.now()}`;
+    let uploadedImageRef: StorageReference | null = null;
+    let uploadSucceeded = false;
+    let uploadingFeaturedImage = false;
+    setIsSavingArticle(true);
+    setFeaturedImageError("");
     setArticlesError("");
     try {
+      let savedImageUrl = imageUrl;
+      if (selectedImageFile) {
+        uploadingFeaturedImage = true;
+        const extension = selectedImageFile.name.split(".").pop()?.toLowerCase();
+        const imageRef = ref(
+          storage,
+          `articles/${postId}/featured-${Date.now()}.${extension}`,
+        );
+        uploadedImageRef = imageRef;
+        await uploadBytes(imageRef, selectedImageFile, {
+          contentType: selectedImageFile.type,
+        });
+        uploadSucceeded = true;
+        savedImageUrl = await getDownloadURL(imageRef);
+        uploadingFeaturedImage = false;
+      }
+
+      const updatedPost = createPostFromForm(savedImageUrl, postId);
+      const nextPosts = editingPost
+        ? posts.map((post) => (post.id === editingPost.id ? updatedPost : post))
+        : [updatedPost, ...posts];
+
       await onUpdatePosts(nextPosts);
+      setFeaturedImage(savedImageUrl);
+      setSelectedImageFile(null);
+      if (featuredImageInputRef.current)
+        featuredImageInputRef.current.value = "";
       setEditingPost(null);
       setIsCreating(false);
     } catch (error) {
-      console.error("Failed to save article to Firestore:", error);
-      setArticlesError("Could not save the article. Please try again.");
+      if (uploadedImageRef && uploadSucceeded) {
+        try {
+          await deleteObject(uploadedImageRef);
+        } catch (cleanupError) {
+          console.error("Could not clean up an unused featured image:", cleanupError);
+        }
+      }
+      if (selectedImageFile && uploadingFeaturedImage) {
+        console.error("Failed to upload featured image to Firebase Storage:", error);
+        setFeaturedImageError(getFeaturedImageUploadError(error));
+      } else {
+        console.error("Failed to save article to Firestore:", error);
+        setArticlesError(
+          "Could not save the article to Firestore. Verify the authorized admin account and Firestore rules, then try again.",
+        );
+      }
+    } finally {
+      setIsSavingArticle(false);
     }
   };
 
@@ -658,6 +777,13 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
 `;
   };
 
+  const previewPost =
+    previewPostOverride ||
+    createPostFromForm(
+      selectedImagePreview || featuredImage,
+      editingPost?.id || "preview",
+    );
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150"
@@ -778,9 +904,22 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                       <button
                         type="button"
                         onClick={() => {
+                          setPreviewPostOverride(null);
+                          setIsPreviewOpen(true);
+                        }}
+                        className="px-3 py-1.5 text-xs font-semibold text-[#333333] hover:text-[#FF5B4D] inline-flex items-center gap-1.5"
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        Preview
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
                           setIsCreating(false);
 
                           setEditingPost(null);
+                          setIsPreviewOpen(false);
                         }}
                         className="px-3 py-1.5 text-xs text-[#666666] hover:text-[#111111]"
                       >
@@ -789,11 +928,18 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
 
                       <button
                         type="submit"
+                        disabled={isSavingArticle}
                         className="px-4 py-2 text-xs font-semibold text-white bg-[#FF5B4D] hover:bg-[#E84E40] rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
                       >
                         <Save className="w-3.5 h-3.5" />
 
-                        <span>Save & Publish</span>
+                        <span>
+                          {isSavingArticle
+                            ? selectedImageFile
+                              ? "Uploading & Saving…"
+                              : "Saving…"
+                            : "Save Article"}
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -993,6 +1139,89 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                     />
                   </div>
 
+                  <div className="rounded-xl border border-[#E8E8E8] bg-[#F8F8F6] p-4 space-y-3">
+                    <div>
+                      <label
+                        htmlFor="featured-image-file"
+                        className="block text-xs font-bold uppercase text-[#333333] mb-1"
+                      >
+                        Featured Image / Overview Image
+                      </label>
+                      <p className="text-xs text-[#666666]">
+                        Upload a JPG, JPEG, PNG, or WebP image up to 5 MB, or
+                        paste an HTTP(S) image URL. Uploads are stored in
+                        Firebase Storage when you save.
+                      </p>
+                    </div>
+
+                    <input
+                      ref={featuredImageInputRef}
+                      id="featured-image-file"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                      onChange={handleFeaturedImageSelection}
+                      className="block w-full text-xs text-[#555555] file:mr-3 file:rounded-md file:border-0 file:bg-white file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#333333] hover:file:bg-[#F2F2EE]"
+                    />
+
+                    <div>
+                      <label
+                        htmlFor="featured-image-url"
+                        className="block text-[11px] font-semibold text-[#555555] mb-1"
+                      >
+                        Or use an image URL
+                      </label>
+                      <input
+                        id="featured-image-url"
+                        type="text"
+                        inputMode="url"
+                        value={featuredImage}
+                        onChange={(event) => {
+                          setFeaturedImage(event.target.value);
+                          setSelectedImageFile(null);
+                          if (featuredImageInputRef.current)
+                            featuredImageInputRef.current.value = "";
+                          setFeaturedImageError("");
+                        }}
+                        placeholder="https://example.com/image.jpg"
+                        className="w-full rounded-lg border border-[#E8E8E8] bg-white px-3 py-2 text-sm"
+                      />
+                    </div>
+
+                    <BlogFeaturedImage
+                      imageUrl={selectedImagePreview || featuredImage}
+                      alt={title.trim() || "Featured image preview"}
+                      className="aspect-[16/9] w-full max-w-xl rounded-lg border border-[#E8E8E8]"
+                      imageClassName="h-full w-full object-cover"
+                    />
+                    {selectedImageFile && (
+                      <p className="text-xs text-[#555555]">
+                        Selected: {selectedImageFile.name} (
+                        {(selectedImageFile.size / (1024 * 1024)).toFixed(2)}{" "}
+                        MB)
+                      </p>
+                    )}
+                    {(selectedImageFile || featuredImage.trim()) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedImageFile(null);
+                          setFeaturedImage("");
+                          if (featuredImageInputRef.current)
+                            featuredImageInputRef.current.value = "";
+                          setFeaturedImageError("");
+                        }}
+                        className="text-xs font-semibold text-red-600 hover:text-red-700 underline"
+                      >
+                        Remove featured image
+                      </button>
+                    )}
+                    {featuredImageError && (
+                      <p role="alert" className="text-xs text-red-600">
+                        {featuredImageError}
+                      </p>
+                    )}
+                  </div>
+
                   <div>
                     <label className="block text-xs font-bold uppercase text-[#333333] mb-1">
                       Full Content (Markdown format)
@@ -1069,13 +1298,23 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                             className="hover:bg-[#FAFAF9] transition-colors"
                           >
                             <td className="px-5 py-3.5">
-                              <span className="font-bold text-[#111111] block text-sm">
-                                {post.title}
-                              </span>
+                              <div className="flex items-center gap-3">
+                                <BlogFeaturedImage
+                                  imageUrl={post.featuredImage}
+                                  alt={post.title}
+                                  className="h-10 w-16 shrink-0 rounded border border-[#E8E8E8]"
+                                  imageClassName="h-full w-full object-cover"
+                                />
+                                <div className="min-w-0">
+                                  <span className="font-bold text-[#111111] block text-sm">
+                                    {post.title}
+                                  </span>
 
-                              <span className="text-[11px] text-[#888888] font-mono">
-                                /blog/{post.slug}
-                              </span>
+                                  <span className="text-[11px] text-[#888888] font-mono">
+                                    /blog/{post.slug}
+                                  </span>
+                                </div>
+                              </div>
                             </td>
 
                             <td className="px-4 py-3.5 text-[#555555] font-medium">
@@ -1102,12 +1341,12 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                             <td className="px-4 py-3.5 text-right space-x-2">
                               <button
                                 onClick={() => {
-                                  onViewArticle(post);
-
-                                  onClose();
+                                  setPreviewPostOverride(post);
+                                  setIsPreviewOpen(true);
                                 }}
                                 className="p-1 text-[#666666] hover:text-[#111111] hover:bg-black/5 rounded transition-colors"
-                                title="View live post"
+                                title="Preview article"
+                                aria-label={`Preview ${post.title}`}
                               >
                                 <Eye className="w-4 h-4" />
                               </button>
@@ -1397,6 +1636,128 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
           </button>
         </div>
       </div>
+
+      {isPreviewOpen && (
+        <div
+          className="fixed inset-0 z-[60] overflow-y-auto bg-[#F8F8F6]"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Article preview"
+        >
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#E8E8E8] bg-white px-4 py-3 sm:px-8">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#FF5B4D]">
+                {previewPostOverride
+                  ? "Saved article preview"
+                  : "Current form preview"}
+              </p>
+              <p className="text-xs text-[#666666]">
+                {previewPostOverride
+                  ? "Previewing the saved CMS article."
+                  : "This preview uses the current form values."}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setIsPreviewOpen(false);
+                setPreviewPostOverride(null);
+              }}
+              className="rounded-lg border border-[#E8E8E8] px-4 py-2 text-xs font-semibold text-[#333333] hover:bg-[#F8F8F6]"
+            >
+              Back to editor
+            </button>
+          </div>
+
+          <article className="mx-auto max-w-4xl px-4 py-8 sm:px-8 sm:py-12">
+            <header className="mb-8">
+              <div className="mb-4 flex flex-wrap items-center gap-2 text-xs text-[#777777]">
+                <span className="font-semibold text-[#FF5B4D]">
+                  {previewPost.category}
+                </span>
+                <span aria-hidden="true">·</span>
+                <span>{previewPost.publishDate}</span>
+                <span aria-hidden="true">·</span>
+                <span>{previewPost.status === "draft" ? "Draft preview" : "Published preview"}</span>
+              </div>
+              <h1 className="mb-4 text-3xl font-extrabold leading-tight text-[#111111] sm:text-5xl">
+                {previewPost.title}
+              </h1>
+              <p className="mb-6 text-lg leading-relaxed text-[#555555]">
+                {previewPost.excerpt}
+              </p>
+              <p className="text-sm text-[#666666]">
+                By{" "}
+                <span className="font-semibold text-[#111111]">
+                  {previewPost.author.name}
+                </span>
+                {previewPost.author.role ? ` · ${previewPost.author.role}` : ""}
+              </p>
+            </header>
+
+            <BlogFeaturedImage
+              imageUrl={previewPost.featuredImage}
+              alt={previewPost.title}
+              className="mb-8 aspect-[16/9] rounded-2xl border border-[#E8E8E8]"
+              imageClassName="h-full w-full object-cover"
+            />
+
+            <div className="rounded-2xl border border-[#E8E8E8] bg-white p-6 leading-relaxed text-[#444444] sm:p-10">
+              {previewPost.content.split("\n\n").map((paragraph, index) => {
+                const trimmed = paragraph.trim();
+                if (!trimmed) return null;
+                if (trimmed.startsWith("### ")) {
+                  return (
+                    <h2
+                      key={index}
+                      className="mb-3 mt-8 border-t border-[#F0F0EE] pt-6 text-2xl font-bold text-[#111111] first:mt-0 first:border-0 first:pt-0"
+                    >
+                      {trimmed.slice(4)}
+                    </h2>
+                  );
+                }
+                if (trimmed === "---") {
+                  return <hr key={index} className="my-6 border-[#E8E8E8]" />;
+                }
+                if (trimmed.startsWith("* ") || trimmed.startsWith("- ")) {
+                  return (
+                    <ul key={index} className="my-4 list-disc space-y-2 pl-5">
+                      {trimmed.split("\n").map((item, itemIndex) => (
+                        <li key={itemIndex}>
+                          {item.replace(/^[\*-]\s+/, "")}
+                        </li>
+                      ))}
+                    </ul>
+                  );
+                }
+                if (trimmed.startsWith("```")) {
+                  return (
+                    <pre
+                      key={index}
+                      className="my-5 overflow-x-auto rounded-lg bg-[#141414] p-4 text-xs text-neutral-100"
+                    >
+                      <code>{trimmed.replace(/```[a-z]*\n?/g, "").trim()}</code>
+                    </pre>
+                  );
+                }
+                return (
+                  <p key={index} className="my-4 whitespace-pre-wrap">
+                    {trimmed}
+                  </p>
+                );
+              })}
+
+              {previewPost.tags.length > 0 && (
+                <div className="mt-8 flex flex-wrap gap-2 border-t border-[#E8E8E8] pt-5 text-xs text-[#555555]">
+                  {previewPost.tags.map((tag) => (
+                    <span key={tag}>#{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </article>
+        </div>
+      )}
     </div>
   );
 };

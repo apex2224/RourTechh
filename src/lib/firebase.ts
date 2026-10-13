@@ -1,18 +1,21 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId:
-        process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    apiKey: "AIzaSyBuNRiaV85_ZeqPnUjRfPKEP37bVxhakLs",
+    authDomain: "ourtech-f58d4.firebaseapp.com",
+    databaseURL: "https://ourtech-f58d4-default-rtdb.firebaseio.com",
+    projectId: "ourtech-f58d4",
+    storageBucket: "ourtech-f58d4.firebasestorage.app",
+    messagingSenderId: "391651452028",
+    appId: "1:391651452028:web:c332351ef2618075e255f9",
+    measurementId: "G-F91P8PZK4F"
 };
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const db = getFirestore(app, "default");
+export const storage = getStorage(app);

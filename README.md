@@ -20,6 +20,11 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 ## CMS and Firestore access
 
+The Firestore database in project `ourtech-f58d4` has the database ID `default`.
+This is a named database and is distinct from Firestore's reserved `(default)`
+database. The client and Firebase CLI configuration target the named `default`
+database.
+
 Set `NEXT_PUBLIC_FIREBASE_ADMIN_UIDS` to the comma-separated authorized Firebase
 Authentication UIDs in `.env.local` and add the same UIDs to the Firestore
 `isAdmin()` rule in `firestore.rules`. UIDs are identifiers, not credentials;
@@ -31,7 +36,7 @@ Deploy the rules to the same Firebase project configured by
 this workspace):
 
 ```bash
-firebase deploy --only firestore:rules --project YOUR_FIREBASE_PROJECT_ID
+firebase deploy --only firestore --project ourtech-f58d4
 ```
 
 The CMS is available at `/admin`. Email/Password and Google sign-in are both

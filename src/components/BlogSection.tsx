@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, ArrowRight, BookOpen } from 'lucide-react';
 import { BlogPost } from '../types';
+import { BlogFeaturedImage } from './BlogFeaturedImage';
 
 interface BlogSectionProps {
   posts: BlogPost[];
@@ -93,18 +94,12 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ posts, onSelectPost })
               >
                 <div>
                   {/* Article Thumbnail */}
-                  <div className="relative aspect-[16/9] overflow-hidden bg-[#ECECE8]">
-                    <img
-                      src={post.featuredImage}
-                      alt={post.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103"
-                      loading="lazy"
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                  </div>
+                  <BlogFeaturedImage
+                    imageUrl={post.featuredImage}
+                    alt={post.title}
+                    className="aspect-[16/9]"
+                    imageClassName="h-full w-full object-cover transition-transform duration-500 group-hover:scale-103"
+                  />
 
                   {/* Article Content Preview */}
                   <div className="p-6 sm:p-7">

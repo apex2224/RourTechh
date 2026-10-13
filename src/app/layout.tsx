@@ -1,7 +1,19 @@
 ﻿import type { Metadata } from "next";
 import "./globals.css";
 
+const configuredSiteUrl = process.env.APP_URL?.trim();
+const isValidSiteUrl =
+  !!configuredSiteUrl && URL.canParse(configuredSiteUrl);
+if (configuredSiteUrl && !isValidSiteUrl) {
+  console.error("APP_URL must be an absolute URL; using the production site URL for metadata.");
+}
+const siteUrl =
+  configuredSiteUrl && isValidSiteUrl
+    ? configuredSiteUrl
+    : "https://vanguarddigital.agency";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "RouRb Tech — Engineering High-Performance Digital Products",
   description:
     "We engineer high-performance digital products — from blazing-fast web apps to conversion-optimised e-commerce platforms.",

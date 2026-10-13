@@ -20,21 +20,51 @@ import { BlogPost } from "@/types";
 function logArticleLoadError(
   error: unknown,
   operation: string,
-  userUid: string,
 ) {
-  if (process.env.NODE_ENV !== "development") {
-    console.error("Could not load CMS articles from Firestore.");
-    return;
-  }
+  const code = error instanceof FirebaseError ? error.code : "unknown";
+  const message = error instanceof Error ? error.message : String(error);
+  const missingDatabase =
+    /\bdatabase\b.*\bnot found\b/i.test(message) ||
+    /\bnot found\b.*\bdatabase\b/i.test(message);
+  const diagnosis = missingDatabase
+    ? "database-not-found"
+    : code === "permission-denied"
+      ? "permission-denied"
+      : code === "unavailable"
+        ? "connection-unavailable"
+        : "unclassified";
 
   console.error("[CMS] Firestore article operation failed", {
     operation,
-    code: error instanceof FirebaseError ? error.code : "unknown",
-    message: error instanceof Error ? error.message : String(error),
-    userUid,
+    code,
+    diagnosis,
+    message,
     projectId: db.app.options.projectId,
+    database: "(default)",
     collection: "articles",
   });
+}
+
+function getArticleLoadErrorMessage(error: unknown): string {
+  const code = error instanceof FirebaseError ? error.code : "unknown";
+  const message = error instanceof Error ? error.message : String(error);
+
+  if (
+    /\bdatabase\b.*\bnot found\b/i.test(message) ||
+    /\bnot found\b.*\bdatabase\b/i.test(message)
+  ) {
+    return `Firestore database "(default)" was not found in Firebase project "${db.app.options.projectId}". Create the default Firestore database in this project; changing security rules will not fix a missing database.`;
+  }
+
+  if (code === "permission-denied") {
+    return "Firestore rejected this read with a permissions error. Check the deployed Firestore rules and the authenticated admin UID.";
+  }
+
+  if (code === "unavailable") {
+    return `Could not connect to Firestore in Firebase project "${db.app.options.projectId}". Check connectivity or browser request blocking, and verify that the default Firestore database exists.`;
+  }
+
+  return `Could not load CMS articles from Firestore in project "${db.app.options.projectId}". Check the browser console for the operation and error code.`;
 }
 
 export default function AdminPage() {
@@ -119,9 +149,9 @@ export default function AdminPage() {
           setPosts(articles.docs.map((article) => article.data() as BlogPost));
         }
       } catch (error) {
-        logArticleLoadError(error, operation, user.uid);
+        logArticleLoadError(error, operation);
         if (!cancelled) {
-          setLoadError("Could not load CMS articles. Check Firestore rules and try again.");
+          setLoadError(getArticleLoadErrorMessage(error));
         }
       } finally {
         if (!cancelled) setArticlesLoading(false);
@@ -194,7 +224,6 @@ export default function AdminPage() {
       onClose={() => router.replace("/")}
       posts={posts}
       onUpdatePosts={handleUpdatePosts}
-      onViewArticle={(post) => router.push(`/blog/${post.slug}`)}
     />
   );
 }
