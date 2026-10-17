@@ -165,7 +165,7 @@ export const WhyChooseUs: React.FC = () => {
               Core Differentiators
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111111] font-display text-balance">
-              Why leading brands choose RouRb Tech.
+              Why leading brands choose RouR Tech.
             </h2>
             <p className="text-sm sm:text-base text-[#666666] mt-4 leading-relaxed">
               We focus on tangible client outcomes rather than generic marketing
@@ -292,7 +292,7 @@ export const WhyChooseUs: React.FC = () => {
                       Traditional Agency / Template Approach
                     </th>
                     <th className="py-3 px-4 font-semibold w-3/8 text-[#111111]">
-                      RouRb Tech Outcome Architecture
+                      RouR Tech Outcome Architecture
                     </th>
                   </tr>
                 </thead>

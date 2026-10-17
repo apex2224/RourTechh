@@ -1,13 +1,18 @@
 export type ServiceId =
   | 'web-development'
   | 'ui-ux-design'
+  | 'technical-seo'
   | 'seo-optimization'
   | 'ecommerce-development'
   | 'custom-software'
+  | 'maintenance-security'
   | 'maintenance-support';
 
 export interface ServiceItem {
   id: ServiceId;
+  slug?: string;
+  seoTitle?: string;
+  seoDescription?: string;
   title: string;
   shortDescription: string;
   fullDescription: string;
@@ -18,6 +23,11 @@ export interface ServiceItem {
   outcomes: string[];
   startingBudget: string;
   relatedCaseStudyId?: string;
+  problemsSolved?: string[];
+  useCases?: string[];
+  benefits?: string[];
+  process?: { step: string; title: string; description: string }[];
+  faqs?: { question: string; answer: string }[];
 }
 
 export interface CaseStudy {

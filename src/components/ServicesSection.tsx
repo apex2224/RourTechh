@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   ArrowUpRight,
   Code2,
@@ -88,7 +89,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
 
                   {/* Title & Short Description */}
                   <h3 className="text-xl font-bold text-[#111111] font-display mb-3 group-hover:text-[#FF5B4D] transition-colors">
-                    {service.title}
+                    <Link href={`/services/${service.slug || service.id}`}>
+                      {service.title}
+                    </Link>
                   </h3>
                   <p className="text-sm text-[#555555] leading-relaxed mb-6">
                     {service.shortDescription}
@@ -108,7 +111,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                   </div>
                 </div>
 
-                {/* Footer of Card: Investment baseline + Trigger Button */}
+                {/* Footer of Card: Investment baseline + Trigger Buttons */}
                 <div className="pt-5 border-t border-[#F0F0EE] flex items-center justify-between text-xs">
                   <div>
                     <span className="text-[#888888] block text-[11px]">
@@ -119,14 +122,24 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                     </span>
                   </div>
 
-                  <button
-                    onClick={() => setActiveService(service)}
-                    className="inline-flex items-center gap-1 font-semibold text-[#111111] hover:text-[#FF5B4D] transition-colors cursor-pointer group-hover:translate-x-0.5 duration-150"
-                    aria-label={`Explore details for ${service.title}`}
-                  >
-                    <span>Explore Service</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-2.5">
+                    <button
+                      onClick={() => setActiveService(service)}
+                      className="text-[#777777] hover:text-[#111111] transition-colors cursor-pointer text-xs"
+                      aria-label={`Quick overview for ${service.title}`}
+                    >
+                      Quick View
+                    </button>
+                    <span className="text-[#E0E0DD]">|</span>
+                    <Link
+                      href={`/services/${service.slug || service.id}`}
+                      className="inline-flex items-center gap-1 font-semibold text-[#111111] hover:text-[#FF5B4D] transition-colors group-hover:translate-x-0.5 duration-150"
+                      aria-label={`Dedicated page for ${service.title}`}
+                    >
+                      <span>Full Details</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             );

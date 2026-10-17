@@ -290,7 +290,9 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       const result = await signInWithPopup(auth, new GoogleAuthProvider());
       if (!isAdminUser(result.user)) {
         await signOut(auth);
-        setAuthError("This Google account is not authorized to access the CMS.");
+        setAuthError(
+          "This Google account is not authorized to access the CMS.",
+        );
       }
     } catch (error) {
       console.error("Google admin login failed:", error);
@@ -486,9 +488,8 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       id,
       slug: finalSlug,
       title: cleanTitle || "Untitled article",
-      seoTitle: seoTitle.trim() || `${cleanTitle} | RouRb Tech Insights`,
-      seoDescription:
-        seoDescription.trim() || excerpt.trim().slice(0, 155),
+      seoTitle: seoTitle.trim() || `${cleanTitle} | RouR Tech Insights`,
+      seoDescription: seoDescription.trim() || excerpt.trim().slice(0, 155),
       category,
       tags: tagsArray.length > 0 ? tagsArray : ["Engineering"],
       author: {
@@ -507,8 +508,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
         }),
       readTime: `${Math.max(3, Math.ceil(content.split(/\s+/).length / 200))} min read`,
       excerpt:
-        excerpt.trim() ||
-        content.slice(0, 160).replace(/[#\*`-]/g, "") + "...",
+        excerpt.trim() || content.slice(0, 160).replace(/[#\*`-]/g, "") + "...",
       content: content.trim(),
       status,
       ...(relatedServiceId
@@ -548,9 +548,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       !extension ||
       !supportedExtensions.includes(extension)
     ) {
-      setFeaturedImageError(
-        "Choose a JPG, JPEG, PNG, or WebP image file.",
-      );
+      setFeaturedImageError("Choose a JPG, JPEG, PNG, or WebP image file.");
       event.currentTarget.value = "";
       return;
     }
@@ -597,7 +595,10 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       let savedImageUrl = imageUrl;
       if (selectedImageFile) {
         uploadingFeaturedImage = true;
-        const extension = selectedImageFile.name.split(".").pop()?.toLowerCase();
+        const extension = selectedImageFile.name
+          .split(".")
+          .pop()
+          ?.toLowerCase();
         const imageRef = ref(
           storage,
           `articles/${postId}/featured-${Date.now()}.${extension}`,
@@ -628,11 +629,17 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
         try {
           await deleteObject(uploadedImageRef);
         } catch (cleanupError) {
-          console.error("Could not clean up an unused featured image:", cleanupError);
+          console.error(
+            "Could not clean up an unused featured image:",
+            cleanupError,
+          );
         }
       }
       if (selectedImageFile && uploadingFeaturedImage) {
-        console.error("Failed to upload featured image to Firebase Storage:", error);
+        console.error(
+          "Failed to upload featured image to Firebase Storage:",
+          error,
+        );
         setFeaturedImageError(getFeaturedImageUploadError(error));
       } else {
         console.error("Failed to save article to Firestore:", error);
@@ -756,7 +763,7 @@ ${published
   // Generate robots.txt
 
   const generateRobotsTxt = () => {
-    return `# RouRb Tech Production Robots.txt
+    return `# RouR Tech Production Robots.txt
 
 User-agent: *
 
@@ -1486,7 +1493,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                         </span>
 
                         <a
-                          href={`mailto:${inq.email}?subject=RouRb Tech — Project Discovery for ${inq.company}`}
+                          href={`mailto:${inq.email}?subject=RouR Tech — Project Discovery for ${inq.company}`}
                           className="font-semibold text-[#FF5B4D] hover:underline"
                         >
                           Send Direct Email Reply →
@@ -1533,7 +1540,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                   </div>
 
                   <h4 className="text-lg text-[#1a0dab] hover:underline cursor-pointer font-medium leading-tight mb-1">
-                    RouRb Tech — Engineering High-Performance Digital Products
+                    RouR Tech — Engineering High-Performance Digital Products
                   </h4>
 
                   <p className="text-xs text-[#4d5156] leading-snug">
@@ -1678,7 +1685,11 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                 <span aria-hidden="true">·</span>
                 <span>{previewPost.publishDate}</span>
                 <span aria-hidden="true">·</span>
-                <span>{previewPost.status === "draft" ? "Draft preview" : "Published preview"}</span>
+                <span>
+                  {previewPost.status === "draft"
+                    ? "Draft preview"
+                    : "Published preview"}
+                </span>
               </div>
               <h1 className="mb-4 text-3xl font-extrabold leading-tight text-[#111111] sm:text-5xl">
                 {previewPost.title}
@@ -1723,9 +1734,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                   return (
                     <ul key={index} className="my-4 list-disc space-y-2 pl-5">
                       {trimmed.split("\n").map((item, itemIndex) => (
-                        <li key={itemIndex}>
-                          {item.replace(/^[\*-]\s+/, "")}
-                        </li>
+                        <li key={itemIndex}>{item.replace(/^[\*-]\s+/, "")}</li>
                       ))}
                     </ul>
                   );

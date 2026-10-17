@@ -1,40 +1,102 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import "./globals.css";
-
-const configuredSiteUrl = process.env.APP_URL?.trim();
-const isValidSiteUrl =
-  !!configuredSiteUrl && URL.canParse(configuredSiteUrl);
-if (configuredSiteUrl && !isValidSiteUrl) {
-  console.error("APP_URL must be an absolute URL; using the production site URL for metadata.");
-}
-const siteUrl =
-  configuredSiteUrl && isValidSiteUrl
-    ? configuredSiteUrl
-    : "https://vanguarddigital.agency";
+import { SITE_URL, siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: "RouRb Tech — Engineering High-Performance Digital Products",
-  description:
-    "We engineer high-performance digital products — from blazing-fast web apps to conversion-optimised e-commerce platforms.",
-  keywords: [
-    "web development",
-    "UI/UX design",
-    "SEO optimization",
-    "e-commerce development",
-    "custom software",
-    "digital agency",
-  ],
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "RouR Tech — Engineering High-Performance Digital Products",
+    template: "%s | RouR Tech",
+  },
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.author }],
+  creator: siteConfig.creator,
+  publisher: siteConfig.name,
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "RouRb Tech — Engineering High-Performance Digital Products",
-    description: "We engineer high-performance digital products.",
+    title: "RouR Tech — Engineering High-Performance Digital Products",
+    description: siteConfig.description,
+    url: SITE_URL,
+    siteName: siteConfig.name,
+    locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: "RouR Tech — Digital Solutions & Web Engineering",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RouR Tech — Engineering High-Performance Digital Products",
+    description: siteConfig.description,
+    creator: siteConfig.creator,
+    images: [siteConfig.ogImage],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const jsonLdOrg = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.name,
+    legalName: siteConfig.legalName,
+    url: SITE_URL,
+    logo: `${SITE_URL}/src/assets/images/hero_digital_agency_1791271576191.jpg`,
+    description: siteConfig.description,
+    email: siteConfig.email,
+    telephone: siteConfig.phone,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: siteConfig.address.street,
+      addressLocality: siteConfig.address.city,
+      addressRegion: siteConfig.address.state,
+      postalCode: siteConfig.address.postalCode,
+      addressCountry: siteConfig.address.country,
+    },
+    sameAs: [
+      siteConfig.social.twitter,
+      siteConfig.social.github,
+      siteConfig.social.linkedin,
+    ],
+  };
+
+  const jsonLdWebSite = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteConfig.name,
+    url: SITE_URL,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${SITE_URL}/blog?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <html lang="en">
       <head>
@@ -47,6 +109,14 @@ export default function RootLayout({
         <link
           href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
           rel="stylesheet"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
         />
       </head>
       <body>{children}</body>

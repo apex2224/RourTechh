@@ -3,6 +3,7 @@ import { ArrowLeft, Share2, Check, ArrowRight } from "lucide-react";
 import { BlogPost, ServiceItem } from "../types";
 import { servicesData } from "../data/servicesData";
 import { BlogFeaturedImage } from "./BlogFeaturedImage";
+import { SITE_URL, siteConfig } from "@/lib/siteConfig";
 
 interface ArticleViewProps {
   post: BlogPost;
@@ -29,14 +30,18 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
     const imageUrl = post.featuredImage
       ? new URL(post.featuredImage, window.location.origin).href
       : "";
-    document.title = post.seoTitle || `${post.title} | RouRb Tech`;
+    document.title = post.seoTitle || `${post.title} | RouR Tech`;
     const metadata = [
       ["name", "description", description],
       ["property", "og:title", post.title],
       ["property", "og:description", description],
       ["property", "og:type", "article"],
       ["property", "og:image", imageUrl],
-      ["name", "twitter:card", post.featuredImage ? "summary_large_image" : "summary"],
+      [
+        "name",
+        "twitter:card",
+        post.featuredImage ? "summary_large_image" : "summary",
+      ],
       ["name", "twitter:title", post.title],
       ["name", "twitter:description", description],
       ["name", "twitter:image", imageUrl],
@@ -120,16 +125,16 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
             },
             publisher: {
               "@type": "Organization",
-              name: "RouRb Tech",
+              name: siteConfig.name,
               logo: {
                 "@type": "ImageObject",
-                url: "https://vanguarddigital.agency/logo.png",
+                url: `${SITE_URL}/src/assets/images/hero_digital_agency_1791271576191.jpg`,
               },
             },
             datePublished: post.publishDate,
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": `https://vanguarddigital.agency/blog/${post.slug}`,
+              "@id": `${SITE_URL}/blog/${post.slug}`,
             },
           }),
         }}
@@ -209,7 +214,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
                 {post.author.name}
               </div>
               <div className="text-xs text-[#666666]">
-                {post.author.role} · RouRb Tech
+                {post.author.role} · RouR Tech
               </div>
             </div>
           </div>

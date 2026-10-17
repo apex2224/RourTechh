@@ -1,14 +1,13 @@
 import { MetadataRoute } from "next";
-
-const siteUrl = process.env.APP_URL || "https://vanguarddigital.agency";
+import { SITE_URL } from "@/lib/siteConfig";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: "/admin",
+      disallow: ["/admin", "/admin/*"],
     },
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

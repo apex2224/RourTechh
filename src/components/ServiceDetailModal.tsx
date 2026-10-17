@@ -122,18 +122,27 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
         {/* Modal Actions */}
         <div className="p-6 border-t border-[#E8E8E8] bg-[#F8F8F6] flex flex-wrap items-center justify-between gap-3">
-          {service.relatedCaseStudyId && onViewCaseStudy && (
-            <button
-              onClick={() => {
-                onClose();
-                onViewCaseStudy(service.relatedCaseStudyId!);
-              }}
-              className="text-xs font-semibold text-[#111111] hover:text-[#FF5B4D] flex items-center gap-1.5 transition-colors"
+          <div className="flex flex-wrap items-center gap-3">
+            {service.relatedCaseStudyId && onViewCaseStudy && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onViewCaseStudy(service.relatedCaseStudyId!);
+                }}
+                className="text-xs font-semibold text-[#111111] hover:text-[#FF5B4D] flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Layers className="w-4 h-4" />
+                <span>View Case Study</span>
+              </button>
+            )}
+            <a
+              href={`/services/${service.slug || service.id}`}
+              onClick={onClose}
+              className="text-xs font-semibold text-[#FF5B4D] hover:underline"
             >
-              <Layers className="w-4 h-4" />
-              <span>View Case Study for this Service</span>
-            </button>
-          )}
+              Full Service Page &rarr;
+            </a>
+          </div>
 
           <div className="flex items-center gap-3 ml-auto">
             <button
