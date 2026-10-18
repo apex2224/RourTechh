@@ -1,18 +1,35 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
 import { SITE_URL, siteConfig } from "@/lib/siteConfig";
+
+const geist = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist",
+  display: "swap",
+});
+
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "RouR Tech — Engineering High-Performance Digital Products",
-    template: "%s | RouR Tech",
+    default: "RouR Tech — Web Development & Digital Services",
+    template: "%s",
   },
   description: siteConfig.description,
   keywords: siteConfig.keywords,
   authors: [{ name: siteConfig.author }],
-  creator: siteConfig.creator,
   publisher: siteConfig.name,
+  icons: {
+    icon: "/src/assets/images/RouRTechLogo.png",
+    shortcut: "/src/assets/images/RouRTechLogo.png",
+    apple: "/src/assets/images/RouRTechLogo.png",
+  },
   formatDetection: {
     email: false,
     address: false,
@@ -22,7 +39,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "RouR Tech — Engineering High-Performance Digital Products",
+    title: "RouR Tech — Web Development & Digital Services",
     description: siteConfig.description,
     url: SITE_URL,
     siteName: siteConfig.name,
@@ -39,9 +56,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "RouR Tech — Engineering High-Performance Digital Products",
+    title: "RouR Tech — Web Development & Digital Services",
     description: siteConfig.description,
-    creator: siteConfig.creator,
     images: [siteConfig.ogImage],
   },
   robots: {
@@ -64,25 +80,9 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Organization",
     name: siteConfig.name,
-    legalName: siteConfig.legalName,
     url: SITE_URL,
-    logo: `${SITE_URL}/src/assets/images/hero_digital_agency_1791271576191.jpg`,
     description: siteConfig.description,
-    email: siteConfig.email,
-    telephone: siteConfig.phone,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: siteConfig.address.street,
-      addressLocality: siteConfig.address.city,
-      addressRegion: siteConfig.address.state,
-      postalCode: siteConfig.address.postalCode,
-      addressCountry: siteConfig.address.country,
-    },
-    sameAs: [
-      siteConfig.social.twitter,
-      siteConfig.social.github,
-      siteConfig.social.linkedin,
-    ],
+    sameAs: Object.values(siteConfig.socialLinks),
   };
 
   const jsonLdWebSite = {
@@ -90,26 +90,11 @@ export default function RootLayout({
     "@type": "WebSite",
     name: siteConfig.name,
     url: SITE_URL,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${SITE_URL}/blog?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
   };
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}

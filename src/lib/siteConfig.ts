@@ -1,5 +1,5 @@
 /**
- * RourTech Global Site Configuration
+ * RouR Tech global site configuration
  * Central source of truth for site URLs, metadata, brand details, and contact points.
  */
 
@@ -9,32 +9,28 @@ const isValidAppUrl = !!rawAppUrl && URL.canParse(rawAppUrl);
 export const SITE_URL =
   isValidAppUrl
     ? rawAppUrl
-    : "https://RourTech.com";
+    : "https://rourtech.com";
 
 export const siteConfig = {
   name: "RouR Tech",
-  legalName: "RouR Tech Digital Agency",
-  shortName: "RourTech",
+  legalName: "Legal business name to be confirmed by owner",
+  shortName: "RouR Tech",
   description:
-    "RourTech engineers high-performance digital products, custom web applications, headless commerce systems, and conversion-focused websites.",
+    "RouR Tech offers website development, UI/UX design, technical SEO, e-commerce development, and custom software services.",
   url: SITE_URL,
-  ogImage: `${SITE_URL}/src/assets/images/hero_digital_agency_1791271576191.jpg`,
+  socialLinks: {
+    x: "https://x.com/rourtech",
+    instagram: "https://www.instagram.com/rourtech.in/",
+    linkedin: "https://www.linkedin.com/company/rourtech/",
+  },
+  contact: {
+    phone: "+918091011912",
+    displayPhone: "+91 80910 11912",
+    whatsapp: "https://wa.me/918091011912",
+    address: "Kangra, Himachal Pradesh, India",
+  },
+  ogImage: `${SITE_URL}/src/assets/images/hero_digital_agency_1791271576191-optimized.webp`,
   author: "RouR Tech Engineering Team",
-  creator: "@rourtech",
-  email: "partnerships@vanguarddigital.agency",
-  phone: "+1 (415) 890-4210",
-  address: {
-    street: "450 Mission Street, Suite 1400",
-    city: "San Francisco",
-    state: "CA",
-    postalCode: "94105",
-    country: "US",
-  },
-  social: {
-    twitter: "https://twitter.com/rourtech",
-    github: "https://github.com/apex2224/RourTechh",
-    linkedin: "https://linkedin.com/company/rourtech",
-  },
   keywords: [
     "web development",
     "UI/UX design",
@@ -45,6 +41,6 @@ export const siteConfig = {
     "React development",
     "Core Web Vitals optimization",
     "digital product engineering",
-    "RourTech",
+    "RouR Tech",
   ],
 };

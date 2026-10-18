@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Search, ArrowRight, BookOpen } from 'lucide-react';
+import React from 'react';
+import Link from 'next/link';
+import { ArrowRight, BookOpen } from 'lucide-react';
 import { BlogPost } from '../types';
 import { BlogFeaturedImage } from './BlogFeaturedImage';
 
@@ -9,21 +10,8 @@ interface BlogSectionProps {
 }
 
 export const BlogSection: React.FC<BlogSectionProps> = ({ posts, onSelectPost }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
-  const categories = ['All', 'Web Development', 'UI/UX', 'SEO', 'Technology', 'E-commerce'];
-
   const publishedPosts = posts.filter((p) => p.status === 'published');
-
-  const filteredPosts = publishedPosts.filter((post) => {
-    const matchesCat = selectedCategory === 'All' || post.category === selectedCategory;
-    const matchesSearch =
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCat && matchesSearch;
-  });
+  const featuredPosts = publishedPosts.slice(0, 3);
 
   return (
     <section id="insights" className="py-20 md:py-28 border-b border-[#E8E8E8] bg-white">
@@ -40,53 +28,30 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ posts, onSelectPost })
             </h2>
           </div>
 
-          <p className="text-sm sm:text-base text-[#666666] max-w-md">
+          <div className="flex items-end justify-between gap-6">
+            <p className="text-sm sm:text-base text-[#666666] max-w-md">
             Rigorous analysis on web vitals, design tokens, headless architecture, and high-scale systems from our engineering principals.
-          </p>
-        </div>
-
-        {/* Filter Controls & Search */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-10 pb-6 border-b border-[#E8E8E8]">
-          {/* Functional Button Segmented Filter */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-[#F2F2EE] rounded-lg border border-[#E8E8E8]">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer whitespace-nowrap ${
-                  selectedCategory === cat
-                    ? 'bg-white text-[#111111] shadow-xs'
-                    : 'text-[#666666] hover:text-[#111111]'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Search Input */}
-          <div className="relative sm:w-72">
-            <Search className="w-4 h-4 text-[#888888] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search articles or tags..."
-              className="w-full pl-9 pr-3 py-1.5 bg-[#F8F8F6] border border-[#E8E8E8] rounded-lg text-xs text-[#111111] placeholder:text-[#888888] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D]"
-            />
+            </p>
+            <Link
+              href="/blog"
+              className="shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold text-[#111111] hover:text-[#FF5B4D] transition-colors"
+            >
+              <span>See more</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
 
         {/* Article Cards Grid */}
-        {filteredPosts.length === 0 ? (
+        {featuredPosts.length === 0 ? (
           <div className="text-center py-16 bg-[#F8F8F6] rounded-xl border border-[#E8E8E8]">
             <BookOpen className="w-8 h-8 text-[#888888] mx-auto mb-3" />
             <p className="text-sm font-semibold text-[#111111]">No articles found</p>
             <p className="text-xs text-[#666666] mt-1">Try adjusting your search query or selected category.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-            {filteredPosts.map((post) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredPosts.map((post) => (
               <article
                 key={post.id}
                 onClick={() => onSelectPost(post)}
