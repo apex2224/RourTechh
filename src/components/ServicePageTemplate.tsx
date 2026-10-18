@@ -67,15 +67,6 @@ export const ServicePageTemplate: React.FC<ServicePageTemplateProps> = ({ servic
       "url": SITE_URL,
     },
     "serviceType": service.title,
-    "offers": {
-      "@type": "Offer",
-      "priceCurrency": "USD",
-      "price": service.startingBudget.replace(/[^0-9]/g, "") || "5000",
-      "priceSpecification": {
-        "@type": "PriceSpecification",
-        "description": `Starting investment for ${service.title}`,
-      },
-    },
   };
 
   const jsonLdBreadcrumb = {
@@ -195,7 +186,7 @@ export const ServicePageTemplate: React.FC<ServicePageTemplateProps> = ({ servic
                   {getServiceIcon(service.iconName, "w-8 h-8")}
                 </div>
                 <span className="text-xs font-bold text-[#FF5B4D] tracking-widest uppercase">
-                  RourTech Core Capability
+                  RouR Tech Core Capability
                 </span>
               </motion.div>
 
@@ -231,7 +222,7 @@ export const ServicePageTemplate: React.FC<ServicePageTemplateProps> = ({ servic
                   <div className="flex items-center gap-2">
                     <Wallet className="w-4 h-4 text-[#888888]" />
                     <span className="text-xs font-mono-data text-[#555555]">
-                      From {service.startingBudget}
+                      Pricing: {service.startingBudget}
                     </span>
                   </div>
                 </div>
@@ -400,24 +391,24 @@ export const ServicePageTemplate: React.FC<ServicePageTemplateProps> = ({ servic
                     </button>
                   </div>
 
-                  {/* Why RourTech Card */}
+                  {/* Why RouR Tech Card */}
                   <div className="bg-white rounded-2xl p-7 border border-[#E8E8E8] shadow-sm">
-                    <h3 className="text-lg font-bold text-[#111111] font-display mb-3">Why RourTech?</h3>
+                    <h3 className="text-lg font-bold text-[#111111] font-display mb-3">Why RouR Tech?</h3>
                     <p className="text-xs sm:text-sm text-[#666666] leading-relaxed mb-6">
-                      Our engineering-first approach ensures that your digital products are resilient, scalable, accessible, and fast. We work directly with your stakeholders without intermediate layers.
+                      Architecture, accessibility, performance, and maintenance needs are discussed and scoped for each project.
                     </p>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 text-xs font-medium text-[#111111]">
                         <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                        <span>Transparent Fixed-Milestone Delivery</span>
+                        <span>Project Scope and Milestones Agreed in Writing</span>
                       </div>
                       <div className="flex items-center gap-3 text-xs font-medium text-[#111111]">
                         <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                        <span>Direct Communication with Senior Engineers</span>
+                        <span>Communication and Review Arrangements Agreed for the Project</span>
                       </div>
                       <div className="flex items-center gap-3 text-xs font-medium text-[#111111]">
                         <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                        <span>Complete Source Code & Intellectual Property Ownership</span>
+                        <span>Ownership and Handover Terms Documented in the Agreement</span>
                       </div>
                     </div>
                   </div>
@@ -532,7 +523,7 @@ export const ServicePageTemplate: React.FC<ServicePageTemplateProps> = ({ servic
               Ready to engineer your next digital breakthrough?
             </h2>
             <p className="text-base sm:text-lg text-[#555555] mb-10 max-w-2xl mx-auto leading-relaxed font-body">
-              Discuss your project objectives with our senior engineering team and receive a comprehensive, structured proposal within one business day.
+              Share your project objectives so the scope, timeline, and next steps can be discussed.
             </p>
             <button
               onClick={handleStartProject}

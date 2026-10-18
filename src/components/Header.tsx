@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 
@@ -78,6 +79,16 @@ export const Header: React.FC<HeaderProps> = ({
           className="text-xl sm:text-2xl font-bold tracking-tight text-[#111111] font-display flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] rounded"
           aria-label="RouR Tech Home"
         >
+          <span className="relative h-9 w-10 shrink-0 overflow-hidden rounded-md">
+            <Image
+              src="/src/assets/images/RouRTechLogo.png"
+              alt="RouR Tech logo"
+              width={68}
+              height={68}
+              className="absolute inset-0 h-full w-full object-contain object-center"
+              priority
+            />
+          </span>
           <span>RouR Tech</span>
         </Link>
 

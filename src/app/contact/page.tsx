@@ -1,19 +1,19 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import ContactPageClient from "@/components/ContactPageClient";
-import { SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { SITE_URL } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Contact RouR Tech — Initiate Project Discovery & Inquiries",
   description:
-    "Get in touch with RouR Tech's senior engineering team. Discuss your web application, UI/UX design, technical SEO, or custom software requirements.",
+    "Contact RouR Tech to discuss a website, UI/UX design, technical SEO, or custom software project.",
   alternates: {
     canonical: `${SITE_URL}/contact`,
   },
   openGraph: {
     title: "Contact RouR Tech — Initiate Project Discovery & Inquiries",
     description:
-      "Get in touch with RouR Tech's senior engineering team. Receive a structured project proposal within one business day.",
+      "Contact RouR Tech to discuss a website, web application, design, SEO, or software project.",
     url: `${SITE_URL}/contact`,
     siteName: "RouR Tech",
     type: "website",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Contact RouR Tech — Initiate Project Discovery & Inquiries",
     description:
-      "Get in touch with RouR Tech's senior engineering team. Receive a structured project proposal within one business day.",
+      "Contact RouR Tech to discuss a website, web application, design, SEO, or software project.",
   },
 };
 
@@ -34,20 +34,6 @@ export default function ContactPage() {
     description:
       "Initiate project discovery with RouR Tech's solutions architects.",
     url: `${SITE_URL}/contact`,
-    mainEntity: {
-      "@type": "Organization",
-      name: siteConfig.name,
-      email: siteConfig.email,
-      telephone: siteConfig.phone,
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: siteConfig.address.street,
-        addressLocality: siteConfig.address.city,
-        addressRegion: siteConfig.address.state,
-        postalCode: siteConfig.address.postalCode,
-        addressCountry: siteConfig.address.country,
-      },
-    },
   };
 
   return (

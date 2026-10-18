@@ -2,7 +2,8 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { PolicyReviewNotice } from "@/components/PolicyReviewNotice";
+import { SITE_URL } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions — RouR Tech Professional Services",
@@ -11,12 +12,16 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `${SITE_URL}/terms-and-conditions`,
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function TermsAndConditionsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
-      <Header isArticleView={false} onOpenContact={() => {}} />
+      <Header isArticleView={false} />
 
       <main className="flex-1 py-12 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,6 +39,8 @@ export default function TermsAndConditionsPage() {
             </ol>
           </nav>
 
+          <PolicyReviewNotice />
+
           <div className="bg-white rounded-2xl border border-[#E8E8E8] p-8 md:p-14 shadow-xs">
             <div className="border-b border-[#E8E8E8] pb-6 mb-8">
               <span className="text-xs font-mono-data font-semibold text-[#FF5B4D] uppercase tracking-wider block mb-2">
@@ -43,7 +50,7 @@ export default function TermsAndConditionsPage() {
                 Terms & Conditions of Service
               </h1>
               <p className="text-xs text-[#888888] mt-2 font-mono-data">
-                Effective Date: October 14, 2026
+                Draft — effective date requires owner confirmation
               </p>
             </div>
 
@@ -53,7 +60,7 @@ export default function TermsAndConditionsPage() {
                   1. Acceptance of Terms
                 </h2>
                 <p>
-                  These Terms & Conditions (&quot;Terms&quot;) govern your use of the website <strong>{siteConfig.url}</strong> and all professional engineering, design, and technical consulting services provided by <strong>{siteConfig.legalName}</strong> (&quot;RouR Tech&quot;, &quot;we&quot;, &quot;us&quot;). By accessing our website or executing a Statement of Work (SOW), you agree to be bound by these Terms.
+                  This draft is for discussion and is not final contract language. The owner must confirm the contracting legal entity, website terms, and how any terms interact with client agreements before publication. Project scope and commercial terms should be set out in a written agreement accepted by the parties.
                 </p>
               </section>
 
@@ -62,14 +69,14 @@ export default function TermsAndConditionsPage() {
                   2. Professional Services & Milestone Delivery
                 </h2>
                 <p>
-                  All discrete engineering and design engagements are governed by an agreed Statement of Work detailing scope, milestones, deliverables, tech stack specifications, and fees.
+                  Any engagement-specific scope, deliverables, schedule, fees, review and acceptance process, and change-control terms should be documented in a written agreement accepted by both parties.
                 </p>
                 <ul className="list-disc pl-5 mt-2 space-y-2">
                   <li>
-                    <strong>Acceptance Testing:</strong> Upon delivery of each milestone sprint, the client is granted a 10-business-day review window to test functionality against the SOW specifications.
+                    Review and acceptance criteria, including any review period, must be agreed in the applicable written agreement.
                   </li>
                   <li>
-                    <strong>Change Orders:</strong> Any requested functionality or modifications outside the signed SOW scope will be documented and evaluated in a separate change order.
+                    Changes to the agreed scope should be documented and accepted in writing by the parties.
                   </li>
                 </ul>
               </section>
@@ -79,14 +86,14 @@ export default function TermsAndConditionsPage() {
                   3. Intellectual Property Rights & Ownership
                 </h2>
                 <p>
-                  We believe our clients must own their digital assets unconditionally:
+                  Intellectual-property ownership, licenses, pre-existing materials, third-party components, and transfer conditions must be specified in the applicable written agreement. Do not rely on this draft to determine ownership.
                 </p>
                 <ul className="list-disc pl-5 mt-2 space-y-2">
                   <li>
-                    <strong>Custom Deliverables:</strong> Upon full receipt of agreed milestone payments, all custom source code, design files, component libraries, and documentation created specifically for the client transfer entirely to the client with full commercial rights.
+                    The parties should expressly agree on rights and any payment or transfer conditions for custom deliverables.
                   </li>
                   <li>
-                    <strong>Open Source Libraries:</strong> Standard third-party open-source libraries (such as React, Next.js, and Tailwind CSS) remain subject to their respective open-source licenses (MIT, Apache 2.0).
+                    Third-party materials remain subject to their applicable licenses and terms.
                   </li>
                 </ul>
               </section>
@@ -96,7 +103,7 @@ export default function TermsAndConditionsPage() {
                   4. Payment Terms & Invoicing
                 </h2>
                 <p>
-                  Invoices are issued according to project milestone schedules agreed upon in the SOW (typically an initial deposit followed by milestone acceptance installments). Invoices are payable within 14 calendar days of issuance unless otherwise agreed in writing.
+                  Fees, invoicing milestones, payment methods, due dates, taxes, and any late-payment terms must be stated in the applicable written agreement. No default payment schedule is confirmed by this draft.
                 </p>
               </section>
 
@@ -105,10 +112,9 @@ export default function TermsAndConditionsPage() {
                   5. Warranties & Limitation of Liability
                 </h2>
                 <p>
-                  We warrant that all services will be executed in a professional, workmanlike manner in accordance with modern web engineering standards. We provide a 30-day post-launch warranty covering defect remediation for delivered code.
+                  Any warranties, support obligations, exclusions, liability limits, and remedies must be reviewed and expressly agreed in writing, subject to applicable law. This draft does not create a specific warranty or liability cap.
                 </p>
                 <p className="mt-2 text-xs text-[#777777]">
-                  To the maximum extent permitted by applicable law, neither party shall be liable for indirect, incidental, or consequential damages. Total cumulative liability under any SOW is limited to the fees paid by the client under that SOW.
                 </p>
               </section>
 
@@ -117,7 +123,7 @@ export default function TermsAndConditionsPage() {
                   6. Governing Law & Jurisdiction
                 </h2>
                 <p>
-                  These Terms shall be governed by and construed in accordance with the laws of the State of California, United States [Placeholder: Subject to confirmation of client corporate jurisdiction], without regard to conflict of law principles.
+                  Governing law, venue, and dispute-resolution terms have not been confirmed and must be selected with legal advice appropriate to the contracting parties and applicable law.
                 </p>
               </section>
 
@@ -126,9 +132,9 @@ export default function TermsAndConditionsPage() {
                   7. Inquiries
                 </h2>
                 <p>
-                  For legal or contract inquiries, contact our management team at{" "}
-                  <a href={`mailto:${siteConfig.email}`} className="text-[#FF5B4D] font-semibold">
-                    {siteConfig.email}
+                  For legal or contract inquiries, use the{" "}
+                  <a href="/contact" className="text-[#FF5B4D] font-semibold">
+                    contact form
                   </a>.
                 </p>
               </section>
@@ -137,7 +143,7 @@ export default function TermsAndConditionsPage() {
         </div>
       </main>
 
-      <Footer onOpenContact={() => {}} onSelectService={() => {}} />
+      <Footer />
     </div>
   );
 }

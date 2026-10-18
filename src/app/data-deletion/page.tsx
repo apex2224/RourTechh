@@ -2,22 +2,27 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { PolicyReviewNotice } from "@/components/PolicyReviewNotice";
 import { Trash2 } from "lucide-react";
-import { SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { SITE_URL } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Data Deletion & User Rights Request — RouR Tech",
   description:
-    "Instructions on how to submit a personal data deletion request and what occurs after your request is processed under GDPR and CCPA.",
+    "Draft instructions for submitting a data deletion request to RouR Tech.",
   alternates: {
     canonical: `${SITE_URL}/data-deletion`,
+  },
+  robots: {
+    index: false,
+    follow: true,
   },
 };
 
 export default function DataDeletionPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
-      <Header isArticleView={false} onOpenContact={() => {}} />
+      <Header isArticleView={false} />
 
       <main className="flex-1 py-12 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,6 +40,8 @@ export default function DataDeletionPage() {
             </ol>
           </nav>
 
+          <PolicyReviewNotice />
+
           <div className="bg-white rounded-2xl border border-[#E8E8E8] p-8 md:p-14 shadow-xs">
             <div className="border-b border-[#E8E8E8] pb-6 mb-8">
               <span className="text-xs font-mono-data font-semibold text-[#FF5B4D] uppercase tracking-wider block mb-2">
@@ -45,17 +52,17 @@ export default function DataDeletionPage() {
                 User Data Deletion Request
               </h1>
               <p className="text-xs text-[#888888] mt-2 font-mono-data">
-                Compliance with GDPR Article 17 (&quot;Right to Erasure&quot;) and CCPA
+                Draft — request handling and applicable laws require owner confirmation
               </p>
             </div>
 
             <div className="prose prose-neutral max-w-none text-sm text-[#444444] leading-relaxed space-y-8">
               <section>
                 <h2 className="text-xl font-bold text-[#111111] font-display mb-3">
-                  1. Your Right to Erasure
+                  1. Submitting a Data Request
                 </h2>
                 <p>
-                  At <strong>{siteConfig.legalName}</strong>, we respect your right to control your personal data. If you have previously submitted an inquiry through our website contact forms or have an account associated with our digital services, you have the right to request the permanent deletion of your personal records from our databases.
+                  Use the website contact form to ask about personal information associated with you. This page describes a request channel only; it does not confirm which legal rights apply, guarantee deletion, or represent that an automated deletion workflow exists.
                 </p>
               </section>
 
@@ -63,7 +70,7 @@ export default function DataDeletionPage() {
                 <h2 className="text-xl font-bold text-[#111111] font-display mb-3">
                   2. Step-by-Step Instructions to Request Data Deletion
                 </h2>
-                <p>To submit a verified data erasure request, follow these straightforward steps:</p>
+                <p>To submit a request:</p>
 
                 <div className="mt-4 space-y-4">
                   <div className="p-5 bg-[#F8F8F6] rounded-xl border border-[#E8E8E8] flex gap-4">
@@ -72,14 +79,14 @@ export default function DataDeletionPage() {
                     </span>
                     <div>
                       <h3 className="font-bold text-[#111111] text-sm mb-1">
-                        Compose an Email Request
+                        Submit a Request
                       </h3>
                       <p className="text-xs text-[#555555]">
-                        Send an email from the specific address you previously used to submit inquiries on our website to{" "}
-                        <a href={`mailto:${siteConfig.email}?subject=Personal Data Deletion Request`} className="text-[#FF5B4D] font-semibold">
-                          {siteConfig.email}
+                        Use the{" "}
+                        <a href="/contact" className="text-[#FF5B4D] font-semibold">
+                          contact form
                         </a>{" "}
-                        with the subject line: <strong>&quot;Personal Data Deletion Request&quot;</strong>.
+                        and describe the personal information or interaction concerned. Do not send sensitive identity documents through the form unless the owner provides a verified secure process.
                       </p>
                     </div>
                   </div>
@@ -90,10 +97,10 @@ export default function DataDeletionPage() {
                     </span>
                     <div>
                       <h3 className="font-bold text-[#111111] text-sm mb-1">
-                        Provide Verification Information
+                        Verification
                       </h3>
                       <p className="text-xs text-[#555555]">
-                        Include your full name, company name (if applicable), and approximate dates of your previous communication so our team can accurately locate your records.
+                        The owner must establish an appropriate identity-verification process before this page is published. Only information reasonably needed to locate and verify a request should be requested.
                       </p>
                     </div>
                   </div>
@@ -104,10 +111,10 @@ export default function DataDeletionPage() {
                     </span>
                     <div>
                       <h3 className="font-bold text-[#111111] text-sm mb-1">
-                        Receipt & Processing Confirmation
+                        Processing
                       </h3>
                       <p className="text-xs text-[#555555]">
-                        Our data protection team will acknowledge receipt within 48 business hours and process the deletion across all active databases within 30 calendar days.
+                        The owner must determine the applicable response timelines and process the request across relevant systems, providers, and backups. No acknowledgment or completion deadline is currently verified.
                       </p>
                     </div>
                   </div>
@@ -116,30 +123,30 @@ export default function DataDeletionPage() {
 
               <section>
                 <h2 className="text-xl font-bold text-[#111111] font-display mb-3">
-                  3. What Happens After Your Request Is Processed?
+                  3. Deletion Scope and Exceptions
                 </h2>
                 <ul className="list-disc pl-5 mt-2 space-y-2">
                   <li>
-                    <strong>Firestore Inquiry Records:</strong> All inquiry documents containing your name, email, company, and project notes are permanently purged from Google Cloud Firestore.
+                    The current code review did not verify deletion of contact records from Firestore or other systems.
                   </li>
                   <li>
-                    <strong>Authentication Credentials:</strong> If an administrative or client account exists, your user record is deleted from Firebase Authentication.
+                    The current code review did not find a user-account deletion workflow for Firebase Authentication.
                   </li>
                   <li>
-                    <strong>Email Records:</strong> Historical inquiry notification threads in our internal email systems are permanently deleted.
+                    Messages sent through email providers, provider logs, exports, backups, and records held by other recipients may require separate handling and may not be controlled by this website.
                   </li>
                   <li>
-                    <strong>Exceptions Required by Law:</strong> In accordance with statutory requirements, minimal transaction records (such as completed billing invoices or tax documentation for executed contracts) may be retained solely to satisfy legal and accounting obligations.
+                    The owner must identify systems and records in scope, applicable retention requirements, and any permitted exceptions before promising deletion or retention outcomes.
                   </li>
                 </ul>
               </section>
 
               <section>
                 <h2 className="text-xl font-bold text-[#111111] font-display mb-3">
-                  4. Written Confirmation
+                  4. Confirmation
                 </h2>
                 <p>
-                  Upon completion of the erasure workflow, you will receive a final confirmation email verifying that all associated personal data has been permanently removed from our active systems.
+                  The owner must establish whether and how requesters will receive a response. Do not interpret submission through the contact form as confirmation that data has been deleted.
                 </p>
               </section>
             </div>
@@ -147,7 +154,7 @@ export default function DataDeletionPage() {
         </div>
       </main>
 
-      <Footer onOpenContact={() => {}} onSelectService={() => {}} />
+      <Footer />
     </div>
   );
 }

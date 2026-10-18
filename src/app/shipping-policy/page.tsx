@@ -2,7 +2,8 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { PolicyReviewNotice } from "@/components/PolicyReviewNotice";
+import { SITE_URL } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Electronic Delivery Policy — RouR Tech Digital Deliverables",
@@ -11,12 +12,16 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `${SITE_URL}/shipping-policy`,
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function ShippingPolicyPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
-      <Header isArticleView={false} onOpenContact={() => {}} />
+      <Header isArticleView={false} />
 
       <main className="flex-1 py-12 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,6 +39,8 @@ export default function ShippingPolicyPage() {
             </ol>
           </nav>
 
+          <PolicyReviewNotice />
+
           <div className="bg-white rounded-2xl border border-[#E8E8E8] p-8 md:p-14 shadow-xs">
             <div className="border-b border-[#E8E8E8] pb-6 mb-8">
               <span className="text-xs font-mono-data font-semibold text-[#FF5B4D] uppercase tracking-wider block mb-2">
@@ -43,7 +50,7 @@ export default function ShippingPolicyPage() {
                 Digital Delivery & Handover Policy
               </h1>
               <p className="text-xs text-[#888888] mt-2 font-mono-data">
-                Effective Date: October 14, 2026
+                Draft — effective date requires owner confirmation
               </p>
             </div>
 
@@ -53,10 +60,10 @@ export default function ShippingPolicyPage() {
                   1. Digital Products & Electronic Delivery
                 </h2>
                 <p>
-                  RouR Tech specializes in website development, custom software solutions, UI/UX design, and technical SEO engineering. All deliverables produced under our service agreements are <strong>100% electronic and digital</strong>.
+                  The website currently describes digital services, and no physical-goods fulfillment process is documented in this project. The owner must confirm that physical products are not offered before treating this as a complete shipping policy.
                 </p>
                 <p className="mt-2 text-xs text-[#777777]">
-                  We do not manufacture, store, or physically ship tangible goods. Therefore, standard freight, postal shipping, customs tariffs, and physical delivery timelines do not apply.
+                  If physical products or materials are offered, this page must be updated to explain shipping regions, costs, delivery estimates, taxes, and applicable consumer rights.
                 </p>
               </section>
 
@@ -64,21 +71,7 @@ export default function ShippingPolicyPage() {
                 <h2 className="text-xl font-bold text-[#111111] font-display mb-3">
                   2. Delivery Methods & Handover Protocols
                 </h2>
-                <p>All project milestones and final deliverables are transferred electronically via standard secure digital channels:</p>
-                <ul className="list-disc pl-5 mt-2 space-y-2">
-                  <li>
-                    <strong>Source Code & Repositories:</strong> Code is delivered via private Git repositories (GitHub, GitLab, or Bitbucket) with repository ownership directly transferred to your organization.
-                  </li>
-                  <li>
-                    <strong>Design Assets & Tokens:</strong> Figma project files, component libraries, design token JSON files, and vector assets are transferred via direct Figma workspace invites or secure cloud links.
-                  </li>
-                  <li>
-                    <strong>Cloud Deployments:</strong> Production staging instances and public live releases are deployed directly to your designated cloud infrastructure (Vercel, AWS, Cloudflare, or Google Cloud).
-                  </li>
-                  <li>
-                    <strong>Documentation & Specifications:</strong> Architecture manuals, API schemas (Swagger/OpenAPI), and CMS user guides are provided in digital markdown or PDF formats.
-                  </li>
-                </ul>
+                <p>For digital services, the deliverables, delivery method, access requirements, and handover timing should be stated in the written agreement for each engagement. This draft does not promise a particular platform, repository transfer, deployment, file format, or delivery schedule.</p>
               </section>
 
               <section>
@@ -86,7 +79,7 @@ export default function ShippingPolicyPage() {
                   3. Delivery Confirmation & Verification
                 </h2>
                 <p>
-                  Upon electronic delivery of each project milestone, our team issues a formal Handover Notice accompanied by deployment URLs and repository access credentials. The 10-business-day acceptance review window begins immediately upon electronic transmission of the handover notice.
+                  Delivery confirmation and any acceptance or review period must be agreed in the applicable written agreement. No standard handover notice or review period is confirmed here.
                 </p>
               </section>
 
@@ -95,9 +88,9 @@ export default function ShippingPolicyPage() {
                   4. Inquiries
                 </h2>
                 <p>
-                  If you have questions regarding digital asset transfers or delivery protocols, please reach out to{" "}
-                  <a href={`mailto:${siteConfig.email}`} className="text-[#FF5B4D] font-semibold">
-                    {siteConfig.email}
+                  If you have questions regarding digital asset transfers or delivery protocols, use the{" "}
+                  <a href="/contact" className="text-[#FF5B4D] font-semibold">
+                    contact form
                   </a>.
                 </p>
               </section>
@@ -106,7 +99,7 @@ export default function ShippingPolicyPage() {
         </div>
       </main>
 
-      <Footer onOpenContact={() => {}} onSelectService={() => {}} />
+      <Footer />
     </div>
   );
 }

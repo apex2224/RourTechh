@@ -1,5 +1,12 @@
 import React from "react";
-import { X, ArrowRight, Quote, CheckCircle, Code } from "lucide-react";
+import {
+  X,
+  ArrowRight,
+  ArrowUpRight,
+  Quote,
+  CheckCircle,
+  Code,
+} from "lucide-react";
 import { CaseStudy } from "../types";
 
 interface CaseStudyModalProps {
@@ -87,10 +94,10 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
             )}
           </div>
 
-          {/* Quantified Outcome Results Bar */}
+          {/* Project Snapshot */}
           <div className="p-6 bg-[#F8F8F6] rounded-xl border border-[#E8E8E8]">
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#FF5B4D] mb-4">
-              Verified Production Results
+              Project Snapshot
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
               {project.results.map((res, idx) => (
@@ -209,6 +216,17 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
             Ready to explore an architecture for your product?
           </span>
           <div className="flex items-center gap-3 ml-auto">
+            {project.websiteUrl && (
+              <a
+                href={project.websiteUrl}
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+                className="px-4 py-2 text-xs font-semibold text-[#111111] hover:bg-black/5 rounded-lg transition-colors inline-flex items-center gap-1.5"
+              >
+                Visit live site
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+            )}
             <button
               onClick={onClose}
               className="px-4 py-2 text-xs font-medium text-[#666666] hover:text-[#111111] transition-colors"

@@ -62,7 +62,7 @@ export default function ResourcesPage() {
       badge: "Performance Checklist",
       title: "Core Web Vitals Production Checklist",
       description:
-        "A practical 18-point technical audit checklist for eliminating INP delays, achieving sub-second LCP, and preventing Cumulative Layout Shifts in React and Next.js applications.",
+        "A practical technical audit checklist for reviewing interaction delays, loading performance, layout shifts, and other issues in React and Next.js applications.",
       points: [
         "Eliminating render-blocking fonts and third-party scripts",
         "Native aspect ratio container dimensioning for images & video",
@@ -126,7 +126,7 @@ export default function ResourcesPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
       />
 
-      <Header isArticleView={false} onOpenContact={() => {}} />
+      <Header isArticleView={false} />
 
       <main className="flex-1">
         {/* Breadcrumb */}
@@ -233,7 +233,7 @@ export default function ResourcesPage() {
         </section>
       </main>
 
-      <Footer onOpenContact={() => {}} onSelectService={() => {}} />
+      <Footer />
     </div>
   );
 }

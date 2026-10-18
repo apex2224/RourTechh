@@ -16,16 +16,17 @@ import {
   updateDoc,
   doc,
 } from "firebase/firestore";
-import {
-  deleteObject,
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from "firebase/storage";
-import type { StorageReference } from "firebase/storage";
-import { auth, db, storage } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import { isAdminUser } from "@/lib/adminAuthorization";
 import { BlogFeaturedImage } from "@/components/BlogFeaturedImage";
+import {
+  getFirestoreBlogImageId,
+  getFirestoreBlogImageUrl,
+  prepareBlogImage,
+  BlogImageUpdates,
+} from "@/lib/blogImages";
+import { SITE_URL } from "@/lib/siteConfig";
+import { initialBlogPosts } from "@/data/blogData";
 
 import {
   X,
@@ -40,6 +41,8 @@ import {
   Copy,
   Check,
   Save,
+  ArrowRight,
+  Home,
 } from "lucide-react";
 
 import { BlogPost, InquiryRecord, ServiceId } from "../types";
@@ -51,7 +54,10 @@ interface CmsAdminModalProps {
 
   posts: BlogPost[];
 
-  onUpdatePosts: (newPosts: BlogPost[]) => Promise<void>;
+  onUpdatePosts: (
+    newPosts: BlogPost[],
+    imageUpdates?: BlogImageUpdates,
+  ) => Promise<void>;
 }
 
 export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
@@ -77,6 +83,12 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
   const [inquiriesLoading, setInquiriesLoading] = useState(false);
   const [inquiriesError, setInquiriesError] = useState("");
   const [articlesError, setArticlesError] = useState("");
+  const [postPendingDelete, setPostPendingDelete] = useState<BlogPost | null>(
+    null,
+  );
+  const [isDeletingPost, setIsDeletingPost] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+  const [isCloseConfirmOpen, setIsCloseConfirmOpen] = useState(false);
   // Articles state
 
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
@@ -143,6 +155,15 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
     setSelectedImagePreview(previewUrl);
     return () => URL.revokeObjectURL(previewUrl);
   }, [selectedImageFile]);
+
+  const requestClose = () => {
+    setIsCloseConfirmOpen(true);
+  };
+
+  const confirmClose = () => {
+    setIsCloseConfirmOpen(false);
+    onClose();
+  };
 
   const getAuthErrorMessage = (error: unknown) => {
     const code = error instanceof FirebaseError ? error.code : "";
@@ -323,7 +344,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       >
         <div className="w-full max-w-md rounded-2xl border border-[#E8E8E8] bg-white p-6 shadow-2xl">
           <h2 className="text-xl font-bold text-[#111111]">
-            RourTech CMS Admin
+            RouR Tech CMS Admin
           </h2>
           <p className="mt-1 mb-5 text-sm text-[#666666]">
             Sign in with your authorized admin account.
@@ -493,7 +514,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       category,
       tags: tagsArray.length > 0 ? tagsArray : ["Engineering"],
       author: {
-        name: authorName.trim() || "Vanguard Editorial",
+        name: authorName.trim() || "RouR Tech Editorial Team",
         role: authorRole.trim() || "Principal Solutions Architect",
         avatar:
           "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
@@ -517,23 +538,6 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
     };
   };
 
-  const getFeaturedImageUploadError = (error: unknown) => {
-    const code = error instanceof FirebaseError ? error.code : "";
-    if (
-      code === "storage/bucket-not-found" ||
-      code === "storage/project-not-found"
-    ) {
-      return "Firebase Storage is not enabled for this project or its configured bucket was not found. Enable Storage and create the configured bucket in Firebase Console.";
-    }
-    if (code === "storage/unauthorized") {
-      return "Firebase Storage denied this upload. Deploy the Storage rules from storage.rules and verify this signed-in account is an authorized admin.";
-    }
-    if (code === "storage/canceled") {
-      return "The image upload was canceled. Choose the image again to retry.";
-    }
-    return `Could not upload the featured image${code ? ` (${code})` : ""}. Confirm Firebase Storage is enabled, its configured bucket exists, and storage.rules is deployed.`;
-  };
-
   const handleFeaturedImageSelection = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -548,12 +552,14 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       !extension ||
       !supportedExtensions.includes(extension)
     ) {
+      setSelectedImageFile(null);
       setFeaturedImageError("Choose a JPG, JPEG, PNG, or WebP image file.");
       event.currentTarget.value = "";
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
+      setSelectedImageFile(null);
       setFeaturedImageError("The image must be 5 MB or smaller.");
       event.currentTarget.value = "";
       return;
@@ -567,49 +573,69 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
   const handleSavePost = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title.trim()) return;
+    if (!title.trim() || featuredImageError) return;
 
     const imageUrl = featuredImage.trim();
     if (!selectedImageFile && imageUrl) {
-      try {
-        const parsedUrl = new URL(imageUrl, window.location.origin);
-        if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
-          throw new Error("Unsupported image URL scheme");
-        }
-      } catch {
+      if (imageUrl.length > 2048 || /\s/.test(imageUrl)) {
         setFeaturedImageError(
-          "Enter a valid HTTP(S) image URL, or remove it and upload an image file.",
+          "Use an image URL or site-relative path no longer than 2,048 characters.",
         );
         return;
+      }
+
+      if (imageUrl.startsWith("/")) {
+        if (imageUrl.startsWith("//") || imageUrl.startsWith("/\\")) {
+          setFeaturedImageError(
+            "Enter a valid site-relative image path or an HTTP(S) image URL.",
+          );
+          return;
+        }
+      } else {
+        try {
+          const parsedUrl = new URL(imageUrl);
+          if (
+            (parsedUrl.protocol !== "http:" &&
+              parsedUrl.protocol !== "https:")
+          ) {
+            throw new Error("Unsupported image URL");
+          }
+        } catch {
+          setFeaturedImageError(
+            "Enter a valid HTTP(S) image URL, or remove it and upload an image file.",
+          );
+          return;
+        }
       }
     }
 
     const postId = editingPost?.id || `post-${Date.now()}`;
-    let uploadedImageRef: StorageReference | null = null;
-    let uploadSucceeded = false;
-    let uploadingFeaturedImage = false;
     setIsSavingArticle(true);
     setFeaturedImageError("");
     setArticlesError("");
     try {
       let savedImageUrl = imageUrl;
+      let imageUpdates: BlogImageUpdates | undefined;
       if (selectedImageFile) {
-        uploadingFeaturedImage = true;
-        const extension = selectedImageFile.name
-          .split(".")
-          .pop()
-          ?.toLowerCase();
-        const imageRef = ref(
-          storage,
-          `articles/${postId}/featured-${Date.now()}.${extension}`,
+        try {
+          imageUpdates = {
+            [postId]: await prepareBlogImage(selectedImageFile),
+          };
+        } catch (error) {
+          console.error("Could not optimize the selected blog image:", error);
+          setFeaturedImageError(
+            error instanceof Error
+              ? error.message
+              : "Could not optimize the selected image.",
+          );
+          return;
+        }
+        savedImageUrl = getFirestoreBlogImageUrl(postId);
+      } else if (editingPost && imageUrl !== editingPost.featuredImage) {
+        const previousImageId = getFirestoreBlogImageId(
+          editingPost.featuredImage,
         );
-        uploadedImageRef = imageRef;
-        await uploadBytes(imageRef, selectedImageFile, {
-          contentType: selectedImageFile.type,
-        });
-        uploadSucceeded = true;
-        savedImageUrl = await getDownloadURL(imageRef);
-        uploadingFeaturedImage = false;
+        if (previousImageId) imageUpdates = { [previousImageId]: null };
       }
 
       const updatedPost = createPostFromForm(savedImageUrl, postId);
@@ -617,7 +643,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
         ? posts.map((post) => (post.id === editingPost.id ? updatedPost : post))
         : [updatedPost, ...posts];
 
-      await onUpdatePosts(nextPosts);
+      await onUpdatePosts(nextPosts, imageUpdates);
       setFeaturedImage(savedImageUrl);
       setSelectedImageFile(null);
       if (featuredImageInputRef.current)
@@ -625,44 +651,44 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       setEditingPost(null);
       setIsCreating(false);
     } catch (error) {
-      if (uploadedImageRef && uploadSucceeded) {
-        try {
-          await deleteObject(uploadedImageRef);
-        } catch (cleanupError) {
-          console.error(
-            "Could not clean up an unused featured image:",
-            cleanupError,
-          );
-        }
-      }
-      if (selectedImageFile && uploadingFeaturedImage) {
-        console.error(
-          "Failed to upload featured image to Firebase Storage:",
-          error,
-        );
-        setFeaturedImageError(getFeaturedImageUploadError(error));
-      } else {
-        console.error("Failed to save article to Firestore:", error);
-        setArticlesError(
-          "Could not save the article to Firestore. Verify the authorized admin account and Firestore rules, then try again.",
-        );
-      }
+      console.error("Failed to save article to Firestore:", error);
+      setArticlesError(
+        "Could not save the article to Firestore. Verify the authorized admin account and Firestore rules, then try again.",
+      );
     } finally {
       setIsSavingArticle(false);
     }
   };
 
-  const handleDeletePost = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this article?")) {
-      const nextPosts = posts.filter((p) => p.id !== id);
-      setArticlesError("");
-      try {
-        await onUpdatePosts(nextPosts);
-        if (editingPost?.id === id) setEditingPost(null);
-      } catch (error) {
-        console.error("Failed to delete article from Firestore:", error);
-        setArticlesError("Could not delete the article. Please try again.");
-      }
+  const handleDeletePost = (id: string) => {
+    const post = posts.find((article) => article.id === id);
+    if (!post) return;
+    setDeleteError("");
+    setPostPendingDelete(post);
+  };
+
+  const confirmDeletePost = async () => {
+    if (!postPendingDelete || isDeletingPost) return;
+
+    setIsDeletingPost(true);
+    setDeleteError("");
+    const nextPosts = posts.filter(
+      (post) => post.id !== postPendingDelete.id,
+    );
+    const imageId = getFirestoreBlogImageId(postPendingDelete.featuredImage);
+
+    try {
+      await onUpdatePosts(
+        nextPosts,
+        imageId ? { [imageId]: null } : undefined,
+      );
+      if (editingPost?.id === postPendingDelete.id) setEditingPost(null);
+      setPostPendingDelete(null);
+    } catch (error) {
+      console.error("Failed to delete article from Firestore:", error);
+      setDeleteError("Could not delete the article. Please try again.");
+    } finally {
+      setIsDeletingPost(false);
     }
   };
 
@@ -699,27 +725,34 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
   // Generate dynamic XML sitemap
 
   const generateSitemapXml = () => {
-    const published = posts.filter((p) => p.status === "published");
+    const publishedStaticPosts = initialBlogPosts.filter(
+      (post) => post.status === "published",
+    );
 
     const staticUrls = [
-      "https://vanguarddigital.agency/",
-
-      "https://vanguarddigital.agency/#services",
-
-      "https://vanguarddigital.agency/#work",
-
-      "https://vanguarddigital.agency/#process",
-
-      "https://vanguarddigital.agency/#insights",
-
-      "https://vanguarddigital.agency/#faq",
-
-      "https://vanguarddigital.agency/#contact",
+      SITE_URL,
+      ...[
+        "/about",
+        "/contact",
+        "/faq",
+        "/blog",
+        "/resources",
+        "/services/web-development",
+        "/services/ui-ux-design",
+        "/services/technical-seo",
+        "/services/ecommerce-development",
+        "/services/custom-software",
+        "/services/maintenance-security",
+      ].map((route) => `${SITE_URL}${route}`),
     ];
+
+    const publishedPostUrls = publishedStaticPosts.map(
+      (post) => `${SITE_URL}/blog/${post.slug}`,
+    );
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 
-<urlset xmlns="http://www\.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 ${staticUrls
 
@@ -728,33 +761,17 @@ ${staticUrls
 
     <loc>${url}</loc>
 
-    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
-
-    <changefreq>weekly</changefreq>
-
-    <priority>1.0</priority>
-
   </url>`,
   )
 
   .join("\n")}
 
-${published
+${publishedPostUrls
+  .map((url) => `  <url>
 
-  .map(
-    (post) => `  <url>
+    <loc>${url}</loc>
 
-    <loc>https://vanguarddigital.agency/blog/${post.slug}</loc>
-
-    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
-
-    <changefreq>monthly</changefreq>
-
-    <priority>0.8</priority>
-
-  </url>`,
-  )
-
+  </url>`)
   .join("\n")}
 
 </urlset>`;
@@ -771,15 +788,7 @@ Allow: /
 
 Disallow: /admin
 
-Disallow: /private/
-
-Disallow: /api/internal/
-
-
-
-\# Sitemap index location
-
-Sitemap: https://vanguarddigital.agency/sitemap.xml
+Sitemap: ${SITE_URL}/sitemap.xml
 
 `;
   };
@@ -797,7 +806,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
       role="dialog"
       aria-modal="true"
     >
-      <div className="absolute inset-0" onClick={onClose} />
+      <div className="absolute inset-0" onClick={requestClose} />
 
       <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-[#E8E8E8] max-h-[92vh] overflow-hidden z-10 flex flex-col">
         {/* Top Bar of CMS */}
@@ -807,7 +816,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
 
             <h2 className="text-lg font-bold text-[#111111] font-display">
-              Vanguard CMS & Digital Operations
+              RouR Tech CMS & Digital Operations
             </h2>
 
             <span className="text-xs text-[#888888] font-mono-data hidden sm:inline">
@@ -825,7 +834,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
               Sign out
             </button>
             <button
-              onClick={onClose}
+              onClick={requestClose}
               className="p-1.5 text-[#666666] hover:text-[#111111] hover:bg-black/5 rounded-md transition-colors cursor-pointer"
               aria-label="Close CMS"
             >
@@ -1155,9 +1164,10 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                         Featured Image / Overview Image
                       </label>
                       <p className="text-xs text-[#666666]">
-                        Upload a JPG, JPEG, PNG, or WebP image up to 5 MB, or
-                        paste an HTTP(S) image URL. Uploads are stored in
-                        Firebase Storage when you save.
+                        Choose a JPG, JPEG, PNG, or WebP image up to 5 MB, or
+                        paste an HTTP(S) image URL. Selected images are
+                        compressed and stored in the blog database, not a
+                        separate image-storage service.
                       </p>
                     </div>
 
@@ -1182,6 +1192,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                         type="text"
                         inputMode="url"
                         value={featuredImage}
+                        maxLength={2048}
                         onChange={(event) => {
                           setFeaturedImage(event.target.value);
                           setSelectedImageFile(null);
@@ -1367,7 +1378,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                               </button>
 
                               <button
-                                onClick={() => handleDeletePost(post.id)}
+                                onClick={() => void handleDeletePost(post.id)}
                                 className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
                                 title="Delete post"
                               >
@@ -1447,6 +1458,16 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                           <span className="text-xs text-[#888888] font-mono">
                             ({inq.email})
                           </span>
+                          {inq.phone && (
+                            <span className="text-xs text-[#888888] font-mono">
+                              · {inq.phone}
+                            </span>
+                          )}
+                          {inq.phone && (
+                            <span className="text-xs text-[#888888] font-mono">
+                              · {inq.phone}
+                            </span>
+                          )}
                         </div>
 
                         <div className="flex items-center gap-3">
@@ -1493,7 +1514,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                         </span>
 
                         <a
-                          href={`mailto:${inq.email}?subject=RouR Tech — Project Discovery for ${inq.company}`}
+                          href={`mailto:${encodeURIComponent(inq.email).replace(/%40/gi, "@")}?subject=${encodeURIComponent(`RouR Tech — Project Discovery for ${inq.company}`)}`}
                           className="font-semibold text-[#FF5B4D] hover:underline"
                         >
                           Send Direct Email Reply →
@@ -1534,7 +1555,7 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
                       V
                     </span>
 
-                    <span>vanguarddigital.agency</span>
+                    <span>{new URL(SITE_URL).host}</span>
 
                     <span className="text-neutral-400">›</span>
                   </div>
@@ -1633,16 +1654,124 @@ Sitemap: https://vanguarddigital.agency/sitemap.xml
         {/* Footer */}
 
         <div className="px-6 py-3.5 bg-white border-t border-[#E8E8E8] flex items-center justify-between text-xs text-[#666666]">
-          <span>Vanguard Headless Content Architecture</span>
+          <span>RouR Tech Content Management</span>
 
           <button
-            onClick={onClose}
+            onClick={requestClose}
             className="px-4 py-2 text-xs font-semibold text-[#111111] bg-[#F2F2EE] hover:bg-[#E8E8E4] rounded-lg transition-colors cursor-pointer"
           >
             Close Administration Panel
           </button>
         </div>
       </div>
+
+      {postPendingDelete && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="delete-article-title"
+          aria-describedby="delete-article-description"
+        >
+          <div className="w-full max-w-md overflow-hidden rounded-2xl border border-[#E8E8E8] bg-white shadow-2xl">
+            <div className="flex items-start gap-4 p-6">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600">
+                <Trash2 className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <div>
+                <h3
+                  id="delete-article-title"
+                  className="text-lg font-bold text-[#111111]"
+                >
+                  Delete this article?
+                </h3>
+                <p
+                  id="delete-article-description"
+                  className="mt-2 text-sm leading-relaxed text-[#666666]"
+                >
+                  <span className="font-semibold text-[#333333]">
+                    {postPendingDelete.title}
+                  </span>{" "}
+                  will be removed from the website and admin list. This cannot
+                  be undone.
+                </p>
+                {deleteError && (
+                  <p role="alert" className="mt-3 text-sm text-red-600">
+                    {deleteError}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col-reverse gap-2 border-t border-[#E8E8E8] bg-[#F8F8F6] p-4 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                disabled={isDeletingPost}
+                onClick={() => setPostPendingDelete(null)}
+                className="rounded-lg border border-[#E8E8E8] bg-white px-4 py-2.5 text-sm font-semibold text-[#444444] transition-colors hover:bg-[#F2F2EE] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Keep article
+              </button>
+              <button
+                type="button"
+                disabled={isDeletingPost}
+                onClick={() => void confirmDeletePost()}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                {isDeletingPost ? "Deleting…" : "Delete article"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isCloseConfirmOpen && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="close-admin-title"
+          aria-describedby="close-admin-description"
+        >
+          <div className="w-full max-w-md overflow-hidden rounded-2xl border border-[#E8E8E8] bg-white shadow-2xl">
+            <div className="p-6">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FFF0EE] text-[#FF5B4D]">
+                <Home className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <h3
+                id="close-admin-title"
+                className="mt-4 text-lg font-bold text-[#111111]"
+              >
+                Leave the admin panel?
+              </h3>
+              <p
+                id="close-admin-description"
+                className="mt-2 text-sm leading-relaxed text-[#666666]"
+              >
+                You’ll return to the RourTech homepage. Any unsaved changes
+                will be lost.
+              </p>
+            </div>
+            <div className="flex flex-col-reverse gap-2 border-t border-[#E8E8E8] bg-[#F8F8F6] p-4 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setIsCloseConfirmOpen(false)}
+                className="rounded-lg border border-[#E8E8E8] bg-white px-4 py-2.5 text-sm font-semibold text-[#444444] transition-colors hover:bg-[#F2F2EE]"
+              >
+                Stay in admin
+              </button>
+              <button
+                type="button"
+                onClick={confirmClose}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FF5B4D] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#E84E40]"
+              >
+                Go to homepage
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isPreviewOpen && (
         <div

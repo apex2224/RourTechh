@@ -7,14 +7,14 @@ import { SITE_URL } from "@/lib/siteConfig";
 export const metadata: Metadata = {
   title: "Website Maintenance, Security & Support Services | RouR Tech",
   description:
-    "Proactive web application maintenance, 24/7 uptime monitoring, security patching, dependency updates, and continuous Core Web Vitals optimization.",
+    "Website maintenance, dependency updates, security reviews, bug fixes, and performance checks scoped to your application's needs.",
   alternates: {
     canonical: `${SITE_URL}/services/maintenance-security`,
   },
   openGraph: {
     title: "Website Maintenance, Security & Support Services | RouR Tech",
     description:
-      "Proactive web application maintenance, 24/7 uptime monitoring, security patching, and dependency updates.",
+      "Website maintenance, dependency updates, security reviews, bug fixes, and performance checks scoped to your application's needs.",
     url: `${SITE_URL}/services/maintenance-security`,
     siteName: "RouR Tech",
     type: "website",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Website Maintenance, Security & Support Services | RouR Tech",
     description:
-      "Proactive web application maintenance, 24/7 uptime monitoring, security patching, and dependency updates.",
+      "Website maintenance, dependency updates, security reviews, bug fixes, and performance checks scoped to your application's needs.",
   },
 };
 

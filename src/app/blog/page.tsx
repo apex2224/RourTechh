@@ -43,7 +43,10 @@ export default function BlogListingPage() {
       url: `${SITE_URL}/blog/${post.slug}`,
       datePublished: post.publishDate,
       author: {
-        "@type": "Person",
+        "@type":
+          post.author.name === "RouR Tech Editorial Team"
+            ? "Organization"
+            : "Person",
         name: post.author.name,
       },
     })),

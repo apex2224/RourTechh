@@ -13,22 +13,32 @@ service cloud.firestore {
     function validBudget(budget) {
       return budget is string
         && (
-          budget == "$10,000 – $25,000"
-          || budget == "$25,000 – $50,000"
-          || budget == "$50,000 – $100,000"
-          || budget == "$100,000+"
+          budget == "To be discussed"
+          || budget == "Not sure yet"
+          || budget == "Prefer not to say"
+        );
+    }
+
+    function validPublicImageUrl(imageUrl) {
+      return imageUrl is string
+        && imageUrl.size() <= 2048
+        && (
+          imageUrl == ""
+          || imageUrl.matches("^https?://[^\\s]+$")
+          || imageUrl.matches("^/[^/].*$")
         );
     }
 
     function validInquiry(inquiryId) {
       let data = request.resource.data;
       let selectedService = data.get("service", null);
+      let phone = data.get("phone", null);
       return data.keys().hasAll([
           "id", "createdAt", "name", "email", "company", "service",
           "budget", "description", "status"
         ])
         && data.keys().hasOnly([
-          "id", "createdAt", "name", "email", "company", "service",
+          "id", "createdAt", "name", "email", "phone", "company", "service",
           "budget", "description", "status"
         ])
         && data.id is string
@@ -38,7 +48,16 @@ service cloud.firestore {
         && data.name.size() > 0
         && data.name.size() <= 120
         && data.email is string
+        && data.email.size() <= 254
         && data.email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
+        && (
+          phone == null
+          || (
+            phone is string
+            && phone.size() <= 30
+            && phone.matches("^[+()0-9 .-]+$")
+          )
+        )
         && data.company is string
         && data.company.size() > 0
         && data.company.size() <= 160
@@ -97,8 +116,13 @@ service cloud.firestore {
         && data.author.keys().hasOnly(["name", "role", "avatar"])
         && data.author.name is string
         && data.author.role is string
-        && data.author.avatar is string
+        && validPublicImageUrl(data.author.avatar)
         && data.featuredImage is string
+        && data.featuredImage.size() <= 2048
+        && (
+          data.featuredImage == "firestore-image:" + articleId
+          || validPublicImageUrl(data.featuredImage)
+        )
         && data.publishDate is string
         && data.readTime is string
         && data.excerpt is string
@@ -125,6 +149,32 @@ service cloud.firestore {
     match /articles/{articleId} {
       allow get, list: if isAdmin() || resource.data.status == "published";
       allow create, update: if isAdmin() && validArticle(articleId);
+      allow delete: if isAdmin();
+    }
+
+    match /articleImages/{articleId} {
+      allow get: if isAdmin()
+        || (
+          exists(/databases/$(database)/documents/articles/$(articleId))
+          && get(/databases/$(database)/documents/articles/$(articleId))
+            .data.status == "published"
+        );
+      allow list: if false;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasAll([
+          "imageData", "contentType", "byteLength", "updatedAt"
+        ])
+        && request.resource.data.keys().hasOnly([
+          "imageData", "contentType", "byteLength", "updatedAt"
+        ])
+        && request.resource.data.contentType == "image/webp"
+        && request.resource.data.imageData is string
+        && request.resource.data.imageData.size() <= 819200
+        && request.resource.data.imageData.matches("^[A-Za-z0-9+/]+={0,2}$")
+        && request.resource.data.byteLength is int
+        && request.resource.data.byteLength > 0
+        && request.resource.data.byteLength <= 614400
+        && request.resource.data.updatedAt == request.time;
       allow delete: if isAdmin();
     }
 

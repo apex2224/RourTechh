@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { PolicyReviewNotice } from "@/components/PolicyReviewNotice";
 import { SITE_URL, siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
@@ -11,12 +12,16 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `${SITE_URL}/disclaimer`,
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function DisclaimerPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
-      <Header isArticleView={false} onOpenContact={() => {}} />
+      <Header isArticleView={false} />
 
       <main className="flex-1 py-12 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,6 +39,8 @@ export default function DisclaimerPage() {
             </ol>
           </nav>
 
+          <PolicyReviewNotice />
+
           <div className="bg-white rounded-2xl border border-[#E8E8E8] p-8 md:p-14 shadow-xs">
             <div className="border-b border-[#E8E8E8] pb-6 mb-8">
               <span className="text-xs font-mono-data font-semibold text-[#FF5B4D] uppercase tracking-wider block mb-2">
@@ -43,7 +50,7 @@ export default function DisclaimerPage() {
                 Website & Technical Disclaimer
               </h1>
               <p className="text-xs text-[#888888] mt-2 font-mono-data">
-                Effective Date: October 14, 2026
+                Draft — effective date requires owner confirmation
               </p>
             </div>
 
@@ -62,10 +69,10 @@ export default function DisclaimerPage() {
                   2. Search Engine Rankings & SEO Disclaimer
                 </h2>
                 <p>
-                  RouR Tech provides technical SEO audits, structured data engineering, and Core Web Vitals remediation to maximize search engine discoverability. However, organic search rankings are governed entirely by independent third-party search engines (including Google, Bing, and others) whose proprietary algorithms and evaluation standards evolve continuously.
+                  Search engines control their own indexing and ranking systems, which can change independently. No particular ranking, traffic, or search visibility result should be inferred from general website information.
                 </p>
                 <p className="mt-2 text-xs text-[#777777]">
-                  RouR Tech explicitly does not promise, warrant, or guarantee specific keyword ranking positions, search result placements, organic traffic volumes, or worldwide search visibility.
+                  Any service-specific scope, performance target, or outcome must be expressly documented in the applicable written agreement; this website does not establish one.
                 </p>
               </section>
 
@@ -74,7 +81,7 @@ export default function DisclaimerPage() {
                   3. Performance Benchmarks & Core Web Vitals
                 </h2>
                 <p>
-                  Case studies and performance metrics cited on this website (such as sub-second LCP, low INP, and Lighthouse audit scores) represent real measurements recorded under specific network testing environments, CDN configurations, and client asset constraints. Real-world user experience may vary depending on local network conditions, end-user device capabilities, third-party tag managers, or client modifications made after deployment.
+                  Performance examples or projections should not be treated as measured results unless they are explicitly identified with supporting test details. Actual results depend on the application, content, hosting, third-party services, test conditions, and user devices.
                 </p>
               </section>
 
@@ -83,7 +90,7 @@ export default function DisclaimerPage() {
                   4. Third-Party Integrations & External Links
                 </h2>
                 <p>
-                  Our web applications often interface with third-party APIs, payment gateways (such as Stripe or Shopify), hosting providers, and cloud services (such as Firebase, AWS, or Cloudflare). RouR Tech is not responsible for unscheduled outages, API rate limit modifications, or downtime originating from external third-party infrastructure.
+                  The website code currently references third-party services, including Firebase, EmailJS, and Google Fonts. A particular project may involve other providers only as described in its applicable agreement. Third-party services have their own terms, availability, and privacy practices; the owner must review and describe the integrations actually used in production.
                 </p>
               </section>
 
@@ -92,9 +99,9 @@ export default function DisclaimerPage() {
                   5. Contact
                 </h2>
                 <p>
-                  If you have questions regarding this disclaimer, contact our team at{" "}
-                  <a href={`mailto:${siteConfig.email}`} className="text-[#FF5B4D] font-semibold">
-                    {siteConfig.email}
+                  If you have questions regarding this disclaimer, use our{" "}
+                  <a href="/contact" className="text-[#FF5B4D] font-semibold">
+                    contact form
                   </a>.
                 </p>
               </section>
@@ -103,7 +110,7 @@ export default function DisclaimerPage() {
         </div>
       </main>
 
-      <Footer onOpenContact={() => {}} onSelectService={() => {}} />
+      <Footer />
     </div>
   );
 }

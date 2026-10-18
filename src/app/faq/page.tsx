@@ -4,25 +4,25 @@ import { faqData } from "@/data/faqData";
 import { SITE_URL } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
-  title: "Frequently Asked Questions — RouR Tech Technical & Commercial FAQ",
+  title: "Frequently Asked Questions | RouR Tech",
   description:
-    "Common questions answered regarding RouR Tech's web engineering process, pricing structures, Next.js architecture, IP ownership, and SLA guarantees.",
+    "Answers about project scope, web development, design, technical SEO, pricing discussions, and post-launch support.",
   alternates: {
     canonical: `${SITE_URL}/faq`,
   },
   openGraph: {
-    title: "Frequently Asked Questions — RouR Tech Technical & Commercial FAQ",
+    title: "Frequently Asked Questions | RouR Tech",
     description:
-      "Common questions answered regarding RouR Tech's web engineering process, pricing structures, and IP ownership.",
+      "Answers about project scope, web development, design, technical SEO, pricing discussions, and post-launch support.",
     url: `${SITE_URL}/faq`,
     siteName: "RouR Tech",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Frequently Asked Questions — RouR Tech Technical & Commercial FAQ",
+    title: "Frequently Asked Questions | RouR Tech",
     description:
-      "Common questions answered regarding RouR Tech's web engineering process, pricing structures, and IP ownership.",
+      "Answers about project scope, web development, design, technical SEO, pricing discussions, and post-launch support.",
   },
 };
 

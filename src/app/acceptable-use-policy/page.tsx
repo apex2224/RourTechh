@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { PolicyReviewNotice } from "@/components/PolicyReviewNotice";
 import { SITE_URL, siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
@@ -11,12 +12,16 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `${SITE_URL}/acceptable-use-policy`,
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default function AcceptableUsePolicyPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
-      <Header isArticleView={false} onOpenContact={() => {}} />
+      <Header isArticleView={false} />
 
       <main className="flex-1 py-12 md:py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,6 +42,8 @@ export default function AcceptableUsePolicyPage() {
             </ol>
           </nav>
 
+          <PolicyReviewNotice />
+
           <div className="bg-white rounded-2xl border border-[#E8E8E8] p-8 md:p-14 shadow-xs">
             <div className="border-b border-[#E8E8E8] pb-6 mb-8">
               <span className="text-xs font-mono-data font-semibold text-[#FF5B4D] uppercase tracking-wider block mb-2">
@@ -46,7 +53,7 @@ export default function AcceptableUsePolicyPage() {
                 Acceptable Use Policy
               </h1>
               <p className="text-xs text-[#888888] mt-2 font-mono-data">
-                Effective Date: October 14, 2026
+                Draft — effective date requires owner confirmation
               </p>
             </div>
 
@@ -56,11 +63,10 @@ export default function AcceptableUsePolicyPage() {
                   1. Purpose & Scope
                 </h2>
                 <p>
-                  This Acceptable Use Policy (&quot;AUP&quot;) defines rules and
-                  guidelines for interacting with{" "}
-                  <strong>{siteConfig.url}</strong>, our public APIs, project
-                  inquiry portals, client staging instances, and any digital
-                  systems managed by <strong>{siteConfig.legalName}</strong>.
+                  This draft describes prohibited uses of{" "}
+                  <strong>{siteConfig.url}</strong>. The owner must confirm the
+                  actual services, systems, and contractual terms to which it
+                  applies before publication.
                 </p>
               </section>
 
@@ -74,32 +80,28 @@ export default function AcceptableUsePolicyPage() {
                 </p>
                 <ul className="list-disc pl-5 mt-2 space-y-2">
                   <li>
-                    <strong>Security Probing & Attacks:</strong> Attempting to
-                    probe, scan, or test the vulnerability of our application,
-                    server infrastructure, or networks without prior written
-                    authorization from our security team.
+                    <strong>Unauthorized security testing:</strong> Do not
+                    probe, scan, or test systems without prior authorization
+                    from the system owner.
                   </li>
                   <li>
-                    <strong>Denial of Service (DoS/DDoS):</strong> Flooding,
-                    spamming, mailbombing, or overloading our servers, edge
-                    networks, or contact endpoints.
+                    <strong>Disruption:</strong> Do not attempt to disrupt,
+                    overload, or interfere with the website, its forms, or
+                    related services.
                   </li>
                   <li>
-                    <strong>Malicious Submissions:</strong> Submitting malicious
-                    payloads, SQL injection vectors, cross-site scripting (XSS)
-                    code, or false automated spam entries through our project
-                    contact forms.
+                    <strong>Malicious submissions:</strong> Do not submit
+                    malware, exploit payloads, or automated spam through website
+                    forms.
                   </li>
                   <li>
-                    <strong>Unauthorized Scraping & Impersonation:</strong>{" "}
-                    Using automated scrapers, bots, or harvesters to replicate
-                    our proprietary case studies, client listings, or branding,
-                    or falsely claiming affiliation with RouR Tech.
+                    <strong>Misrepresentation:</strong> Do not impersonate
+                    another person or falsely claim affiliation with RouR Tech.
                   </li>
                   <li>
-                    <strong>Illegal or Infringing Content:</strong> Using our
-                    hosted client systems or servers to distribute unlawful,
-                    defamatory, infringing, or harmful materials.
+                    <strong>Unlawful use:</strong> Do not use the website or
+                    related services in violation of applicable law or others&apos;
+                    rights.
                   </li>
                 </ul>
               </section>
@@ -109,12 +111,11 @@ export default function AcceptableUsePolicyPage() {
                   3. System Monitoring & Enforcement
                 </h2>
                 <p>
-                  We monitor application logs and network traffic to preserve
-                  system integrity, ensure availability, and prevent security
-                  exploits. We reserve the right to immediately block IP
-                  addresses, throttle abusive API requests, or terminate
-                  unauthorized administrative access without notice in response
-                  to AUP violations.
+                  This draft does not claim that activity is actively monitored
+                  or that particular blocking or enforcement controls are in
+                  place. The owner must confirm the available response process
+                  and any contractual or legal limits before publishing
+                  enforcement statements.
                 </p>
               </section>
 
@@ -125,12 +126,12 @@ export default function AcceptableUsePolicyPage() {
                 <p>
                   We welcome responsible disclosure of potential security
                   vulnerabilities. If you discover a vulnerability or suspect an
-                  AUP violation, please report it directly to{" "}
+                  AUP violation, please report it through the{" "}
                   <a
-                    href={`mailto:${siteConfig.email}`}
+                    href="/contact"
                     className="text-[#FF5B4D] font-semibold"
                   >
-                    {siteConfig.email}
+                    contact form
                   </a>
                   .
                 </p>
@@ -140,7 +141,7 @@ export default function AcceptableUsePolicyPage() {
         </div>
       </main>
 
-      <Footer onOpenContact={() => {}} onSelectService={() => {}} />
+      <Footer />
     </div>
   );
 }

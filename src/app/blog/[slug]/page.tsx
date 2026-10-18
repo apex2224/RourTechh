@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { initialBlogPosts } from '@/data/blogData';
 import BlogPostClient from '@/components/BlogPostClient';
 import { SITE_URL } from '@/lib/siteConfig';
@@ -8,15 +9,23 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return initialBlogPosts.map((post) => ({ slug: post.slug }));
+  return initialBlogPosts
+    .filter((post) => post.status === 'published')
+    .map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = initialBlogPosts.find((p) => p.slug === params.slug);
+  if (post?.status === 'draft') notFound();
+
   if (!post) {
     return {
       title: 'Article Not Found | RouR Tech Insights',
       description: 'The requested engineering insight could not be found.',
+      robots: {
+        index: false,
+        follow: true,
+      },
     };
   }
 
@@ -24,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? (post.featuredImage.startsWith('http')
         ? post.featuredImage
         : `${SITE_URL}${post.featuredImage}`)
-    : `${SITE_URL}/src/assets/images/blog_seo_web_performance_1791271638172.jpg`;
+    : `${SITE_URL}/src/assets/images/blog_seo_web_performance_1791271638172-optimized.webp`;
 
   return {
     title: post.seoTitle || `${post.title} | RouR Tech Insights`,
@@ -58,6 +67,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default function BlogPostPage({ params }: Props) {
   const post = initialBlogPosts.find((p) => p.slug === params.slug);
+  if (post?.status === 'draft') notFound();
+
   return (
     <BlogPostClient
       slug={params.slug}

@@ -8,30 +8,33 @@ import {
   Briefcase,
   Globe2,
   Code2,
-  Mail
 } from "lucide-react";
-import { SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { SITE_URL } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
-  title: "Careers & Engineering Culture — RouR Tech",
+  title: "Careers | RouR Tech",
   description:
-    "Explore engineering opportunities and our technical culture at RouR Tech. We build high-performance web products with Next.js, React, and TypeScript.",
+    "Recruitment status and application details are awaiting confirmation from RouR Tech.",
   alternates: {
     canonical: `${SITE_URL}/careers`,
   },
   openGraph: {
-    title: "Careers & Engineering Culture — RouR Tech",
+    title: "Careers | RouR Tech",
     description:
-      "Explore engineering opportunities and our technical culture at RouR Tech.",
+      "Recruitment status and application details are awaiting confirmation from RouR Tech.",
     url: `${SITE_URL}/careers`,
     siteName: "RouR Tech",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Careers & Engineering Culture — RouR Tech",
+    title: "Careers | RouR Tech",
     description:
-      "Explore engineering opportunities and our technical culture at RouR Tech.",
+      "Recruitment status and application details are awaiting confirmation from RouR Tech.",
+  },
+  robots: {
+    index: false,
+    follow: true,
   },
 };
 
@@ -69,7 +72,7 @@ export default function CareersPage() {
     {
       title: "Craft & Rigor",
       description:
-        "We hold ourselves to high technical standards: strict TypeScript, WCAG AA accessibility, sub-second LCP budgets, and thorough peer code reviews.",
+        "Project requirements may include typed code, accessibility review, performance measurement, and peer review, depending on the agreed scope.",
     },
     {
       title: "Direct Client Impact",
@@ -85,7 +88,7 @@ export default function CareersPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
       />
 
-      <Header isArticleView={false} onOpenContact={() => { }} />
+      <Header isArticleView={false} />
 
       <main className="flex-1">
         {/* Breadcrumb */}
@@ -167,33 +170,26 @@ export default function CareersPage() {
                 <Code2 className="w-6 h-6" />
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-[#111111] font-display mb-4">
-                General Engineering Inquiries
+                Recruitment information
               </h2>
               <p className="text-sm sm:text-base text-[#555555] leading-relaxed max-w-xl mx-auto mb-8">
-                While we evaluate hiring on a project-by-project basis, we welcome speculative applications from senior developers and designers with strong GitHub portfolios or live case studies.
+                No current openings or verified application contact are listed here. The company owner should confirm recruitment status and provide an application process before this page is used for hiring.
               </p>
 
               <div className="inline-block p-6 bg-white rounded-xl border border-[#E8E8E8] text-left max-w-md w-full shadow-xs">
                 <span className="text-xs font-bold text-[#888888] uppercase tracking-wider block mb-2">
-                  How to Reach Us
+                  Owner confirmation required
                 </span>
                 <p className="text-xs text-[#555555] leading-relaxed mb-4">
-                  Send your GitHub link, portfolio, and a brief description of your favorite technical achievement directly to:
+                  Confirm whether applications are being accepted and which contact channel should be used.
                 </p>
-                <a
-                  href={`mailto:${siteConfig.email}?subject=Engineering Application - [Your Name]`}
-                  className="text-sm font-bold text-[#FF5B4D] hover:underline flex items-center gap-2"
-                >
-                  <Mail className="w-4 h-4" />
-                  <span>{siteConfig.email}</span>
-                </a>
               </div>
             </div>
           </div>
         </section>
       </main>
 
-      <Footer onOpenContact={() => { }} onSelectService={() => { }} />
+      <Footer />
     </div>
   );
 }

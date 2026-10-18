@@ -12,7 +12,7 @@ import {
   Terminal,
   Globe2,
 } from "lucide-react";
-import { SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { SITE_URL } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "About RouR Tech — Engineering High-Performance Digital Products",
@@ -38,25 +38,6 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  const jsonLdOrg = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: siteConfig.name,
-    legalName: siteConfig.legalName,
-    url: SITE_URL,
-    description: siteConfig.description,
-    email: siteConfig.email,
-    telephone: siteConfig.phone,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: siteConfig.address.street,
-      addressLocality: siteConfig.address.city,
-      addressRegion: siteConfig.address.state,
-      postalCode: siteConfig.address.postalCode,
-      addressCountry: siteConfig.address.country,
-    },
-  };
-
   const jsonLdBreadcrumbs = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -81,25 +62,25 @@ export default function AboutPage() {
       icon: <Zap className="w-6 h-6 text-[#FF5B4D]" />,
       title: "Performance by Default",
       description:
-        "Speed is a fundamental feature, not an afterthought. We enforce strict Core Web Vitals budgets—sub-second LCP and zero render-blocking bloat—on every project.",
+        "Performance is considered during planning and implementation. Measurements and improvement targets depend on the product, hosting, content, and agreed test conditions.",
     },
     {
       icon: <Code2 className="w-6 h-6 text-[#FF5B4D]" />,
       title: "Engineered Architecture",
       description:
-        "We build exclusively with strict TypeScript, modular Next.js components, and resilient APIs. Clean code guarantees your digital product can evolve for years.",
+        "Technology choices are made around the product's requirements, integrations, hosting environment, and maintenance needs.",
     },
     {
       icon: <ShieldCheck className="w-6 h-6 text-[#FF5B4D]" />,
       title: "Security & Accessibility",
       description:
-        "Every application adheres to WCAG 2.1 AA accessibility guidelines and modern security standards, ensuring an inclusive experience and rock-solid data protection.",
+        "Accessibility and security requirements should be reviewed and scoped for each project. No single implementation can guarantee complete security or conformance.",
     },
     {
       icon: <Target className="w-6 h-6 text-[#FF5B4D]" />,
       title: "Honest, Direct Collaboration",
       description:
-        "No account managers or bureaucratic middlemen. You collaborate directly with senior engineers and product designers who understand your exact technical requirements.",
+        "Clear discussions about goals, constraints, decisions, and responsibilities help teams work through technical requirements.",
     },
   ];
 
@@ -125,14 +106,10 @@ export default function AboutPage() {
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
-      />
-      <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumbs) }}
       />
 
-      <Header isArticleView={false} onOpenContact={() => {}} />
+      <Header isArticleView={false} />
 
       <main className="flex-1">
         {/* Breadcrumb */}
@@ -238,40 +215,38 @@ export default function AboutPage() {
                   How We Partner With Ambitious Teams
                 </h2>
                 <p className="text-sm sm:text-base text-[#555555] leading-relaxed">
-                  We done&apos;t believe in convoluted project scopes or vague
-                  hourly billing. Every engagement is structured around concrete
-                  deliverables, clear milestones, and verified production
-                  deployments.
+                  Project scope, deliverables, fees, milestones, and handover
+                  expectations should be agreed in writing before work begins.
                 </p>
                 <div className="space-y-4 pt-2">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                     <p className="text-sm text-[#333333]">
                       <strong className="font-semibold text-[#111111]">
-                        Fixed-Scope & Milestone Clarity:
+                        Written Scope & Expectations:
                       </strong>{" "}
-                      Know exactly what will be built, when it will be
-                      delivered, and what it costs.
+                      Document the planned work, estimated schedule, and fees
+                      for the engagement.
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                     <p className="text-sm text-[#333333]">
                       <strong className="font-semibold text-[#111111]">
-                        100% Code & IP Ownership:
+                        Ownership Terms:
                       </strong>{" "}
-                      All repositories, Figma tokens, assets, and documentation
-                      are transferred fully to your team.
+                      The project agreement should specify ownership, licenses,
+                      and any handover of code, design files, or documentation.
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                     <p className="text-sm text-[#333333]">
                       <strong className="font-semibold text-[#111111]">
-                        Global Communication Cadence:
+                        Communication:
                       </strong>{" "}
-                      Async video updates, weekly sprint demos, and direct
-                      shared communication channels.
+                      Agree on suitable update frequency, review meetings, and
+                      communication channels for the project.
                     </p>
                   </div>
                 </div>
@@ -281,36 +256,37 @@ export default function AboutPage() {
                 <div className="flex items-center gap-3 mb-6">
                   <Globe2 className="w-6 h-6 text-[#FF5B4D]" />
                   <span className="text-xs font-mono-data uppercase tracking-wider text-neutral-400">
-                    Global Engineering Standards
+                    Technical Practices
                   </span>
                 </div>
                 <h3 className="text-2xl font-bold font-display mb-6">
-                  Production Standards on Every Build
+                  Engineering Considerations
                 </h3>
                 <div className="space-y-4 text-xs sm:text-sm text-neutral-300">
                   <div className="p-4 bg-neutral-900 rounded-xl border border-neutral-800">
                     <span className="text-[#FF5B4D] font-bold block mb-1">
-                      Core Web Vitals Guarantee
+                      Performance Targets
                     </span>
-                    Engineered to meet green thresholds (LCP &lt; 2.5s, INP &lt;
-                    200ms, CLS &lt; 0.1) under actual Chrome User Experience
-                    benchmarks.
+                    Performance goals can be agreed and measured under defined
+                    test conditions. Real-world results vary with the site,
+                    hosting, content, integrations, and user devices; no score
+                    or threshold is guaranteed.
                   </div>
                   <div className="p-4 bg-neutral-900 rounded-xl border border-neutral-800">
                     <span className="text-[#FF5B4D] font-bold block mb-1">
-                      TypeScript Type Safety
+                      TypeScript
                     </span>
-                    End-to-end typed contracts between database schemas, server
-                    components, and client interactions to eliminate runtime
-                    regressions.
+                    Types can help catch certain errors during development but
+                    do not eliminate runtime defects. Testing and data
+                    validation should be scoped to the application.
                   </div>
                   <div className="p-4 bg-neutral-900 rounded-xl border border-neutral-800">
                     <span className="text-[#FF5B4D] font-bold block mb-1">
-                      Schema.org JSON-LD Graphs
+                      Structured Data
                     </span>
-                    Explicit entity graphs embedded into your document head to
-                    maximize search engine indexing and rich AI search answer
-                    readiness.
+                    Structured data can describe page content to supported
+                    crawlers. Search engines determine indexing and whether
+                    enhanced results appear.
                   </div>
                 </div>
               </div>
@@ -322,24 +298,23 @@ export default function AboutPage() {
         <section className="py-20 bg-[#F8F8F6]">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#111111] font-display mb-6">
-              Lete&apos;s build something exceptional together.
+              Let&apos;s build something exceptional together.
             </h2>
             <p className="text-base sm:text-lg text-[#555555] mb-8 max-w-xl mx-auto">
-              Schedule an exploratory call with our team to discuss your goals,
-              architecture, and timeline.
+              Contact us to discuss your goals, technical needs, and timeline.
             </p>
             <Link
               href="/contact"
               className="px-9 py-4 text-sm sm:text-base font-bold text-white bg-[#FF5B4D] hover:bg-[#E84E40] rounded-xl transition-all shadow-md inline-flex items-center gap-2"
             >
-              <span>Initiate Discovery Call</span>
+              <span>Contact Us</span>
               <ArrowUpRight className="w-5 h-5" />
             </Link>
           </div>
         </section>
       </main>
 
-      <Footer onOpenContact={() => {}} onSelectService={() => {}} />
+      <Footer />
     </div>
   );
 }

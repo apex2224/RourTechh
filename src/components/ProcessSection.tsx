@@ -19,7 +19,8 @@ export const ProcessSection: React.FC = () => {
             Disciplined delivery from architecture to handover.
           </h2>
           <p className="text-sm sm:text-base text-[#666666] mt-4 leading-relaxed">
-            We operate with strict weekly sprint cadences, transparent project boards, and tangible deliverables at every milestone.
+            Project cadence, collaboration tools, and deliverables are agreed
+            for each engagement.
           </p>
         </div>
 

@@ -3,9 +3,6 @@ import {
   Play,
   Pause,
   ArrowRight,
-  Search,
-  Grid,
-  LayoutGrid,
   Layers,
 } from "lucide-react";
 import { projectsData } from "../data/projectsData";
@@ -24,10 +21,6 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   onClearActiveCaseStudy,
 }) => {
   const [filter, setFilter] = useState<string>("All");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [layoutMode, setLayoutMode] = useState<"featured" | "compact">(
-    "featured",
-  );
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
   const [selectedProject, setSelectedProject] = useState<CaseStudy | null>(
     activeCaseStudyId
@@ -51,19 +44,11 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     "Enterprise",
   ];
 
-  // Filter and search
+  // ponytail: Keep the section focused on the small set of projects worth opening.
   const filteredProjects = projectsData.filter((project) => {
     const matchesCategory = filter === "All" || project.category === filter;
 
-    const matchesSearch =
-      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.technologies.some((tech) =>
-        tech.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-
-    return matchesCategory && matchesSearch;
+    return matchesCategory;
   });
 
   const handleToggleVideo = (e: React.MouseEvent, projectId: string) => {
@@ -81,56 +66,22 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">
             <div className="text-xs font-semibold text-[#FF5B4D] tracking-wider uppercase mb-2">
-              Our Work & Digital Project Portfolio
+              Selected work
             </div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111111] font-display text-balance">
-              Website Development Projects & Digital Solutions.
+              A few things we have shipped.
             </h2>
 
             <p className="text-sm sm:text-base text-[#666666] mt-4 leading-relaxed">
-              Explore our portfolio of web development projects, e-commerce
-              websites, UI/UX design systems and custom software solutions.
-              Discover project approaches, technologies and implementation
-              details to understand how digital products are designed and
-              developed around business requirements.
+              Real websites, real constraints, and the decisions behind the
+              build.
             </p>
-          </div>
-
-          <div className="flex items-center gap-3 self-start md:self-auto">
-            {/* Layout density toggles */}
-            <div className="hidden sm:flex items-center p-1 bg-[#F2F2EE] rounded-lg border border-[#E8E8E8]">
-              <button
-                onClick={() => setLayoutMode("featured")}
-                className={`p-1.5 rounded-md transition-colors ${
-                  layoutMode === "featured"
-                    ? "bg-white text-[#111111] shadow-2xs"
-                    : "text-[#777777] hover:text-[#111111]"
-                }`}
-                title="Featured 2-Column Grid"
-                aria-label="Featured 2-Column Grid"
-              >
-                <Grid className="w-4 h-4" />
-              </button>
-
-              <button
-                onClick={() => setLayoutMode("compact")}
-                className={`p-1.5 rounded-md transition-colors ${
-                  layoutMode === "compact"
-                    ? "bg-white text-[#111111] shadow-2xs"
-                    : "text-[#777777] hover:text-[#111111]"
-                }`}
-                title="Compact 3-Column Library Grid"
-                aria-label="Compact 3-Column Library Grid"
-              >
-                <LayoutGrid className="w-4 h-4" />
-              </button>
-            </div>
           </div>
         </div>
 
-        {/* Category Filters + Search */}
-        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-10 pb-6 border-b border-[#E8E8E8]">
+        {/* Category Filters */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 pb-6 border-b border-[#E8E8E8]">
           {/* Category Tabs */}
           <div className="flex flex-wrap items-center gap-1.5 p-1 bg-[#F2F2EE] rounded-lg border border-[#E8E8E8]">
             {categories.map((cat) => (
@@ -148,23 +99,8 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             ))}
           </div>
 
-          {/* Search Box */}
-          <div className="flex items-center gap-3">
-            <div className="relative w-full sm:w-64">
-              <Search className="w-4 h-4 text-[#888888] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search projects by name, industry or technology..."
-                className="w-full pl-9 pr-3 py-1.5 bg-white border border-[#E8E8E8] rounded-lg text-xs text-[#111111] placeholder:text-[#888888] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D]"
-              />
-            </div>
-
-            <span className="text-xs text-[#888888] font-mono-data whitespace-nowrap">
-              {filteredProjects.length} of {projectsData.length} Projects
-            </span>
+          <div className="text-xs text-[#888888] font-mono-data whitespace-nowrap">
+            {String(filteredProjects.length).padStart(2, "0")} / {String(projectsData.length).padStart(2, "0")} projects
           </div>
         </div>
 
@@ -174,29 +110,28 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             <Layers className="w-8 h-8 text-[#888888] mx-auto mb-3" />
 
             <p className="text-sm font-semibold text-[#111111]">
-              No Matching Projects Found
+              No projects match your search
             </p>
 
             <p className="text-xs text-[#666666] mt-1">
-              Try another project name, technology or category to explore our
-              portfolio.
+              Try a different name, industry, or technology.
             </p>
+            <button
+              onClick={onStartProject}
+              className="mt-4 px-4 py-2 text-xs font-semibold text-white bg-[#FF5B4D] hover:bg-[#E84E40] rounded-lg transition-colors"
+            >
+              Discuss a project
+            </button>
           </div>
         ) : (
-          <div
-            className={`grid gap-8 ${
-              layoutMode === "featured"
-                ? "grid-cols-1 lg:grid-cols-2"
-                : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-            }`}
-          >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {filteredProjects.map((project) => {
               const isPlayingVideo = playingVideoId === project.id;
 
               return (
-                <div
+                <article
                   key={project.id}
-                  className="group bg-white rounded-2xl overflow-hidden border border-[#E8E8E8] hover:border-[#D1D1CB] hover-lift transition-all flex flex-col justify-between shadow-xs"
+                  className="group bg-white overflow-hidden border border-[#E8E8E8] hover:border-[#D1D1CB] hover-lift transition-all flex flex-col justify-between"
                 >
                   <div>
                     {/* Visual & Video Preview Container */}
@@ -224,7 +159,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         <>
                           <img
                             src={project.image}
-                            alt={`${project.title} — ${project.category} project by RourTech`}
+                            alt={`${project.title} — ${project.category} project by RouR Tech`}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-104"
                             loading="lazy"
                             referrerPolicy="no-referrer"
@@ -247,15 +182,9 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         </>
                       )}
 
-                      {/* Top Badges (Category & Project Result) */}
                       <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-xs pointer-events-none z-10">
-                        <span className="bg-black/75 backdrop-blur-sm text-white px-2.5 py-1 rounded-md font-medium text-[11px]">
+                        <span className="bg-black/75 backdrop-blur-sm text-white px-2.5 py-1 font-medium text-[11px]">
                           {project.category}
-                        </span>
-
-                        <span className="bg-white/95 backdrop-blur-sm text-[#111111] px-2.5 py-1 rounded-md font-mono-data font-bold text-[11px] shadow-xs">
-                          {project.results[0]?.metric}{" "}
-                          {project.results[0]?.label}
                         </span>
                       </div>
                     </div>
@@ -283,60 +212,45 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         {project.summary}
                       </p>
 
-                      {/* Project Results */}
-                      <div className="grid grid-cols-2 gap-3 p-3.5 bg-[#F8F8F6] rounded-xl border border-[#E8E8E8] mb-6">
-                        <div>
-                          <span className="text-[11px] text-[#777777] block">
-                            {project.results[0]?.label}
-                          </span>
-
-                          <span className="text-lg font-extrabold text-[#111111] font-mono-data">
-                            {project.results[0]?.metric}
-                          </span>
-                        </div>
-
-                        <div>
-                          <span className="text-[11px] text-[#777777] block">
-                            {project.results[1]?.label}
-                          </span>
-
-                          <span className="text-lg font-extrabold text-[#111111] font-mono-data">
-                            {project.results[1]?.metric}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Technology Tags */}
-                      <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                        {project.technologies
-                          .slice(0, layoutMode === "compact" ? 3 : 5)
-                          .map((tech) => (
-                            <span
-                              key={tech}
-                              className="px-2.5 py-1 bg-[#F2F2EE] border border-[#E8E8E8] rounded-md font-mono-data text-[#444444] text-[11px]"
-                            >
-                              {tech}
-                            </span>
-                          ))}
+                      <div className="flex items-center justify-between border-t border-[#E8E8E8] pt-4">
+                        <span className="text-[11px] uppercase tracking-wider text-[#888888]">
+                          Built with
+                        </span>
+                        <span className="text-xs text-[#444444]">
+                          {project.technologies.slice(0, 3).join(" / ")}
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   {/* Card Action */}
-                  <div className="px-6 py-4 sm:px-7 bg-[#F8F8F6] border-t border-[#E8E8E8] flex items-center justify-between">
+                  <div className="px-6 py-4 sm:px-7 bg-[#F8F8F6] border-t border-[#E8E8E8] flex flex-col sm:flex-row items-center justify-between gap-3">
                     <span className="text-xs text-[#777777] hidden sm:inline">
-                      Project Details & Implementation
+                      {project.client}
                     </span>
 
-                    <button
-                      onClick={() => setSelectedProject(project)}
-                      className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-[#111111] hover:bg-[#FF5B4D] rounded-lg transition-all duration-150 shadow-2xs ml-auto cursor-pointer"
-                    >
-                      <span>View Project</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex items-center gap-2 ml-auto">
+                      {project.websiteUrl && (
+                        <a
+                          href={project.websiteUrl}
+                          target="_blank"
+                          rel="nofollow noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-[#111111] bg-white hover:bg-[#E8E8E4] border border-[#E8E8E8] rounded-lg transition-all"
+                        >
+                          <span>Live site</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                      <button
+                        onClick={() => setSelectedProject(project)}
+                        className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-[#111111] hover:bg-[#FF5B4D] rounded-lg transition-all duration-150 shadow-2xs cursor-pointer"
+                      >
+                        <span>Details</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </article>
               );
             })}
           </div>
@@ -351,7 +265,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
 
             <p className="text-xs sm:text-sm text-[#666666] mt-1">
               Discuss your website development, e-commerce, UI/UX design or
-              custom software requirements with RourTech.
+              custom software requirements with RouR Tech.
             </p>
           </div>
 

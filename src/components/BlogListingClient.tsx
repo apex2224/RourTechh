@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { BlogFeaturedImage } from "./BlogFeaturedImage";
 import { BlogPost } from "@/types";
 import { loadPublishedBlogPosts } from "@/lib/blogPosts";
 import { 
@@ -160,11 +161,11 @@ export default function BlogListingClient({ initialPosts }: BlogListingClientPro
                       {/* Featured Image */}
                       <Link href={`/blog/${post.slug}`} className="block relative aspect-video w-full bg-neutral-100 overflow-hidden border-b border-[#E8E8E8]">
                         {post.featuredImage ? (
-                          <img
-                            src={post.featuredImage}
+                          <BlogFeaturedImage
+                            imageUrl={post.featuredImage}
                             alt={post.title}
-                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                            loading="lazy"
+                            className="h-full w-full"
+                            imageClassName="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-xs text-neutral-400 font-mono">

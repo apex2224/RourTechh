@@ -38,6 +38,7 @@ export interface CaseStudy {
   category: 'Web Application' | 'E-commerce' | 'Design System' | 'Enterprise';
   summary: string;
   image: string;
+  websiteUrl?: string;
   videoPreview?: string;
   videoPoster?: string;
   challenge: string;
@@ -97,6 +98,7 @@ export interface InquiryRecord {
   createdAt: string;
   name: string;
   email: string;
+  phone?: string;
   company: string;
   service: string;
   budget: string;

@@ -59,17 +59,18 @@ export default function PortfolioPageClient() {
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#FFF2F0] rounded-full border border-[#FF5B4D]/20 text-[#FF5B4D] text-xs font-bold uppercase tracking-wider mb-6">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Production Work & Results</span>
+              <span>Portfolio</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#111111] font-display tracking-tight leading-[1.1] mb-6">
-              Featured Case Studies & Technical Proof
+              Project Work
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-[#555555] leading-relaxed max-w-3xl font-body mb-8">
-              Explore how we engineer sub-second web applications, headless commerce systems, and resilient custom software platforms for organizations worldwide.
+              Explore selected websites and the technologies used to build
+              them.
             </p>
 
             {/* Category Filters */}
-            <div className="flex flex-wrap gap-2 pt-2">
+            {projectsData.length > 0 && <div className="flex flex-wrap gap-2 pt-2">
               {categories.map((category) => (
                 <button
                   key={category}
@@ -83,13 +84,30 @@ export default function PortfolioPageClient() {
                   {category}
                 </button>
               ))}
-            </div>
+            </div>}
           </div>
         </section>
 
         {/* Projects Grid */}
         <section className="py-16 md:py-24 bg-[#F8F8F6]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {filteredProjects.length === 0 ? (
+              <div className="max-w-2xl mx-auto text-center bg-white p-8 sm:p-12 rounded-2xl border border-[#E8E8E8] shadow-xs">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#111111] font-display">
+                  Project stories are being prepared
+                </h2>
+                <p className="text-sm text-[#666666] leading-relaxed mt-3">
+                  New projects will appear here as they are ready to share.
+                </p>
+                <Link
+                  href="/contact"
+                  className="mt-6 px-5 py-3 bg-[#FF5B4D] hover:bg-[#E84E40] text-white text-sm font-semibold rounded-lg transition-colors inline-flex items-center gap-2"
+                >
+                  Discuss a project
+                  <ArrowUpRight className="w-4 h-4" />
+                </Link>
+              </div>
+            ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProjects.map((project) => (
                 <div
@@ -128,19 +146,21 @@ export default function PortfolioPageClient() {
                         {project.summary}
                       </p>
 
-                      {/* Primary Metrics Highlight */}
-                      <div className="grid grid-cols-2 gap-3 mb-6 p-3 bg-[#F8F8F6] rounded-xl border border-[#E8E8E8]">
-                        {project.results.slice(0, 2).map((res, i) => (
-                          <div key={i}>
-                            <span className="text-base font-extrabold text-[#111111] font-mono-data block">
-                              {res.metric}
-                            </span>
-                            <span className="text-[11px] text-[#666666] leading-tight block">
-                              {res.label}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
+                      {/* Project Snapshot */}
+                      {project.results.length > 0 && (
+                        <div className="grid grid-cols-2 gap-3 mb-6 p-3 bg-[#F8F8F6] rounded-xl border border-[#E8E8E8]">
+                          {project.results.slice(0, 2).map((res, i) => (
+                            <div key={i}>
+                              <span className="text-base font-extrabold text-[#111111] font-mono-data block">
+                                {res.metric}
+                              </span>
+                              <span className="text-[11px] text-[#666666] leading-tight block">
+                                {res.label}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
 
                       {/* Tech Pills */}
                       <div className="flex flex-wrap gap-1.5 mb-2">
@@ -162,18 +182,30 @@ export default function PortfolioPageClient() {
                   </div>
 
                   {/* Card Action */}
-                  <div className="p-6 pt-0">
+                  <div className="p-6 pt-0 flex flex-col gap-2">
+                    {project.websiteUrl && (
+                      <a
+                        href={project.websiteUrl}
+                        target="_blank"
+                        rel="nofollow noopener noreferrer"
+                        className="w-full py-3 bg-[#111111] hover:bg-[#FF5B4D] text-white rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2"
+                      >
+                        <span>Visit live site</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                    )}
                     <button
                       onClick={() => setActiveCaseStudy(project)}
-                      className="w-full py-3 bg-[#F8F8F6] hover:bg-[#111111] text-[#111111] hover:text-white rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3 bg-[#F8F8F6] hover:bg-[#E8E8E4] text-[#111111] rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <span>Read In-Depth Case Study</span>
+                      <span>Project details</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
               ))}
             </div>
+            )}
           </div>
         </section>
 

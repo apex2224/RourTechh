@@ -3,25 +3,29 @@ import PortfolioPageClient from "@/components/PortfolioPageClient";
 import { SITE_URL } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
-  title: "Portfolio & Case Studies — RouR Tech Technical Proof",
+  title: "Project Work | RouR Tech",
   description:
-    "Explore RouR Tech's portfolio of web applications, headless commerce systems, and digital platforms with verified Core Web Vitals and architecture proof.",
+    "Explore selected websites built by RouR Tech, including education technology and premium branded residences projects.",
   alternates: {
     canonical: `${SITE_URL}/portfolio`,
   },
   openGraph: {
-    title: "Portfolio & Case Studies — RouR Tech Technical Proof",
+    title: "Project Work | RouR Tech",
     description:
-      "Explore RouR Tech's portfolio of web applications, headless commerce systems, and digital platforms.",
+      "Explore selected websites built by RouR Tech, including education technology and premium branded residences projects.",
     url: `${SITE_URL}/portfolio`,
     siteName: "RouR Tech",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Portfolio & Case Studies — RouR Tech Technical Proof",
+    title: "Project Work | RouR Tech",
     description:
-      "Explore RouR Tech's portfolio of web applications, headless commerce systems, and digital platforms.",
+      "Explore selected websites built by RouR Tech, including education technology and premium branded residences projects.",
+  },
+  robots: {
+    index: false,
+    follow: true,
   },
 };
 
@@ -39,7 +43,7 @@ export default function PortfolioPage() {
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Portfolio & Case Studies",
+        "name": "Project Work",
         "item": `${SITE_URL}/portfolio`,
       },
     ],

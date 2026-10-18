@@ -11,34 +11,33 @@ export const servicesData: ServiceItem[] = [
     shortDescription:
       'Custom website development and web applications built with React, Next.js and modern technologies for performance, usability and scalability.',
     fullDescription:
-      'RourTech provides end-to-end website and web application development services for organizations that demand speed, stability, and scale. We engineer responsive web platforms using Next.js, React, TypeScript, and modern headless architectures. Whether you need a customer portal, an interactive business flagship, or an API-driven web application, we ensure every line of code is optimized for Core Web Vitals, maintainability, and search discoverability.',
+      'RouR Tech offers website and web application development using technologies such as Next.js, React, and TypeScript. The architecture, performance goals, maintenance needs, and search requirements are assessed for each project.',
     iconName: 'Code2',
     deliverables: [
       'Custom web applications and responsive business platforms built with Next.js & React',
       'Production-grade TypeScript architecture with component-level type safety',
       'Headless CMS integration (Sanity, Strapi, Contentful) or custom admin portals',
       'REST & GraphQL API connectivity with edge caching and data serialization',
-      'Core Web Vitals optimization targeting sub-second LCP and low INP',
+      'Performance review and Core Web Vitals improvements scoped to agreed goals',
       'Automated CI/CD deployment pipelines on Vercel, Cloudflare, or AWS',
-      'Complete developer documentation and source code repository transfer',
+      'Developer documentation and repository handover as agreed for the project',
     ],
     techStack: [
-      'Next.js 14/15',
-      'React 18/19',
+      'Next.js',
+      'React',
       'TypeScript',
       'Tailwind CSS',
       'Node.js',
       'PostgreSQL / Supabase',
       'Vercel / Cloudflare',
     ],
-    typicalTimeline: '4–8 weeks',
+    typicalTimeline: 'Agreed after project scoping',
     outcomes: [
-      'A sub-second load time across desktop and mobile devices worldwide',
-      'Full cross-browser responsiveness and WCAG AA accessibility compliance',
-      'A scalable codebase engineered for ongoing feature expansion without technical debt',
+      'Performance evaluated against agreed devices, networks, and use cases',
+      'Responsive behavior and accessibility needs reviewed during implementation',
+      'A documented codebase designed to support future maintenance',
     ],
-    startingBudget: '$12,000',
-    relatedCaseStudyId: 'fintech-analytics-suite',
+    startingBudget: 'Discussed after project scoping',
     problemsSolved: [
       'Slow, bloated legacy websites losing potential customers to high bounce rates',
       'Inflexible monolithic templates that restrict custom business workflows',
@@ -52,23 +51,23 @@ export const servicesData: ServiceItem[] = [
       'Interactive client portals with secure authentication and data visualization',
     ],
     benefits: [
-      'Direct collaboration with senior engineers throughout the delivery cycle',
-      'Zero bloated third-party plugin dependencies that degrade performance',
+      'Project communication and collaboration cadence agreed at the start of work',
+      'Review of third-party dependencies for fit, maintenance, and performance impact',
       'Semantic HTML5 structure engineered for organic search discovery from day one',
-      'Standardized design tokens matching Figma design specifications pixel-by-pixel',
+      'Design tokens and implementation aligned with supplied design specifications',
     ],
     process: [
       {
         step: '01',
         title: 'Architecture & Technical Discovery',
         description:
-          'We evaluate your business requirements, define data schemas, select the optimal rendering strategy (SSG, ISR, or RSC), and plan edge routing.',
+          'We review business requirements, define relevant data schemas, and select a rendering and routing approach suited to the project.',
       },
       {
         step: '02',
         title: 'Component Engineering & Prototyping',
         description:
-          'We construct modular, reusable UI components adhering strictly to design tokens, ensuring responsive layouts and keyboard accessibility.',
+          'We build reusable UI components that follow the agreed design system and include responsive and keyboard-accessible behavior in scope.',
       },
       {
         step: '03',
@@ -80,24 +79,24 @@ export const servicesData: ServiceItem[] = [
         step: '04',
         title: 'Performance Audits & Production Handoff',
         description:
-          'We execute Lighthouse, Core Web Vitals, and cross-browser stress tests before deploying to production with continuous monitoring.',
+          'Testing, performance checks, deployment, and any ongoing monitoring are selected and documented for the project scope.',
       },
     ],
     faqs: [
       {
         question: 'Which framework do you recommend for new web development projects?',
         answer:
-          'We primarily specialize in Next.js with React and TypeScript. This combination provides the best balance of server-side rendering for SEO, static edge caching for speed, and rich client interactivity for modern user experiences.',
+          'We work with Next.js, React, and TypeScript. The framework and rendering approach should be selected based on your requirements, team, integrations, and maintenance needs.',
       },
       {
         question: 'Will our team be able to update website copy and images without code changes?',
         answer:
-          'Yes. We integrate modern headless Content Management Systems (such as Sanity, Strapi, or custom Firebase CMS) that give your marketing team full control over publishing and editing without risking code stability.',
+          'A CMS can be included when it fits the project. The publishing workflow, editor permissions, and content types are agreed during scoping.',
       },
       {
-        question: 'How do you guarantee good Core Web Vitals scores?',
+        question: 'How do you approach Core Web Vitals?',
         answer:
-          'We enforce strict performance budgets: zero render-blocking scripts, native image dimensioning with next/image, minimal client-side JavaScript bundles, and CDN edge delivery. We benchmark before launching.',
+          'We can review LCP, INP, and CLS, identify likely bottlenecks, and prioritize changes for the agreed devices and network conditions. Scores depend on the application, hosting, content, and third-party services, so they cannot be guaranteed.',
       },
     ],
   },
@@ -111,14 +110,14 @@ export const servicesData: ServiceItem[] = [
     shortDescription:
       'User-focused UI/UX design, responsive website interfaces, interactive prototypes and reusable design systems for digital products.',
     fullDescription:
-      'RourTech designs digital interfaces that combine visual elegance with functional clarity. We transform complex workflows into intuitive, engaging user experiences. From user journey mapping and low-fidelity wireframing to production-ready Figma design systems and clickable prototypes, every interface is structured to guide visitors smoothly toward conversion while upholding your distinct brand identity.',
+      'RouR Tech offers digital interface design, including user-flow review, wireframes, interface specifications, design systems, and clickable prototypes as agreed for each project.',
     iconName: 'Palette',
     deliverables: [
       'Comprehensive Figma component libraries and tokenized design systems',
       'High-fidelity responsive UI designs for mobile, tablet, and desktop viewports',
       'Interactive clickable prototypes for stakeholder alignment and user testing',
       'Information architecture, wireframes, and customer journey flowcharts',
-      'Accessibility evaluation ensuring WCAG 2.1 AA color contrast and readability',
+      'Accessibility review against agreed criteria, including relevant WCAG guidance',
       'Structured developer handoff assets with typography, spacing, and icon specs',
     ],
     techStack: [
@@ -129,14 +128,13 @@ export const servicesData: ServiceItem[] = [
       'Contrast Checker',
       'Tailwind Token Sync',
     ],
-    typicalTimeline: '3–6 weeks',
+    typicalTimeline: 'Agreed after project scoping',
     outcomes: [
       'A distinct, polished visual identity that builds customer credibility',
-      'Clearer user paths that lower friction and increase onboarding completion',
-      'A scalable design system that speeds up future feature releases by over 50%',
+      'User flows designed to make key tasks easier to understand and complete',
+      'Reusable design patterns intended to support consistent future changes',
     ],
-    startingBudget: '$8,500',
-    relatedCaseStudyId: 'luxe-architectural-store',
+    startingBudget: 'Discussed after project scoping',
     problemsSolved: [
       'Confusing navigation and cluttered layouts causing high user drop-off',
       'Inconsistent visual elements across different company web pages and products',
@@ -151,9 +149,9 @@ export const servicesData: ServiceItem[] = [
     ],
     benefits: [
       'Designs engineered specifically with modern web implementation constraints in mind',
-      'Direct token-to-code alignment so developers build exactly what was designed',
-      'Tested across small and large mobile viewports for flawless touch interactions',
-      'Full intellectual property and design file ownership handed over at project completion',
+      'Handoff details that help developers implement the agreed design intent',
+      'Responsive design review across viewport sizes selected for the project',
+      'Design file access and ownership terms documented in the project agreement',
     ],
     process: [
       {
@@ -185,12 +183,12 @@ export const servicesData: ServiceItem[] = [
       {
         question: 'Do you provide the raw design files upon completion?',
         answer:
-          'Yes, absolutely. You receive full ownership of all Figma files, component libraries, typography guides, and exportable vector assets upon final project sign-off.',
+          'The agreement should specify which design files and assets are delivered and what access or ownership rights apply.',
       },
       {
         question: 'How do you ensure designs can be built without unexpected development costs?',
         answer:
-          'Because our designers collaborate daily with our front-end engineers, we design using real-world CSS grid, flexbox, and tokenized constraints, eliminating unrealistic mockups that cause development friction.',
+          'Design and engineering can be coordinated during the engagement. Handoff detail and implementation review should be agreed as part of the project scope.',
       },
       {
         question: 'Can you work with our existing brand guidelines?',
@@ -209,11 +207,11 @@ export const servicesData: ServiceItem[] = [
     shortDescription:
       'Technical SEO audits, on-page SEO, website speed optimization, structured data and content improvements to support organic search visibility.',
     fullDescription:
-      'RourTech delivers rigorous technical SEO engineering to ensure search engines crawl, render, index, and rank your website with zero friction. We look beyond basic keyword insertion, solving deep architectural issues such as JavaScript hydration penalties, crawl budget exhaustion, improper canonicalization, and Core Web Vitals shortcomings. Our data-backed approach creates a resilient technical foundation for lasting organic search growth.',
+      'RouR Tech offers technical SEO reviews and implementation support for crawling, rendering, indexability, metadata, structured data, and site performance. Work is prioritized against the site’s current architecture and agreed objectives. Search rankings depend on many factors outside a single technical engagement.',
     iconName: 'TrendingUp',
     deliverables: [
       'Comprehensive technical SEO audit covering crawling, rendering, and indexing',
-      'Core Web Vitals remediation targeting sub-2.5s LCP, low INP, and zero CLS',
+      'Review of LCP, INP, and CLS with prioritized, context-specific recommendations',
       'Schema.org JSON-LD implementation (Organization, Service, FAQ, Article, Breadcrumbs)',
       'Canonical URL structure, redirect map cleanups, and 404 response auditing',
       'XML sitemap hierarchy optimization and automated robots.txt configuration',
@@ -228,14 +226,13 @@ export const servicesData: ServiceItem[] = [
       'Lighthouse CI',
       'Chrome UX Report (CrUX)',
     ],
-    typicalTimeline: '2–4 weeks',
+    typicalTimeline: 'Agreed after project scoping',
     outcomes: [
-      'Elimination of indexing errors, duplicate content loops, and crawl blockers',
-      'Measurable improvements in real-user Core Web Vitals metrics (LCP, INP, CLS)',
-      'Rich search snippets and enhanced knowledge panel visibility via structured data',
+      'A prioritized record of crawl, indexability, and duplicate-content issues',
+      'Before-and-after performance measurements for agreed pages and test conditions',
+      'Structured data implemented and checked against supported schema requirements',
     ],
-    startingBudget: '$6,000',
-    relatedCaseStudyId: 'healthtech-clinical-portal',
+    startingBudget: 'Discussed after project scoping',
     problemsSolved: [
       'Search crawlers failing to index dynamic client-side JavaScript content',
       'Duplicate content issues caused by improper query parameters or missing canonicals',
@@ -251,7 +248,7 @@ export const servicesData: ServiceItem[] = [
     benefits: [
       'Engineered directly into your codebase rather than delivering an unexecuted audit PDF',
       'Structured data verified against Google Rich Results standards before deployment',
-      'Performance enhancements that simultaneously improve conversion rates and SEO',
+      'Performance changes measured separately from business and search outcomes, which depend on many factors',
       'Clear, honest reporting based on actual search console and analytics metrics',
     ],
     process: [
@@ -265,31 +262,31 @@ export const servicesData: ServiceItem[] = [
         step: '02',
         title: 'Performance & Core Web Vitals Engineering',
         description:
-          'We diagnose and eliminate render-blocking resources, uncompressed assets, and layout shifts to achieve green Core Web Vitals in CrUX.',
+          'We review rendering, assets, and layout behavior, then prioritize changes based on the measured results and agreed objectives.',
       },
       {
         step: '03',
         title: 'Structured Data & Schema Graph Deployment',
         description:
-          'We embed validated Schema.org JSON-LD graphs linking your organization, services, breadcrumbs, and FAQs to earn rich search features.',
+          'We can add structured data that is validated against the relevant schema requirements; search engines decide whether eligible features appear.',
       },
       {
         step: '04',
         title: 'Validation & Search Console Verification',
         description:
-          'We test all implementations in staging, submit updated sitemaps, and monitor Google Search Console indexing validation logs.',
+          'Where access is available and included in scope, we can validate changes and review Search Console reporting. Indexing and feature display remain controlled by search engines.',
       },
     ],
     faqs: [
       {
-        question: 'Do you guarantee a #1 ranking on Google?',
+        question: 'Can you guarantee a #1 ranking on Google?',
         answer:
-          'No reputable agency can guarantee specific rankings because search algorithms are governed by third parties. What we guarantee is rigorous technical excellence: eliminating crawl errors, maximizing site speed, validating structured data, and adhering strictly to search engine best practices.',
+          'No. Search rankings depend on competition, content, links, technical health, and search engine systems. Technical SEO work can address crawlability and implementation issues, but it cannot guarantee a specific position or traffic level.',
       },
       {
         question: 'How is technical SEO different from traditional SEO copywriting?',
         answer:
-          'While copywriting focuses on keywords and messaging, technical SEO focuses on how search engine bots crawl, parse, and render your website. If your site is too slow, improperly rendered, or full of redirect loops, even the best content will fail to rank.',
+          'Technical SEO reviews how search engines can crawl, render, and interpret a site. It is one part of search visibility; content, competition, links, and search engine systems also matter.',
       },
       {
         question: 'Can you implement the technical fixes directly in our codebase?',
@@ -308,7 +305,7 @@ export const servicesData: ServiceItem[] = [
     shortDescription:
       'Custom e-commerce websites, online store development, product catalog experiences and checkout integrations tailored to business needs.',
     fullDescription:
-      'RourTech engineers custom e-commerce experiences that turn visitors into loyal customers. We build fast, responsive digital storefronts using headless architectures (Shopify Storefront API, Stripe, Medusa) paired with high-performance Next.js frontends. With instant page transitions, flexible product customization, localized multi-currency checkout, and seamless inventory synchronization, our e-commerce solutions are engineered for high-volume transactions.',
+      'RouR Tech can scope custom e-commerce storefronts and integrations using platforms such as Shopify and modern web technologies. Architecture, checkout, catalog features, localization, inventory connections, and performance requirements depend on the selected providers and project scope.',
     iconName: 'ShoppingBag',
     deliverables: [
       'Custom headless storefronts powered by Next.js and Shopify Storefront API',
@@ -320,7 +317,7 @@ export const servicesData: ServiceItem[] = [
       'Customer account portals, order tracking, and automated transactional emails',
     ],
     techStack: [
-      'Next.js 14/15',
+      'Next.js',
       'Shopify Plus / Storefront API',
       'Stripe Elements',
       'Algolia / Meilisearch',
@@ -328,14 +325,13 @@ export const servicesData: ServiceItem[] = [
       'Sanity CMS',
       'Redis Caching',
     ],
-    typicalTimeline: '6–10 weeks',
+    typicalTimeline: 'Agreed after project scoping',
     outcomes: [
-      'Sub-1.2s page loads on mobile 4G networks, driving higher checkout completion',
-      'A flexible editorial storefront where marketing can update collections effortlessly',
-      'A scalable transaction pipeline capable of handling high-volume flash sales',
+      'Performance measured against agreed pages, devices, networks, and test conditions',
+      'A content and catalog workflow designed around the selected commerce platform',
+      'Capacity and reliability requirements documented and tested where included in scope',
     ],
-    startingBudget: '$15,000',
-    relatedCaseStudyId: 'luxe-architectural-store',
+    startingBudget: 'Discussed after project scoping',
     problemsSolved: [
       'Slow mobile page loads on monolithic e-commerce themes causing cart abandonment',
       'Rigid checkout flows that cannot support wholesale, B2B, or international pricing',
@@ -345,13 +341,13 @@ export const servicesData: ServiceItem[] = [
     useCases: [
       'Luxury and direct-to-consumer (DTC) brands seeking a bespoke digital flagship',
       'Wholesale and B2B merchants needing custom pricing tiers and quotation flows',
-      'High-catalog volume retailers requiring instant search and complex filtering',
+      'Retailers with large catalogs requiring search and product filtering',
       'Multi-currency, international stores with localized tax and shipping rules',
     ],
     benefits: [
       'Bespoke user experience completely free from template constraints',
-      'Decoupled frontend ensures your store stays fast even with extensive marketing tools',
-      'Robust security adhering to PCI-DSS compliance standards for payment handling',
+      'A decoupled frontend can provide implementation flexibility but adds integration and maintenance considerations',
+      'Payment provider integration and PCI responsibilities reviewed for the chosen checkout architecture',
       'Structured product data for enhanced visibility in Google Shopping and organic search',
     ],
     process: [
@@ -371,30 +367,30 @@ export const servicesData: ServiceItem[] = [
         step: '03',
         title: 'Headless Storefront Engineering',
         description:
-          'We build the Next.js storefront, connecting Shopify Storefront APIs, Algolia search, and webhooks with edge caching for instant rendering.',
+          'When selected and included in scope, we connect the storefront to the commerce platform, search provider, and required webhooks, then test the agreed flows.',
       },
       {
         step: '04',
         title: 'Payment Integration & Stress Testing',
         description:
-          'We test end-to-end purchasing, discounts, refunds, automated tax calculations, and simulate high-concurrency traffic before launch.',
+          'Checkout, discounts, refunds, tax handling, and load testing are addressed according to the selected providers and agreed test scope.',
       },
     ],
     faqs: [
       {
         question: 'Why choose headless commerce over a standard Shopify theme?',
         answer:
-          'Standard Shopify themes load numerous third-party apps and scripts that slow down mobile performance. Headless separates the frontend into a blazing-fast Next.js app, providing sub-second page loads, limitless design freedom, and higher conversion rates.',
+          'Headless commerce separates the storefront from commerce services and can provide more frontend control. It also introduces additional integration and maintenance work, so the right approach depends on your products, workflows, team, and budget.',
       },
       {
         question: 'Do we still manage products and orders in the Shopify dashboard?',
         answer:
-          'Yes. Your operations, product inventory, order fulfillment, and refund workflows remain conveniently managed within the standard Shopify admin interface you already know.',
+          'If Shopify is selected, the agreement should describe which catalog, order, fulfillment, and refund workflows remain in Shopify and which are handled elsewhere.',
       },
       {
         question: 'How do you handle security and payment processing?',
         answer:
-          'Payment details never touch our application servers. We integrate PCI-DSS certified payment systems like Stripe Elements or Shopify Checkout, ensuring top-tier security for your customers.',
+          'Payment handling depends on the chosen provider and integration. The architecture and each party’s PCI responsibilities should be confirmed with the payment provider and documented before launch.',
       },
     ],
   },
@@ -408,7 +404,7 @@ export const servicesData: ServiceItem[] = [
     shortDescription:
       'Custom business software, web application development, internal dashboards, customer portals and API integrations for specific operational needs.',
     fullDescription:
-      'RourTech builds custom web software and cloud applications tailored precisely to your operational requirements. When commercial off-the-shelf software falls short, we engineer bespoke SaaS platforms, internal management portals, real-time analytics dashboards, and workflow automation systems. Engineered with robust TypeScript backends, secure role-based access, and scalable cloud architectures, our software eliminates manual bottlenecks and drives business growth.',
+      'RouR Tech offers custom web software and application development for operational requirements. Potential project components include SaaS platforms, internal portals, dashboards, and workflow automation. Architecture, security controls, and integrations are scoped for each engagement.',
     iconName: 'Layers',
     deliverables: [
       'Full-stack custom web applications and business operational software',
@@ -428,14 +424,13 @@ export const servicesData: ServiceItem[] = [
       'Docker & AWS / GCP',
       'Firebase / Supabase',
     ],
-    typicalTimeline: '8–14 weeks',
+    typicalTimeline: 'Agreed after project scoping',
     outcomes: [
-      'Elimination of repetitive manual data entry through automated backend pipelines',
-      'A centralized, single source of truth for your business data and workflows',
-      'An enterprise-grade software foundation engineered for multi-tenant scalability',
+      'Automation opportunities identified for repetitive data-entry workflows',
+      'Data structures and access patterns designed for the agreed workflows',
+      'Architecture and scaling requirements documented for expected use cases',
     ],
-    startingBudget: '$20,000',
-    relatedCaseStudyId: 'fintech-analytics-suite',
+    startingBudget: 'Discussed after project scoping',
     problemsSolved: [
       'Disjointed operations relying on vulnerable spreadsheets and fragmented tools',
       'Off-the-shelf SaaS tools charging exorbitant per-seat fees without fitting workflows',
@@ -449,9 +444,9 @@ export const servicesData: ServiceItem[] = [
       'Multi-sided marketplace platforms connecting buyers, sellers, and operators',
     ],
     benefits: [
-      '100% intellectual property ownership with zero ongoing software licensing royalties',
+      'Ownership and licensing for custom work and third-party components documented in the project agreement',
       'Tailored exactly to your operational workflows rather than forcing you into rigid templates',
-      'High-security coding practices with data encryption at rest and in transit',
+      'Security requirements and data-protection controls scoped to the application and selected providers',
       'Modular microservice or clean monolithic architecture designed for future expansion',
     ],
     process: [
@@ -477,19 +472,19 @@ export const servicesData: ServiceItem[] = [
         step: '04',
         title: 'Security Auditing, Testing & Staged Deployment',
         description:
-          'We conduct penetration testing, vulnerability scanning, automated test runs, and containerized deployment to scalable cloud infrastructure.',
+          'Security testing, vulnerability reviews, automated tests, and deployment targets are selected and documented for the engagement.',
       },
     ],
     faqs: [
       {
         question: 'Who owns the intellectual property and source code?',
         answer:
-          'You do. Upon full completion of the project, all source code, database architectures, documentation, and design assets are 100% transferred to your organization with no recurring license fees.',
+          'The written agreement should specify ownership, licenses, payment conditions, and which source code, documentation, and design assets are delivered.',
       },
       {
         question: 'How do you ensure data security in custom web applications?',
         answer:
-          'We enforce industry standards including JWT or session-based authentication, salted hashing (bcrypt/argon2), role-based access control (RBAC), TLS 1.3 encryption, SQL injection safeguards via ORMs, and secure cloud environments.',
+          'Security measures depend on the application and threat model. Authentication, access control, encryption, data handling, and provider configuration should be assessed and agreed for each project.',
       },
       {
         question: 'Can you integrate our custom software with our existing tools?',
@@ -503,18 +498,18 @@ export const servicesData: ServiceItem[] = [
     slug: 'maintenance-security',
     seoTitle: 'Website Maintenance, Security & Support Services | RouR Tech',
     seoDescription:
-      'Proactive website maintenance, dependency updates, security hardening, 24/7 uptime monitoring, Core Web Vitals maintenance, and dedicated technical support.',
+      'Website maintenance, dependency updates, security reviews, bug fixes, performance checks, and support scoped to the application.',
     title: 'Website Maintenance, Security & Support',
     shortDescription:
       'Ongoing website maintenance, software updates, security checks, bug fixes and performance monitoring to help keep your website reliable.',
     fullDescription:
-      'RourTech provides proactive maintenance, security governance, and technical support to keep your digital products operating at peak performance. Modern web applications require consistent updates, security vulnerability patching, performance audits, and database maintenance. Our dedicated retainer support ensures zero unmonitored downtime, rapid bug resolution, continuous Core Web Vitals compliance, and ongoing enhancements.',
+      'Maintenance and support can be scoped to cover selected dependency updates, security reviews, performance checks, incident handling, and application changes. Availability, response targets, monitoring, and recovery practices must be agreed for each engagement.',
     iconName: 'ShieldCheck',
     deliverables: [
-      'Continuous 24/7 uptime and health monitoring with automated incident alerts',
+      'Monitoring and incident alerting configured according to the agreed support scope',
       'Proactive dependency and framework updates (Next.js, Node.js, npm packages)',
       'Security vulnerability scanning, malware defense, and firewall configuration',
-      'Daily offsite database and asset backups with verified disaster recovery drills',
+      'Backup and recovery arrangements, if required, defined for the selected infrastructure and support scope',
       'Core Web Vitals and speed regression monitoring to prevent performance degradation',
       'Dedicated monthly hours for bug fixes, design tweaks, and feature additions',
       'Detailed monthly engineering reports with actionable optimization insights',
@@ -527,14 +522,13 @@ export const servicesData: ServiceItem[] = [
       'UptimeRobot / Pingdom',
       'AWS S3 Glacier Backups',
     ],
-    typicalTimeline: 'Ongoing Monthly Retainer',
+    typicalTimeline: 'Agreed support schedule',
     outcomes: [
-      '99.95%+ website availability with rapid incident response workflows',
-      'Zero neglected dependencies, keeping your site immune to known CVE vulnerabilities',
-      'Guaranteed engineering availability for immediate updates and troubleshooting',
+      'A documented maintenance plan for updates, checks, and issue handling',
+      'Dependency changes reviewed and prioritized based on project needs',
+      'Support hours, channels, and response expectations agreed in writing',
     ],
-    startingBudget: '$2,500 / month',
-    relatedCaseStudyId: 'healthtech-clinical-portal',
+    startingBudget: 'Discussed after project scoping',
     problemsSolved: [
       'Websites crashing unexpectedly without the owner realizing for hours or days',
       'Outdated plugins or npm packages leaving critical security vulnerabilities open to exploits',
@@ -542,15 +536,15 @@ export const servicesData: ServiceItem[] = [
       'Having no reliable technical contact when urgent bug fixes or updates are needed',
     ],
     useCases: [
-      'Mission-critical e-commerce stores requiring 24/7 uptime and zero transaction loss',
+      'E-commerce stores where availability and order integrity are important',
       'Corporate websites needing ongoing content updates, security patches, and SEO preservation',
       'Web applications requiring continuous dependency governance and cloud maintenance',
       'Companies needing a dedicated outsourced web engineering team on retainer',
     ],
     benefits: [
-      'Direct access to senior developers via dedicated Slack or email support channels',
-      'Predictable monthly investment without unexpected emergency development fees',
-      'Disaster recovery guarantee: verified backups ready to restore at any time',
+      'Support channels, included work, and availability agreed in writing',
+      'Fees and any out-of-scope or emergency work documented before support begins',
+      'Backup and recovery planning based on the application and agreed scope',
       'Proactive improvements rather than just waiting for problems to occur',
     ],
     process: [
@@ -558,42 +552,42 @@ export const servicesData: ServiceItem[] = [
         step: '01',
         title: 'Initial Security & Health Baseline Audit',
         description:
-          'We inspect your existing repository, server infrastructure, security headers, dependencies, and error logs to establish a clean operational baseline.',
+          'Where access and scope permit, we review the repository, hosting, security settings, dependencies, and available diagnostics to document a baseline.',
       },
       {
         step: '02',
         title: 'Telemetry & Monitoring Setup',
         description:
-          'We configure real-time error logging (Sentry), automated synthetic uptime checks, and security alerts to detect issues before your users do.',
+          'Monitoring and alerting tools can be configured when selected, supported by the infrastructure, and included in the agreed scope.',
       },
       {
         step: '03',
         title: 'Scheduled Maintenance Sprints',
         description:
-          'We perform bi-weekly or monthly updates on staging environments, running regression test suites before pushing changes to production.',
+          'Maintenance cadence, staging access, and regression testing are agreed based on the application and support arrangement.',
       },
       {
         step: '04',
         title: 'Support SLA & Continuous Evolution',
         description:
-          'We provide on-demand support for feature updates, content changes, and technical assistance within our agreed response time SLA.',
+          'Support availability, response targets, and included changes are set out in the applicable support agreement.',
       },
     ],
     faqs: [
       {
         question: 'What is your response time for emergency support?',
         answer:
-          'For critical severity issues (such as total website downtime or broken checkout funnels), our retainer plans provide an initial response and active triage within 1 to 2 hours during business hours.',
+          'Response targets depend on the support agreement. Confirm coverage hours, escalation channels, severity definitions, and response commitments in writing before relying on a service level.',
       },
       {
         question: 'Can unused monthly retainer hours roll over to the next month?',
         answer:
-          'To ensure dedicated capacity and predictable engineering scheduling, hours are allocated per monthly billing cycle. However, we proactively use available time to run performance optimizations and security reviews.',
+          'Any monthly allocation, rollover, or use of unused hours depends on the terms of the support agreement.',
       },
       {
-        question: 'Do you only maintain websites that RourTech built?',
+        question: 'Do you only maintain websites that RouR Tech built?',
         answer:
-          'While we love maintaining products we created, we also adopt websites and web applications built by other teams. We conduct a preliminary code and architecture audit before taking over maintenance.',
+          'Maintenance for an existing application depends on its condition, access, and support requirements. Any preliminary assessment should be agreed before work begins.',
       },
     ],
   },

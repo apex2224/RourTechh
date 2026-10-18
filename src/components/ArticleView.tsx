@@ -3,6 +3,7 @@ import { ArrowLeft, Share2, Check, ArrowRight } from "lucide-react";
 import { BlogPost, ServiceItem } from "../types";
 import { servicesData } from "../data/servicesData";
 import { BlogFeaturedImage } from "./BlogFeaturedImage";
+import { getFirestoreBlogImageId } from "@/lib/blogImages";
 import { SITE_URL, siteConfig } from "@/lib/siteConfig";
 
 interface ArticleViewProps {
@@ -11,6 +12,28 @@ interface ArticleViewProps {
   onBack: () => void;
   onSelectPost: (post: BlogPost) => void;
   onSelectService: (serviceTitle: string) => void;
+}
+
+function getPublicBlogImageUrl(imageUrl: string): string {
+  if (!imageUrl || getFirestoreBlogImageId(imageUrl)) return "";
+
+  try {
+    const parsedUrl = new URL(imageUrl, SITE_URL);
+    return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:"
+      ? parsedUrl.href
+      : "";
+  } catch {
+    return "";
+  }
+}
+
+function serializeJsonLd(value: object): string {
+  const serialized = JSON.stringify(value);
+  if (!serialized) throw new Error("Could not serialize article metadata.");
+  return serialized
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
 }
 
 export const ArticleView: React.FC<ArticleViewProps> = ({
@@ -22,29 +45,27 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
 }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [copied, setCopied] = useState(false);
+  const publicImageUrl = getPublicBlogImageUrl(post.featuredImage);
 
   // Dynamic SEO metadata updates
   useEffect(() => {
     const originalTitle = document.title;
     const description = post.seoDescription || post.excerpt;
-    const imageUrl = post.featuredImage
-      ? new URL(post.featuredImage, window.location.origin).href
-      : "";
     document.title = post.seoTitle || `${post.title} | RouR Tech`;
     const metadata = [
       ["name", "description", description],
       ["property", "og:title", post.title],
       ["property", "og:description", description],
       ["property", "og:type", "article"],
-      ["property", "og:image", imageUrl],
+      ["property", "og:image", publicImageUrl],
       [
         "name",
         "twitter:card",
-        post.featuredImage ? "summary_large_image" : "summary",
+        publicImageUrl ? "summary_large_image" : "summary",
       ],
       ["name", "twitter:title", post.title],
       ["name", "twitter:description", description],
-      ["name", "twitter:image", imageUrl],
+      ["name", "twitter:image", publicImageUrl],
     ] as const;
     const previousMetadata = metadata.map(([attribute, name, value]) => {
       const selector = `meta[${attribute}="${name}"]`;
@@ -71,7 +92,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
         else element.setAttribute("content", previousContent);
       });
     };
-  }, [post]);
+  }, [post, publicImageUrl]);
 
   // Track reading progress
   useEffect(() => {
@@ -112,23 +133,28 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: serializeJsonLd({
             "@context": "https://schema.org",
             "@type": "Article",
             headline: post.title,
             description: post.seoDescription,
-            ...(post.featuredImage ? { image: post.featuredImage } : {}),
+            ...(publicImageUrl ? { image: publicImageUrl } : {}),
             author: {
-              "@type": "Person",
+              "@type":
+                post.author.name === "RouR Tech Editorial Team"
+                  ? "Organization"
+                  : "Person",
               name: post.author.name,
-              jobTitle: post.author.role,
+              ...(post.author.name === "RouR Tech Editorial Team"
+                ? {}
+                : { jobTitle: post.author.role }),
             },
             publisher: {
               "@type": "Organization",
               name: siteConfig.name,
               logo: {
                 "@type": "ImageObject",
-                url: `${SITE_URL}/src/assets/images/hero_digital_agency_1791271576191.jpg`,
+                url: `${SITE_URL}/src/assets/images/hero_digital_agency_1791271576191-optimized.webp`,
               },
             },
             datePublished: post.publishDate,

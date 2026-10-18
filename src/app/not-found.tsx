@@ -6,7 +6,7 @@ import { Home, Compass } from "lucide-react";
 export default function NotFound() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
-      <Header isArticleView={false} onOpenContact={() => { }} />
+      <Header isArticleView={false} />
 
       <main className="flex-1 flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full text-center bg-white p-8 sm:p-12 rounded-2xl border border-[#E8E8E8] shadow-xs">
@@ -42,7 +42,7 @@ export default function NotFound() {
         </div>
       </main>
 
-      <Footer onOpenContact={() => { }} onSelectService={() => { }} />
+      <Footer />
     </div>
   );
 }

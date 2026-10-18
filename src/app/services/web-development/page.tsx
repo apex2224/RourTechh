@@ -7,14 +7,14 @@ import { SITE_URL } from "@/lib/siteConfig";
 export const metadata: Metadata = {
   title: "Website & Web Application Development Services | RouR Tech",
   description:
-    "Custom Next.js & React web applications and high-performance websites engineered for speed, responsiveness, and conversion. Sub-second LCP and modern architecture.",
+    "Custom Next.js and React websites and web applications, with responsive interfaces, maintainable architecture, and performance considered throughout delivery.",
   alternates: {
     canonical: `${SITE_URL}/services/web-development`,
   },
   openGraph: {
     title: "Website & Web Application Development Services | RouR Tech",
     description:
-      "Custom Next.js & React web applications and high-performance websites engineered for speed, responsiveness, and conversion.",
+      "Custom Next.js and React websites and web applications, with responsive interfaces and maintainable architecture.",
     url: `${SITE_URL}/services/web-development`,
     siteName: "RouR Tech",
     type: "website",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Website & Web Application Development Services | RouR Tech",
     description:
-      "Custom Next.js & React web applications and high-performance websites engineered for speed, responsiveness, and conversion.",
+      "Custom Next.js and React websites and web applications, with responsive interfaces and maintainable architecture.",
   },
 };
 

@@ -9,12 +9,14 @@ import {
   doc,
   getDoc,
   getDocs,
+  serverTimestamp,
   writeBatch,
 } from "firebase/firestore";
 import { CmsAdminModal } from "@/components/CmsAdminModal";
 import { initialBlogPosts } from "@/data/blogData";
 import { isAdminUser } from "@/lib/adminAuthorization";
 import { auth, db } from "@/lib/firebase";
+import { BlogImageUpdates } from "@/lib/blogImages";
 import { BlogPost } from "@/types";
 
 function logArticleLoadError(
@@ -164,7 +166,10 @@ export default function AdminPage() {
     };
   }, []);
 
-  const handleUpdatePosts = async (nextPosts: BlogPost[]) => {
+  const handleUpdatePosts = async (
+    nextPosts: BlogPost[],
+    imageUpdates?: BlogImageUpdates,
+  ) => {
     if (!authorized || !isAdminUser(auth.currentUser)) {
       throw new Error("Only a configured Firebase admin can update articles.");
     }
@@ -189,6 +194,16 @@ export default function AdminPage() {
       }
     });
 
+    Object.entries(imageUpdates ?? {}).forEach(([articleId, image]) => {
+      const imageRef = doc(db, "articleImages", articleId);
+      if (image) {
+        batch.set(imageRef, { ...image, updatedAt: serverTimestamp() });
+      } else {
+        batch.delete(imageRef);
+      }
+      hasChanges = true;
+    });
+
     if (hasChanges) await batch.commit();
     setPosts(nextPosts);
   };
@@ -196,7 +211,7 @@ export default function AdminPage() {
   if (!authResolved || (authorized && articlesLoading)) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-[#F8F8F6] text-sm text-[#555555]">
-        Checking admin access…
+        {!authResolved ? "Checking admin access…" : "Loading CMS articles…"}
       </main>
     );
   }
