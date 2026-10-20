@@ -5,7 +5,7 @@ import BlogPostClient from '@/components/BlogPostClient';
 import { SITE_URL } from '@/lib/siteConfig';
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
@@ -15,7 +15,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = initialBlogPosts.find((p) => p.slug === params.slug);
+  const { slug } = await params;
+  const post = initialBlogPosts.find((p) => p.slug === slug);
   if (post?.status === 'draft') notFound();
 
   if (!post) {
@@ -65,13 +66,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function BlogPostPage({ params }: Props) {
-  const post = initialBlogPosts.find((p) => p.slug === params.slug);
+export default async function BlogPostPage({ params }: Props) {
+  const { slug } = await params;
+  const post = initialBlogPosts.find((p) => p.slug === slug);
   if (post?.status === 'draft') notFound();
 
   return (
     <BlogPostClient
-      slug={params.slug}
+      slug={slug}
       initialPost={post ?? null}
       initialPosts={initialBlogPosts}
     />
