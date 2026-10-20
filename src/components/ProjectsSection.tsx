@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import {
   Play,
   Pause,
@@ -157,15 +158,13 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         </div>
                       ) : (
                         <>
-                          <img
+                          <Image
                             src={project.image}
                             alt={`${project.title} — ${project.category} project by RouR Tech`}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-104"
+                            width={1600}
+                            height={1000}
                             loading="lazy"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                            }}
                           />
 
                           {/* Video Preview Trigger Badge */}

@@ -1,6 +1,13 @@
-import React from 'react';
-import { X, CheckCircle2, ArrowRight, Clock, DollarSign, Layers } from 'lucide-react';
-import { ServiceItem } from '../types';
+import React from "react";
+import {
+  X,
+  CheckCircle2,
+  ArrowRight,
+  Clock,
+  DollarSign,
+  Layers,
+} from "lucide-react";
+import { ServiceItem } from "../types";
 
 interface ServiceDetailModalProps {
   service: ServiceItem | null;
@@ -28,14 +35,16 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
       <div className="absolute inset-0" onClick={onClose} />
 
       <div className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl border border-[#E8E8E8] max-h-[90vh] overflow-y-auto z-10">
-        
         {/* Header */}
         <div className="p-6 border-b border-[#E8E8E8] flex items-start justify-between bg-[#F8F8F6]">
           <div>
             <div className="text-xs font-semibold text-[#FF5B4D] uppercase tracking-wider mb-1">
-              Service Deep Dive
+              Quick View
             </div>
-            <h2 id="service-modal-title" className="text-2xl font-bold text-[#111111] font-display">
+            <h2
+              id="service-modal-title"
+              className="text-2xl font-bold text-[#111111] font-display"
+            >
               {service.title}
             </h2>
           </div>
@@ -50,24 +59,36 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
 
         {/* Body */}
         <div className="p-6 sm:p-8 space-y-6">
-          <p className="text-base text-[#444444] leading-relaxed">
-            {service.fullDescription}
+          <p className="text-base font-medium text-[#333333] leading-relaxed">
+            {service.shortDescription}
           </p>
+
+          <div className="border-l-2 border-[#FF5B4D] pl-4 text-sm leading-relaxed text-[#555555]">
+            {service.fullDescription}
+          </div>
 
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 gap-4 p-4 bg-[#F8F8F6] rounded-lg border border-[#E8E8E8] text-sm">
             <div className="flex items-center gap-2.5">
               <Clock className="w-4 h-4 text-[#FF5B4D]" />
               <div>
-                <span className="text-xs text-[#777777] block">Delivery Window</span>
-                <span className="font-semibold text-[#111111]">{service.typicalTimeline}</span>
+                <span className="text-xs text-[#777777] block">
+                  Delivery Window
+                </span>
+                <span className="font-semibold text-[#111111]">
+                  {service.typicalTimeline}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-2.5">
               <DollarSign className="w-4 h-4 text-[#FF5B4D]" />
               <div>
-                <span className="text-xs text-[#777777] block">Investment Baseline</span>
-                <span className="font-semibold text-[#111111] font-mono-data">{service.startingBudget}</span>
+                <span className="text-xs text-[#777777] block">
+                  Investment Baseline
+                </span>
+                <span className="font-semibold text-[#111111] font-mono-data">
+                  {service.startingBudget}
+                </span>
               </div>
             </div>
           </div>
@@ -75,11 +96,14 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
           {/* Scope & Deliverables */}
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wider text-[#111111] mb-3">
-              Included Deliverables & Milestones
+              What&apos;s included
             </h3>
             <ul className="space-y-2.5">
               {service.deliverables.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 text-sm text-[#444444]">
+                <li
+                  key={idx}
+                  className="flex items-start gap-2.5 text-sm text-[#444444]"
+                >
                   <CheckCircle2 className="w-4 h-4 text-[#FF5B4D] shrink-0 mt-0.5" />
                   <span>{item}</span>
                 </li>
@@ -163,7 +187,6 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

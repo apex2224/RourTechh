@@ -96,26 +96,42 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
 
   // Track reading progress
   useEffect(() => {
+    let frame = 0;
     const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollTop;
-      const windowHeight =
-        document.documentElement.scrollHeight -
-        document.documentElement.clientHeight;
-      if (windowHeight > 0) {
-        setScrollProgress(
-          Math.min(100, Math.max(0, (totalScroll / windowHeight) * 100)),
-        );
-      }
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        const totalScroll = document.documentElement.scrollTop;
+        const windowHeight =
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight;
+        if (windowHeight > 0) {
+          setScrollProgress(
+            Math.min(100, Math.max(0, (totalScroll / windowHeight) * 100)),
+          );
+        }
+        frame = 0;
+      });
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.cancelAnimationFrame(frame);
+    };
   }, []);
 
-  const handleShare = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (!navigator.clipboard || !window.isSecureContext) {
+      window.prompt("Copy this article URL:", url);
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt("Copy this article URL:", url);
     }
   };
 
@@ -234,6 +250,8 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
               src={post.author.avatar}
               alt={post.author.name}
               className="w-11 h-11 rounded-full object-cover border border-[#E8E8E8]"
+              loading="lazy"
+              referrerPolicy="no-referrer"
             />
             <div>
               <div className="text-sm font-bold text-[#111111]">

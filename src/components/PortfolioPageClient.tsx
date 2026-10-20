@@ -2,15 +2,13 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { projectsData } from "@/data/projectsData";
 import { CaseStudy } from "@/types";
 import { CaseStudyModal } from "./CaseStudyModal";
-import { 
-  ArrowUpRight, 
-  Sparkles
-} from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function PortfolioPageClient() {
@@ -118,10 +116,12 @@ export default function PortfolioPageClient() {
                     {/* Image Container */}
                     <div className="relative aspect-video w-full bg-neutral-100 overflow-hidden border-b border-[#E8E8E8]">
                       {project.image ? (
-                        <img
+                        <Image
                           src={project.image}
                           alt={`${project.title} - ${project.industry}`}
                           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                          width={1200}
+                          height={800}
                           loading="lazy"
                         />
                       ) : (

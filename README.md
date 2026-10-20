@@ -25,11 +25,10 @@ This is a named database and is distinct from Firestore's reserved `(default)`
 database. The client and Firebase CLI configuration target the named `default`
 database.
 
-Set `NEXT_PUBLIC_FIREBASE_ADMIN_UIDS` to the comma-separated authorized Firebase
-Authentication UIDs in `.env.local` and add the same UIDs to the Firestore
-`isAdmin()` rule in `firestore.rules`. UIDs are identifiers, not credentials;
-Firestore Security Rules enforce access independently of the client-side check.
-Configure the same variable in the production environment.
+Add the authorized Firebase Authentication UIDs only to the `isAdmin()` function
+in the deployed `firestore.rules`. Do not put an admin UID allowlist in
+`NEXT_PUBLIC_*` variables: those values are sent to every browser. Firestore
+Security Rules are the authoritative admin check.
 
 Deploy the rules to the same Firebase project configured by
 `NEXT_PUBLIC_FIREBASE_PROJECT_ID` (the CLI has no active project configured in

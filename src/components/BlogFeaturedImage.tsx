@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Image as ImageIcon } from "lucide-react";
 import {
   getFirestoreBlogImageId,
@@ -22,9 +23,7 @@ export const BlogFeaturedImage: React.FC<BlogFeaturedImageProps> = ({
   const [resolvedImageUrl, setResolvedImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const firestoreImageId = imageUrl
-    ? getFirestoreBlogImageId(imageUrl)
-    : null;
+  const firestoreImageId = imageUrl ? getFirestoreBlogImageId(imageUrl) : null;
 
   useEffect(() => {
     setImageFailed(false);
@@ -87,17 +86,20 @@ export const BlogFeaturedImage: React.FC<BlogFeaturedImageProps> = ({
       className={`relative flex items-center justify-center overflow-hidden bg-[#ECECE8] ${className}`}
     >
       {resolvedImageUrl && !imageFailed ? (
-        <img
+        <Image
           src={resolvedImageUrl}
           alt={alt}
           className={imageClassName}
+          fill={false}
+          width={1600}
+          height={900}
           loading="lazy"
-          referrerPolicy="no-referrer"
+          unoptimized={resolvedImageUrl.startsWith("data:")}
           onError={() => setImageFailed(true)}
         />
       ) : (
         <div
-          className="flex flex-col items-center gap-2 px-4 text-center text-xs text-[#777777]"
+          className={`flex h-full w-full flex-col items-center justify-center gap-2 px-4 text-center text-xs text-[#777777] ${isLoading ? "skeleton" : ""}`}
           role="img"
           aria-label={
             isLoading

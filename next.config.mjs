@@ -15,6 +15,22 @@ const nextConfig = {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",
           },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "base-uri 'self'",
+              "object-src 'none'",
+              "frame-ancestors 'self'",
+              "img-src 'self' data: blob: https: http:",
+              "style-src 'self' 'unsafe-inline'",
+              "font-src 'self' data:",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "connect-src 'self' https://*.firebaseio.com https://*.firebaseapp.com https://*.googleapis.com https://*.gstatic.com",
+              "frame-src 'self' https://*.firebaseapp.com",
+              "upgrade-insecure-requests",
+            ].join("; "),
+          },
         ],
       },
       {

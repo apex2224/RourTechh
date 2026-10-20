@@ -33,7 +33,10 @@ export default function HomeClient() {
         if (!cancelled && publishedPosts) setPosts(publishedPosts);
       })
       .catch((error) => {
-        console.error("Could not load published articles from Firestore:", error);
+        console.error(
+          "Could not load published articles from Firestore:",
+          error,
+        );
       });
 
     return () => {
@@ -82,23 +85,25 @@ export default function HomeClient() {
             el?.scrollIntoView({ behavior: "smooth" });
           }}
         />
-        <ServicesSection
-          onSelectServiceForInquiry={handleSelectServiceForInquiry}
-          onViewCaseStudy={() => {
-            const el = document.getElementById("services");
-            el?.scrollIntoView({ behavior: "smooth" });
-          }}
-        />
-        <ProcessSection />
-        <WhyChooseUs />
-        <BlogSection posts={posts} onSelectPost={handleSelectArticle} />
-        <FAQSection onStartProject={handleOpenContactPopup} />
-        <ContactSection
-          prefilledService={prefilledService}
-          onWhatsAppClick={handleOpenContactPopup}
-          onInquirySubmitted={() => {}}
-        />
-        <NewsletterSection />
+        <div className="content-visibility-auto">
+          <ServicesSection
+            onSelectServiceForInquiry={handleSelectServiceForInquiry}
+            onViewCaseStudy={() => {
+              const el = document.getElementById("services");
+              el?.scrollIntoView({ behavior: "smooth" });
+            }}
+          />
+          <ProcessSection />
+          <WhyChooseUs />
+          <BlogSection posts={posts} onSelectPost={handleSelectArticle} />
+          <FAQSection onStartProject={handleOpenContactPopup} />
+          <ContactSection
+            prefilledService={prefilledService}
+            onWhatsAppClick={handleOpenContactPopup}
+            onInquirySubmitted={() => {}}
+          />
+          <NewsletterSection />
+        </div>
       </main>
 
       <Footer
@@ -130,11 +135,15 @@ export default function HomeClient() {
             <p className="text-xs font-semibold uppercase tracking-wider text-[#FF5B4D]">
               Contact RouR Tech
             </p>
-            <h2 id="quick-contact-title" className="mt-2 pr-8 text-2xl font-bold text-[#111111] font-display">
+            <h2
+              id="quick-contact-title"
+              className="mt-2 pr-8 text-2xl font-bold text-[#111111] font-display"
+            >
               Let&apos;s talk about your project.
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-[#666666]">
-              Choose the quickest way to reach us, or share your project details through the form.
+              Choose the quickest way to reach us, or share your project details
+              through the form.
             </p>
 
             <div className="mt-6 grid gap-2">

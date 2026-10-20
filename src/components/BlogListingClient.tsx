@@ -2,17 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { BlogFeaturedImage } from "./BlogFeaturedImage";
 import { BlogPost } from "@/types";
 import { loadPublishedBlogPosts } from "@/lib/blogPosts";
-import { 
-  Search, 
-  Clock, 
-  ArrowRight, 
-  BookOpen 
-} from "lucide-react";
+import { Search, Clock, ArrowRight, BookOpen } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface BlogListingClientProps {
@@ -216,10 +212,12 @@ export default function BlogListingClient({ initialPosts }: BlogListingClientPro
                     <div className="p-6 pt-0 border-t border-[#F0F0EE] flex items-center justify-between text-xs mt-4 pt-4">
                       <div className="flex items-center gap-2.5">
                         {post.author.avatar ? (
-                          <img
+                          <Image
                             src={post.author.avatar}
                             alt={post.author.name}
                             className="w-7 h-7 rounded-full object-cover"
+                            width={32}
+                            height={32}
                             loading="lazy"
                           />
                         ) : (

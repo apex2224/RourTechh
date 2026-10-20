@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import {
   X,
   ArrowRight,
@@ -81,15 +82,13 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
                 poster={project.image}
               />
             ) : (
-              <img
+              <Image
                 src={project.image}
                 alt={project.title}
                 className="w-full h-full object-cover"
+                width={1600}
+                height={900}
                 loading="lazy"
-                referrerPolicy="no-referrer"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
               />
             )}
           </div>

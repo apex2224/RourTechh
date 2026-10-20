@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FirebaseError } from "firebase/app";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import {
   collection,
   doc,
@@ -18,12 +17,13 @@ import { isAdminUser } from "@/lib/adminAuthorization";
 import { auth, db } from "@/lib/firebase";
 import { BlogImageUpdates } from "@/lib/blogImages";
 import { BlogPost } from "@/types";
+import { getErrorCode } from "@/lib/errorCode";
 
 function logArticleLoadError(
   error: unknown,
   operation: string,
 ) {
-  const code = error instanceof FirebaseError ? error.code : "unknown";
+  const code = getErrorCode(error) || "unknown";
   const message = error instanceof Error ? error.message : String(error);
   const missingDatabase =
     /\bdatabase\b.*\bnot found\b/i.test(message) ||
@@ -48,7 +48,7 @@ function logArticleLoadError(
 }
 
 function getArticleLoadErrorMessage(error: unknown): string {
-  const code = error instanceof FirebaseError ? error.code : "unknown";
+  const code = getErrorCode(error) || "unknown";
   const message = error instanceof Error ? error.message : String(error);
 
   if (
@@ -80,7 +80,7 @@ export default function AdminPage() {
   useEffect(() => {
     let cancelled = false;
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
       if (!user || !isAdminUser(user)) {
         setAuthorized(false);
         setAuthResolved(true);

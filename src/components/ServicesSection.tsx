@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import Link from "next/link";
 import {
@@ -124,8 +126,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
 
                   <div className="flex items-center gap-2.5">
                     <button
-                      onClick={() => setActiveService(service)}
-                      className="text-[#777777] hover:text-[#111111] transition-colors cursor-pointer text-xs"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setActiveService(service);
+                      }}
+                      className="inline-flex items-center rounded-md border border-[#E8E8E8] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#FF5B4D] transition-colors hover:border-[#FF5B4D] hover:bg-[#FFF2F0] cursor-pointer"
                       aria-label={`Quick overview for ${service.title}`}
                     >
                       Quick View

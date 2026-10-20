@@ -1,0 +1,77 @@
+{
+  "planHash": "3a196c5b41fc07e137c08a45092ca56c250650f67caa2a40217800541a5cb30f",
+  "phase": "standalone",
+  "recordedAtUtc": "2026-10-20T06:10:51.4446040Z",
+  "retryCount": 0,
+  "resetBaseline": false,
+  "complete": true,
+  "result": {
+    "setupSucceeded": true,
+    "setupDurationMs": 0,
+    "setupFailureOutput": null,
+    "assertions": [
+      {
+        "name": "tsc-no-emit",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": false,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 1,
+        "outputSample": "src/app/admin/page.tsx(28,9): error TS18046: \u0027error\u0027 is of type \u0027unknown\u0027.\r\nsrc/app/admin/page.tsx(58,9): error TS18046: \u0027error\u0027 is of type \u0027unknown\u0027.\r\nsrc/components/CmsAdminModal.tsx(172,11): error TS18046: \u0027error\u0027 is of type \u0027unknown\u0027.\r\nsrc/components/CmsAdminModal.tsx(304,13): error TS18046: \u0027error\u0027 is of type \u0027unknown\u0027.\r\n",
+        "durationMs": 2627
+      },
+      {
+        "name": "dev-server-serves-home",
+        "kind": "http-probe",
+        "verificationMethod": "http-status",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": null,
+        "outputSample": "HTTP 200\n\u003C!DOCTYPE html\u003E\u003Chtml lang=\u0022en\u0022 class=\u0022geist_b2321009-module__6_eZSW__variable geistmono_6f3eab01-module__nME7Ja__variable\u0022\u003E\u003Chead\u003E\u003Cmeta charSet=\u0022utf-8\u0022/\u003E\u003Cmeta name=\u0022viewport\u0022 content=\u0022width=device-width, initial-scale=1\u0022/\u003E\u003Clink rel=\u0022preload\u0022 as=\u0022image\u0022 imageSrcSet=\u0022/_next/image?url=%2Fsrc%2Fassets%2Fimages%2FRouRTechLogo.png\u0026amp;w=96\u0026amp;q=75 1x, /_next/image?url=%2Fsrc%2Fassets%2Fimages%2FRouRTechLogo.png\u0026amp;w=256\u0026amp;q=75 2x\u0022/\u003E\u003Clink rel=\u0022stylesheet\u0022 href=\u0022/_next/static/chunks/src_app_04n_yxtqi3y1w._.css\u0022 data-precedence=\u0022next_static/chunks/src_app_04n_yxtqi3y1w._.css\u0022/\u003E\u003Clink rel=\u0022preload\u0022 as=\u0022script\u0022 fetchPriority=\u0022low\u0022 href=\u0022/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_0qva5cupmdgep._.js\u0022/\u003E\u003Cscript src=\u0022/_next/static/chunks/1daa_next_dist_compiled_react-dom_cjs_react-dom-client_development_0mp0cp_t-ezj9.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/1q96_modules_next_dist_compiled_react-dom_cjs_react-dom_development_1sqry0_53krp4.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_compiled_react-dom_0grqycjrj6mju._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-67asdr9._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jmam7qwg.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_compiled_1amofcmz--cdp._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_client_1wygxxh5rwq0t._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_05y3oi5z9mc_3._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqwj2323d._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/_1anvha4rlo79g._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/turbopack-_06rkbud3pyrlm._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/_219uq1sj0q91c._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_20wefz_f1k6jn._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_04se748npkha7._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/src_components_Header_tsx_1_ru7qqjj4hed._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/src_0_j-gn6zfvp3f._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_0v0ikhijoaf4e._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_re2js_build_index_10oziwle7cri1.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_%40firebase_firestore_dist_common-D9UYuXJO_esm_10on9nj-5r_d4.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_%40firebase_firestore_dist_09_0u8jaxjoer._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/16uk_%40firebase_auth_dist_esm_0-vhhaa6p0bw8._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_0zhf0uii2um7_._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Ctitle\u003ERouR Tech \u2014 Engineering High-Performance Digital Products \u0026amp; Web Applications\u003C/title\u003E\u003Cmeta name=\u0022description\u0022 content=\u0022RouR Tech builds blazing-fast, scalable, and SEO-friendly websites, Next.js web applications, headless commerce platforms, and custom software solutions.\u0022/\u003E\u003Cmeta name=\u0022author\u0022 content=\u0022RouR Tech Engineering Team\u0022/\u003E\u003Cmeta name=\u0022keywords\u0022 content=\u0022web development,UI/UX design,technical SEO,e-commerce development,custom software,Next.js development,React development,Core Web Vitals optimization,digital product engineering,RouR Tech\u0022/\u003E\u003Cmeta name=\u0022publisher\u0022 content=\u0022RouR Tech\u0022/\u003E\u003Cmeta name=\u0022robots\u0022 content=\u0022index, follow\u0022/\u003E\u003Cmeta name=\u0022googlebot\u0022 content=\u0022index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1\u0022/\u003E\u003Clink rel=\u0022canonical\u0022 href=\u0022https://rourtech.com\u0022/\u003E\u003Cmeta name=\u0022format-detection\u0022 content=\u0022telephone=no, address=no, email=no\u0022/\u003E\u003Cmeta property=\u0022og:title\u0022 content=\u0022RouR Tech \u2014 Engineering High-Performance Digital Products\u0022/\u003E\u003Cmeta property=\u0022og:description\u0022 content=\u0022RouR Tech builds blazing-fast, scalable, and SEO-friendly websites, Next.js web\n\u2026[truncated]",
+        "durationMs": 258
+      }
+    ],
+    "executions": [
+      {
+        "source": "devServer",
+        "resolvedExecutable": "C:\\nvm4w\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "dev"
+        ],
+        "cwd": "c:\\Users\\rohit\\vanguard-nextjs",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "tsc-no-emit",
+        "resolvedExecutable": "C:\\nvm4w\\nodejs\\npx.CMD",
+        "args": [
+          "tsc",
+          "--noEmit"
+        ],
+        "cwd": "c:\\Users\\rohit\\vanguard-nextjs",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "dev-server-serves-home",
+        "resolvedExecutable": "C:\\nvm4w\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "dev"
+        ],
+        "cwd": "c:\\Users\\rohit\\vanguard-nextjs",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      }
+    ]
+  }
+}

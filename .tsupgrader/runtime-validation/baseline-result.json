@@ -1,0 +1,65 @@
+{
+  "planHash": "3a196c5b41fc07e137c08a45092ca56c250650f67caa2a40217800541a5cb30f",
+  "phase": "baseline",
+  "recordedAtUtc": "2026-10-20T05:40:36.0835032Z",
+  "retryCount": 0,
+  "resetBaseline": true,
+  "complete": true,
+  "result": {
+    "setupSucceeded": true,
+    "setupDurationMs": 0,
+    "setupFailureOutput": null,
+    "assertions": [
+      {
+        "name": "tsc-no-emit",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": false,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 2,
+        "outputSample": "node_modules/@types/node/vm.d.ts(782,100): error TS1010: \u0027*/\u0027 expected.\r\n",
+        "durationMs": 3298
+      },
+      {
+        "name": "dev-server-serves-home",
+        "kind": "http-probe",
+        "verificationMethod": "http-status",
+        "passed": false,
+        "timedOut": false,
+        "skipped": true,
+        "skippedReason": "devServer never became ready: devServer process exited before http://localhost:3000/ responded (exit=0). Output:\n\r\n\u003E vanguard-nextjs@0.1.0 dev\r\n\u003E next dev\r\n\r\n  \u25B2 Next.js 14.2.35\r\n  - Local:        http://localhost:3000\r\n  - Environments: .env.local\r\n\r\n \u2713 Starting...\r\n \u26A0 Attempted to load @next/swc-win32-x64-msvc, but an error occurred: \\\\?\\C:\\Users\\rohit\\vanguard-nextjs\\node_modules\\@next\\swc-win32-x64-msvc\\next-swc.win32-x64-msvc.node is not a valid Win32 application.\r\n\\\\?\\C:\\Users\\rohit\\vanguard-nextjs\\node_modules\\@next\\swc-win32-x64-msvc\\next-swc.win32-x64-msvc.node\r\n \u2A2F Failed to load SWC binary for win32/x64, see more info here: https://nextjs.org/docs/messages/failed-loading-swc\r\n\u001B[?25h\r\n",
+        "exitCode": null,
+        "outputSample": "",
+        "durationMs": 0
+      }
+    ],
+    "executions": [
+      {
+        "source": "devServer",
+        "resolvedExecutable": "C:\\nvm4w\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "dev"
+        ],
+        "cwd": "C:\\Users\\rohit\\vanguard-nextjs",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "tsc-no-emit",
+        "resolvedExecutable": "C:\\nvm4w\\nodejs\\npx.CMD",
+        "args": [
+          "tsc",
+          "--noEmit"
+        ],
+        "cwd": "C:\\Users\\rohit\\vanguard-nextjs",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      }
+    ]
+  }
+}

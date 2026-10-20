@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FirebaseError } from "firebase/app";
 import {
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -7,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  User,
 } from "firebase/auth";
 import {
   collection,
@@ -27,6 +27,7 @@ import {
 } from "@/lib/blogImages";
 import { SITE_URL } from "@/lib/siteConfig";
 import { initialBlogPosts } from "@/data/blogData";
+import { getErrorCode } from "@/lib/errorCode";
 
 import {
   X,
@@ -166,7 +167,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
   };
 
   const getAuthErrorMessage = (error: unknown) => {
-    const code = error instanceof FirebaseError ? error.code : "";
+    const code = getErrorCode(error);
 
     switch (code) {
       case "auth/invalid-credential":
@@ -194,7 +195,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
   // Authenticate users and restrict CMS access to the configured admin UIDs.
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
       setAuthLoading(false);
       if (!user) {
         setCurrentUser(null);
@@ -293,7 +294,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       );
     } catch (error) {
       console.error("Password reset request failed:", error);
-      const code = error instanceof FirebaseError ? error.code : "";
+      const code = getErrorCode(error);
       if (code === "auth/user-not-found") {
         setPasswordResetMessage(
           "If an account exists for this email, a password reset link has been sent.",
