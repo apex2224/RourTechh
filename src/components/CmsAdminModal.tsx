@@ -36,6 +36,7 @@ import {
   Trash2,
   CheckCircle2,
   Eye,
+  EyeOff,
   FileText,
   Users,
   Globe,
@@ -673,6 +674,25 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
     if (!post) return;
     setDeleteError("");
     setPostPendingDelete(post);
+  };
+
+  const handleToggleVisibility = async (post: BlogPost) => {
+    const nextStatus = post.status === "published" ? "draft" : "published";
+    const updatedPost = { ...post, status: nextStatus as BlogPost["status"] };
+    setArticlesError("");
+
+    try {
+      await onUpdatePosts(
+        posts.map((currentPost) =>
+          currentPost.id === post.id ? updatedPost : currentPost,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to update article visibility:", error);
+      setArticlesError(
+        "Could not update article visibility. Verify the authorized admin account and Firestore rules, then try again.",
+      );
+    }
   };
 
   const confirmDeletePost = async () => {
@@ -1376,12 +1396,33 @@ Sitemap: ${SITE_URL}/sitemap.xml
                                 </span>
                               ) : (
                                 <span className="text-amber-700 font-semibold text-[11px]">
-                                  Draft
+                                  Hidden / Draft
                                 </span>
                               )}
                             </td>
 
                             <td className="px-4 py-3.5 text-right space-x-2">
+                              <button
+                                onClick={() => void handleToggleVisibility(post)}
+                                className="p-1 text-[#666666] hover:text-[#FF5B4D] hover:bg-black/5 rounded transition-colors"
+                                title={
+                                  post.status === "published"
+                                    ? "Hide article from website"
+                                    : "Publish article on website"
+                                }
+                                aria-label={
+                                  post.status === "published"
+                                    ? `Hide ${post.title} from website`
+                                    : `Publish ${post.title} on website`
+                                }
+                              >
+                                {post.status === "published" ? (
+                                  <EyeOff className="w-4 h-4" />
+                                ) : (
+                                  <Eye className="w-4 h-4" />
+                                )}
+                              </button>
+
                               <button
                                 onClick={() => {
                                   setPreviewPostOverride(post);

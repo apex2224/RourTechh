@@ -27,12 +27,9 @@ export default function BlogListingClient({ initialPosts }: BlogListingClientPro
     let cancelled = false;
     loadPublishedBlogPosts()
       .then((published) => {
-        if (!cancelled && published && published.length > 0) {
+        if (!cancelled && published !== null) {
           // Merge unique by slug
           const map = new Map<string, BlogPost>();
-          initialPosts.forEach((p) => {
-            if (p.status === "published") map.set(p.slug, p);
-          });
           published.forEach((p) => {
             if (p.status === "published") map.set(p.slug, p);
           });

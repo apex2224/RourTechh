@@ -30,7 +30,7 @@ export default function HomeClient() {
     let cancelled = false;
     loadPublishedBlogPosts()
       .then((publishedPosts) => {
-        if (!cancelled && publishedPosts) setPosts(publishedPosts);
+        if (!cancelled && publishedPosts !== null) setPosts(publishedPosts);
       })
       .catch((error) => {
         console.error(
