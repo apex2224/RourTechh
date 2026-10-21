@@ -50,11 +50,16 @@ export default function BlogListingClient({ initialPosts }: BlogListingClientPro
 
   const categories = [
     "All",
-    "Web Development",
-    "UI/UX",
-    "SEO",
-    "Technology",
-    "E-commerce",
+    ...Array.from(
+      new Set([
+        "Web Development",
+        "UI/UX",
+        "SEO",
+        "Technology",
+        "E-commerce",
+        ...posts.map((post) => post.category),
+      ]),
+    ),
   ];
 
   const filteredPosts = posts.filter((post) => {

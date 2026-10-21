@@ -68,6 +68,7 @@ export interface BlogPost {
   seoTitle: string;
   seoDescription: string;
   category: 'Web Development' | 'UI/UX' | 'SEO' | 'Technology' | 'E-commerce';
+  blogType?: string;
   tags: string[];
   author: {
     name: string;

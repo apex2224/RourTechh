@@ -89,7 +89,7 @@ service cloud.firestore {
           "id", "slug", "title", "seoTitle", "seoDescription", "category",
           "tags", "author", "featuredImage", "publishDate", "readTime",
           "excerpt", "content", "status", "relatedServiceId",
-          "relatedPostSlugs"
+          "relatedPostSlugs", "blogType"
         ])
         && data.id is string
         && data.id == articleId
@@ -102,6 +102,14 @@ service cloud.firestore {
         && data.seoTitle.size() <= 250
         && data.seoDescription is string
         && data.seoDescription.size() <= 500
+        && (
+          !data.keys().hasAny(["blogType"])
+          || (
+            data.blogType is string
+            && data.blogType.size() > 0
+            && data.blogType.size() <= 80
+          )
+        )
         && (
           data.category == "Web Development"
           || data.category == "UI/UX"

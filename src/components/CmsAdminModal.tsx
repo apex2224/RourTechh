@@ -106,6 +106,8 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
     "Web Development" | "UI/UX" | "SEO" | "Technology" | "E-commerce"
   >("Web Development");
 
+  const [blogType, setBlogType] = useState("");
+
   const [authorName, setAuthorName] = useState("Alexander Cross");
 
   const [authorRole, setAuthorRole] = useState("Principal Solutions Architect");
@@ -430,6 +432,8 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
     setCategory("Web Development");
 
+    setBlogType("");
+
     setAuthorName("Alexander Cross");
 
     setAuthorRole("Principal Solutions Architect");
@@ -467,6 +471,8 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
     setSlug(p.slug);
 
     setCategory(p.category);
+
+    setBlogType(p.blogType || "");
 
     setAuthorName(p.author.name);
 
@@ -513,6 +519,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       seoTitle: seoTitle.trim() || `${cleanTitle} | RouR Tech Insights`,
       seoDescription: seoDescription.trim() || excerpt.trim().slice(0, 155),
       category,
+      ...(blogType.trim() ? { blogType: blogType.trim().slice(0, 80) } : {}),
       tags: tagsArray.length > 0 ? tagsArray : ["Engineering"],
       author: {
         name: authorName.trim() || "RouR Tech Editorial Team",
@@ -1023,6 +1030,23 @@ Sitemap: ${SITE_URL}/sitemap.xml
 
                         <option value="E-commerce">E-commerce</option>
                       </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase text-[#333333] mb-1">
+                        Blog Type <span className="font-normal text-[#888888]">(internal)</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={blogType}
+                        onChange={(e) => setBlogType(e.target.value)}
+                        maxLength={80}
+                        placeholder="e.g. Case Study, Announcement, Guide"
+                        className="w-full px-3 py-2 bg-white border border-[#E8E8E8] rounded-lg text-sm"
+                      />
+                      <p className="mt-1 text-[11px] text-[#888888]">
+                        Only visible in the CMS; visitors see the category.
+                      </p>
                     </div>
 
                     <div>
