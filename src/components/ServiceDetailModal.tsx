@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   CheckCircle2,
@@ -22,9 +23,16 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
   onSelectForInquiry,
   onViewCaseStudy,
 }) => {
-  if (!service) return null;
+  const [isMounted, setIsMounted] = useState(false);
 
-  return (
+  useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
+
+  if (!service || !isMounted) return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150"
       role="dialog"
@@ -188,6 +196,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
