@@ -5,6 +5,7 @@ import BlogPostClient from "@/components/BlogPostClient";
 import { SITE_URL } from "@/lib/siteConfig";
 import { loadPublishedBlogPostBySlug } from "@/lib/serverBlogPosts";
 
+export const dynamic = "force-dynamic";
 interface Props {
   params: Promise<{ slug: string }>;
 }
