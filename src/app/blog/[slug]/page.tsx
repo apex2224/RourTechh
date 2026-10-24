@@ -10,12 +10,6 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  return initialBlogPosts
-    .filter((post) => post.status === "published")
-    .map((post) => ({ slug: post.slug }));
-}
-
 async function getPost(slug: string) {
   const staticPost = initialBlogPosts.find((post) => post.slug === slug);
 
