@@ -1,8 +1,8 @@
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { initialBlogPosts } from '@/data/blogData';
-import BlogPostClient from '@/components/BlogPostClient';
-import { SITE_URL } from '@/lib/siteConfig';
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { initialBlogPosts } from "@/data/blogData";
+import BlogPostClient from "@/components/BlogPostClient";
+import { SITE_URL } from "@/lib/siteConfig";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -10,30 +10,30 @@ interface Props {
 
 export async function generateStaticParams() {
   return initialBlogPosts
-    .filter((post) => post.status === 'published')
+    .filter((post) => post.status === "published")
     .map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = initialBlogPosts.find((p) => p.slug === slug);
-  if (post?.status === 'draft') notFound();
+  if (post?.status === "draft") notFound();
 
   if (!post) {
     return {
-      title: 'Article Not Found | RouR Tech Insights',
-      description: 'The requested engineering insight could not be found.',
+      title: "Article Not Found | RouR Tech Insights",
+      description: "The requested engineering insight could not be found.",
       robots: {
-        index: false,
+        index: true,
         follow: true,
       },
     };
   }
 
   const imageUrl = post.featuredImage
-    ? (post.featuredImage.startsWith('http')
-        ? post.featuredImage
-        : `${SITE_URL}${post.featuredImage}`)
+    ? post.featuredImage.startsWith("http")
+      ? post.featuredImage
+      : `${SITE_URL}${post.featuredImage}`
     : `${SITE_URL}/src/assets/images/blog_seo_web_performance_1791271638172-optimized.webp`;
 
   return {
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: post.title,
       description: post.seoDescription || post.excerpt,
-      type: 'article',
+      type: "article",
       url: `${SITE_URL}/blog/${post.slug}`,
       publishedTime: post.publishDate,
       images: [
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: post.title,
       description: post.seoDescription || post.excerpt,
       images: [imageUrl],
@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const post = initialBlogPosts.find((p) => p.slug === slug);
-  if (post?.status === 'draft') notFound();
+  if (post?.status === "draft") notFound();
 
   return (
     <BlogPostClient
