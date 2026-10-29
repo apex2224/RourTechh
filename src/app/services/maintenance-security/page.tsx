@@ -2,20 +2,20 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceBySlug } from "@/data/servicesData";
 import { ServicePageTemplate } from "@/components/ServicePageTemplate";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Website Maintenance, Security & Support Services | RouR Tech",
   description:
     "Website maintenance, dependency updates, security reviews, bug fixes, and performance checks scoped to your application's needs.",
   alternates: {
-    canonical: `${SITE_URL}/services/maintenance-security`,
+    canonical: absoluteSiteUrl("/services/maintenance-security"),
   },
   openGraph: {
     title: "Website Maintenance, Security & Support Services | RouR Tech",
     description:
       "Website maintenance, dependency updates, security reviews, bug fixes, and performance checks scoped to your application's needs.",
-    url: `${SITE_URL}/services/maintenance-security`,
+    url: absoluteSiteUrl("/services/maintenance-security"),
     siteName: "RouR Tech",
     type: "website",
   },

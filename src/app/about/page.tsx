@@ -12,20 +12,21 @@ import {
   Terminal,
   Globe2,
 } from "lucide-react";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
+import { serializeStructuredData } from "@/lib/structuredData";
 
 export const metadata: Metadata = {
   title: "About RouR Tech — Engineering High-Performance Digital Products",
   description:
     "Learn about RouR Tech's engineering philosophy, architecture standards, and client-first delivery model for modern web applications and digital platforms.",
   alternates: {
-    canonical: `${SITE_URL}/about`,
+    canonical: absoluteSiteUrl("/about"),
   },
   openGraph: {
     title: "About RouR Tech — Engineering High-Performance Digital Products",
     description:
       "Learn about RouR Tech's engineering philosophy, architecture standards, and client-first delivery model.",
-    url: `${SITE_URL}/about`,
+    url: absoluteSiteUrl("/about"),
     siteName: "RouR Tech",
     type: "website",
   },
@@ -52,7 +53,7 @@ export default function AboutPage() {
         "@type": "ListItem",
         position: 2,
         name: "About Us",
-        item: `${SITE_URL}/about`,
+        item: absoluteSiteUrl("/about"),
       },
     ],
   };
@@ -106,7 +107,9 @@ export default function AboutPage() {
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumbs) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(jsonLdBreadcrumbs),
+        }}
       />
 
       <Header isArticleView={false} />
@@ -143,8 +146,7 @@ export default function AboutPage() {
               <span>About RouR Tech</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#111111] font-display tracking-tight leading-[1.1] mb-8">
-              We engineer high-performance digital products that drive
-              measurable business growth.
+              We engineer digital products shaped around real business needs.
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-[#555555] leading-relaxed max-w-3xl font-body mb-10">
               RouR Tech is a specialized digital engineering studio. We combine

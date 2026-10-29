@@ -1,3 +1,5 @@
+import type { JSONContent } from '@tiptap/core';
+
 export type ServiceId =
   | 'web-development'
   | 'ui-ux-design'
@@ -79,7 +81,8 @@ export interface BlogPost {
   publishDate: string;
   readTime: string;
   excerpt: string;
-  content: string; // Markdown or rich text paragraphs
+  content: string; // Legacy Markdown retained for backward compatibility.
+  contentJson?: JSONContent; // TipTap/ProseMirror JSON for rich-text articles.
   status: 'published' | 'draft';
   relatedServiceId?: ServiceId;
   relatedPostSlugs?: string[];

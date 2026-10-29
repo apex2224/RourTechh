@@ -3,8 +3,10 @@ import { ArrowLeft, Share2, Check, ArrowRight } from "lucide-react";
 import { BlogPost, ServiceItem } from "../types";
 import { servicesData } from "../data/servicesData";
 import { BlogFeaturedImage } from "./BlogFeaturedImage";
+import RichArticleContent from "./RichArticleContent";
 import { getFirestoreBlogImageId } from "@/lib/blogImages";
-import { SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { absoluteSiteUrl, SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { serializeStructuredData } from "@/lib/structuredData";
 
 interface ArticleViewProps {
   post: BlogPost;
@@ -25,15 +27,6 @@ function getPublicBlogImageUrl(imageUrl: string): string {
   } catch {
     return "";
   }
-}
-
-function serializeJsonLd(value: object): string {
-  const serialized = JSON.stringify(value);
-  if (!serialized) throw new Error("Could not serialize article metadata.");
-  return serialized
-    .replace(/</g, "\\u003c")
-    .replace(/>/g, "\\u003e")
-    .replace(/&/g, "\\u0026");
 }
 
 export const ArticleView: React.FC<ArticleViewProps> = ({
@@ -149,7 +142,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: serializeJsonLd({
+          __html: serializeStructuredData({
             "@context": "https://schema.org",
             "@type": "Article",
             headline: post.title,
@@ -170,13 +163,13 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
               name: siteConfig.name,
               logo: {
                 "@type": "ImageObject",
-                url: `${SITE_URL}/src/assets/images/hero_digital_agency_1791271576191-optimized.webp`,
+                url: absoluteSiteUrl("/src/assets/images/RouRTechLogo.png"),
               },
             },
             datePublished: post.publishDate,
             mainEntityOfPage: {
               "@type": "WebPage",
-              "@id": `${SITE_URL}/blog/${post.slug}`,
+              "@id": absoluteSiteUrl(`/blog/${post.slug}`),
             },
           }),
         }}
@@ -274,61 +267,10 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
 
         {/* Article Body */}
         <div className="bg-white p-6 sm:p-12 rounded-2xl border border-[#E8E8E8] shadow-xs prose prose-neutral max-w-none text-[#333333] leading-relaxed">
-          {post.content.split("\n\n").map((paragraph, index) => {
-            const trimmed = paragraph.trim();
-
-            if (trimmed.startsWith("### ")) {
-              return (
-                <h3
-                  key={index}
-                  className="text-2xl font-bold text-[#111111] font-display mt-8 mb-4 pt-4 border-t border-[#F0F0EE] first:border-0 first:pt-0"
-                >
-                  {trimmed.replace("### ", "")}
-                </h3>
-              );
-            }
-
-            if (trimmed.startsWith("```")) {
-              const codeLines = trimmed.replace(/```[a-z]*\n?/g, "").trim();
-              return (
-                <div
-                  key={index}
-                  className="my-6 rounded-lg bg-[#141414] p-4 overflow-x-auto text-xs font-mono text-neutral-200"
-                >
-                  <pre>
-                    <code>{codeLines}</code>
-                  </pre>
-                </div>
-              );
-            }
-
-            if (trimmed.startsWith("* ") || trimmed.startsWith("- ")) {
-              const items = trimmed.split("\n");
-              return (
-                <ul
-                  key={index}
-                  className="my-4 space-y-2 list-disc pl-5 text-sm text-[#444444]"
-                >
-                  {items.map((li, liIdx) => (
-                    <li key={liIdx}>{li.replace(/^[\*\-]\s+/, "")}</li>
-                  ))}
-                </ul>
-              );
-            }
-
-            if (trimmed === "---") {
-              return <hr key={index} className="my-8 border-[#E8E8E8]" />;
-            }
-
-            return (
-              <p
-                key={index}
-                className="text-base text-[#444444] leading-relaxed my-4"
-              >
-                {trimmed}
-              </p>
-            );
-          })}
+          <RichArticleContent
+            contentJson={post.contentJson}
+            legacyContent={post.content}
+          />
 
           {/* Tags */}
           <div className="mt-12 pt-6 border-t border-[#E8E8E8] flex flex-wrap items-center gap-2 text-xs text-[#666666]">

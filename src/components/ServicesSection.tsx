@@ -55,7 +55,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div className="max-w-2xl">
-            <div className="text-xs font-semibold text-[#FF5B4D] tracking-wider uppercase mb-2">
+            <div className="text-xs font-semibold text-[#B84238] tracking-wider uppercase mb-2">
               Web Development & Digital Services
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111111] font-display text-balance">
@@ -81,7 +81,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                 <div>
                   {/* Top Bar inside card: Editorial Number & Icon */}
                   <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#F0F0EE]">
-                    <span className="text-xs font-bold font-mono-data text-[#888888] tracking-widest">
+                    <span className="text-xs font-bold font-mono-data text-[#666666] tracking-widest">
                       {stepNum}.
                     </span>
                     <div className="w-9 h-9 rounded-lg bg-[#F8F8F6] border border-[#E8E8E8] flex items-center justify-center text-[#111111] group-hover:bg-[#FFF2F0] group-hover:text-[#FF5B4D] group-hover:border-[#FF5B4D]/30 transition-colors">
@@ -90,7 +90,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                   </div>
 
                   {/* Title & Short Description */}
-                  <h3 className="text-xl font-bold text-[#111111] font-display mb-3 group-hover:text-[#FF5B4D] transition-colors">
+                  <h3 className="text-xl font-bold text-[#111111] font-display mb-3 group-hover:text-[#B84238] transition-colors">
                     <Link href={`/services/${service.slug || service.id}`}>
                       {service.title}
                     </Link>
@@ -116,7 +116,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                 {/* Footer of Card: Investment baseline + Trigger Buttons */}
                 <div className="pt-5 border-t border-[#F0F0EE] flex items-center justify-between text-xs">
                   <div>
-                    <span className="text-[#888888] block text-[11px]">
+                    <span className="text-[#666666] block text-[11px]">
                       Starting Price
                     </span>
                     <span className="font-bold text-[#111111] font-mono-data">
@@ -131,7 +131,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                         event.stopPropagation();
                         setActiveService(service);
                       }}
-                      className="inline-flex items-center rounded-md border border-[#E8E8E8] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#FF5B4D] transition-colors hover:border-[#FF5B4D] hover:bg-[#FFF2F0] cursor-pointer"
+                      className="inline-flex items-center rounded-md border border-[#E8E8E8] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#B84238] transition-colors hover:border-[#FF5B4D] hover:bg-[#FFF2F0] cursor-pointer"
                       aria-label={`Quick overview for ${service.title}`}
                     >
                       Quick View
@@ -139,7 +139,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
                     <span className="text-[#E0E0DD]">|</span>
                     <Link
                       href={`/services/${service.slug || service.id}`}
-                      className="inline-flex items-center gap-1 font-semibold text-[#111111] hover:text-[#FF5B4D] transition-colors group-hover:translate-x-0.5 duration-150"
+                      className="inline-flex items-center gap-1 font-semibold text-[#111111] hover:text-[#B84238] transition-colors group-hover:translate-x-0.5 duration-150"
                       aria-label={`Dedicated page for ${service.title}`}
                     >
                       <span>Full Details</span>

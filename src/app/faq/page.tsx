@@ -1,20 +1,21 @@
 import { Metadata } from "next";
 import FaqPageClient from "@/components/FaqPageClient";
 import { faqData } from "@/data/faqData";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
+import { serializeStructuredData } from "@/lib/structuredData";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions | RouR Tech",
   description:
     "Answers about project scope, web development, design, technical SEO, pricing discussions, and post-launch support.",
   alternates: {
-    canonical: `${SITE_URL}/faq`,
+    canonical: absoluteSiteUrl("/faq"),
   },
   openGraph: {
     title: "Frequently Asked Questions | RouR Tech",
     description:
       "Answers about project scope, web development, design, technical SEO, pricing discussions, and post-launch support.",
-    url: `${SITE_URL}/faq`,
+    url: absoluteSiteUrl("/faq"),
     siteName: "RouR Tech",
     type: "website",
   },
@@ -54,7 +55,7 @@ export default function FaqPage() {
         "@type": "ListItem",
         "position": 2,
         "name": "FAQs",
-        "item": `${SITE_URL}/faq`,
+        "item": absoluteSiteUrl("/faq"),
       },
     ],
   };
@@ -63,11 +64,15 @@ export default function FaqPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(jsonLdFaq),
+        }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(jsonLdBreadcrumb),
+        }}
       />
       <FaqPageClient />
     </>

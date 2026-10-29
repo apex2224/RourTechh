@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Digital Delivery Policy | RouR Tech",
   description: "How RouR Tech delivers digital services and project deliverables.",
-  alternates: { canonical: `${SITE_URL}/shipping-policy` },
+  alternates: { canonical: absoluteSiteUrl("/shipping-policy") },
 };
 
 export default function ShippingPolicyPage() {
@@ -22,6 +22,16 @@ export default function ShippingPolicyPage() {
               deployment, email, or another agreed digital channel. The
               applicable proposal or agreement confirms the method, scope, and
               delivery schedule.
+            </p>
+          ),
+        },
+        {
+          title: "No physical shipping",
+          content: (
+            <p>
+              The website does not offer physical products or collect a
+              shipping address for physical delivery. This policy concerns
+              digital services and project handover only.
             </p>
           ),
         },

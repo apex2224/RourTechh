@@ -113,7 +113,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={handleStartProjectClick}
-            className="px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white bg-[#FF5B4D] hover:bg-[#E84E40] active:scale-[0.98] rounded-lg transition-all duration-150 shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
+            className="px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white bg-[#B84238] hover:bg-[#A33830] active:scale-[0.98] rounded-lg transition-all duration-150 shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
           >
             <span>Start a Project</span>
             <ArrowUpRight className="w-4 h-4" />
@@ -156,7 +156,7 @@ export const Header: React.FC<HeaderProps> = ({
                   setMobileMenuOpen(false);
                   handleStartProjectClick();
                 }}
-                className="w-full py-3 text-center text-sm font-semibold text-white bg-[#FF5B4D] hover:bg-[#E84E40] rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 text-center text-sm font-semibold text-white bg-[#B84238] hover:bg-[#A33830] rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Start a Project</span>
                 <ArrowUpRight className="w-4 h-4" />

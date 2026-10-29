@@ -1,13 +1,14 @@
 import { Metadata } from "next";
+import { Hero } from "@/components/Hero";
 import HomeClient from "@/components/HomeClient";
-import { SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { absoluteSiteUrl, SITE_URL, siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "RouR Tech — Engineering High-Performance Digital Products & Web Applications",
   description:
     "RouR Tech builds blazing-fast, scalable, and SEO-friendly websites, Next.js web applications, headless commerce platforms, and custom software solutions.",
   alternates: {
-    canonical: SITE_URL,
+    canonical: absoluteSiteUrl(),
   },
   openGraph: {
     title: "RouR Tech — Engineering High-Performance Digital Products",
@@ -35,5 +36,5 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <HomeClient />;
+  return <HomeClient hero={<Hero />} />;
 }

@@ -1,68 +1,97 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Cookie Policy | RouR Tech",
-  description: "How RouR Tech uses cookies and similar browser technologies.",
-  alternates: { canonical: `${SITE_URL}/cookie-policy` },
+  description:
+    "What cookies and browser storage were found in the RouR Tech website source and what remains unverified.",
+  alternates: { canonical: absoluteSiteUrl("/cookie-policy") },
 };
 
 export default function CookiePolicyPage() {
   return (
     <LegalPage
       title="Cookie Policy"
-      description="This policy explains the cookies and similar technologies that may be used on the RouR Tech website."
+      description="This inventory reflects a source-code review; cookies and storage used by hosting infrastructure, providers, and browsers may require separate runtime verification."
       sections={[
         {
-          title: "What cookies are",
+          title: "What we found in the website source",
+          content: (
+            <>
+              <p>
+                The application code reviewed for this policy does not itself
+                set cookies or read or write local or session storage for
+                ordinary public browsing. No analytics or advertising script
+                initialization was found. A Firebase measurement-ID setting is
+                present in configuration, but no Firebase Analytics
+                initialization was found in the reviewed source.
+              </p>
+              <p>
+                This is not a guarantee that no cookie or technical storage is
+                used in every environment. Hosting/CDN services, Firebase
+                Authentication, the browser, or future site changes may use
+                their own storage. A live browser and production configuration
+                review is needed to establish exact cookie names, providers,
+                and lifetimes. We do not invent those details here.
+              </p>
+            </>
+          ),
+        },
+        {
+          title: "Firebase and functional requests",
           content: (
             <p>
-              Cookies are small text files stored on your device by a website.
-              Similar technologies, including browser storage and session
-              tokens, can help a site remember a session or understand how it
-              is used.
+              Public blog pages request published article data and, where
+              needed, article images from Firebase without a cookie-preference
+              prompt. These requests support the blog functionality; the
+              source review did not identify them as analytics or advertising.
+              Firebase Authentication is used for administrator sign-in and
+              may use browser-managed persistence after an administrator signs
+              in. The exact mechanism can vary by SDK and browser.
             </p>
           ),
         },
         {
-          title: "How we use them",
-          content: (
-            <ul className="list-disc pl-5 space-y-2">
-              <li>
-                <strong>Essential technologies:</strong> to provide secure
-                sessions, authentication, and core website functionality.
-              </li>
-              <li>
-                <strong>Preferences:</strong> to remember choices where the
-                website offers those features.
-              </li>
-              <li>
-                <strong>Measurement:</strong> if analytics are enabled, to
-                understand website usage and improve our content.
-              </li>
-            </ul>
-          ),
-        },
-        {
-          title: "Third-party technologies",
+          title: "Other third-party requests",
           content: (
             <p>
-              Service providers used for hosting, authentication, forms,
-              analytics, or embedded content may set or access their own
-              cookies or storage. Their use is governed by their own privacy
-              policies and terms.
+              EmailJS is called when a visitor submits the contact form and
+              processes the enquiry notification. Article images entered as
+              external URLs may be requested from the selected image host.
+              Hosting and delivery infrastructure may process technical
+              requests. The reviewed source did not establish the cookies,
+              storage duration, or server logs used by these providers; check
+              their current notices and your browser controls for additional
+              details.
             </p>
           ),
         },
         {
-          title: "Your controls",
+          title: "No preference banner or settings panel",
           content: (
             <p>
-              You can block or delete cookies through your browser settings.
-              Blocking essential technologies may affect sign-in or other
-              website functions. If the website presents a consent control,
-              your choices can be changed there.
+              The reviewed website does not currently implement a cookie
+              consent banner, preference record, or settings panel. There is no
+              in-site preference to reopen or withdraw. You can manage or clear
+              cookies and browser storage through your browser settings;
+              blocking provider storage or network requests may affect
+              administrator sign-in or blog functionality. The absence of a
+              banner should not be read as consent.
+            </p>
+          ),
+        },
+        {
+          title: "Categories",
+          content: (
+            <p>
+              No analytics or advertising cookies are identified in the
+              reviewed application source. We have not verified a named
+              optional cookie, its provider, or its duration, so this policy
+              does not claim that such categories are present or provide
+              invented cookie tables. Any future non-essential tracking should
+              be inventoried and appropriately controlled before it is
+              introduced.
             </p>
           ),
         },

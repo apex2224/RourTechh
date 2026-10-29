@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { absoluteSiteUrl, SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { serializeStructuredData } from "@/lib/structuredData";
 
 const geist = localFont({
   src: "./fonts/GeistVF.woff",
@@ -79,17 +80,36 @@ export default function RootLayout({
   const jsonLdOrg = {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
     name: siteConfig.name,
     url: SITE_URL,
     description: siteConfig.description,
+    email: siteConfig.contact.email,
+    telephone: siteConfig.contact.phone,
+    logo: absoluteSiteUrl("/src/assets/images/RouRTechLogo.png"),
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Kangra",
+      addressRegion: "Himachal Pradesh",
+      addressCountry: "IN",
+    },
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer inquiries",
+      email: siteConfig.contact.email,
+      availableLanguage: "English",
+    },
     sameAs: Object.values(siteConfig.socialLinks),
   };
 
   const jsonLdWebSite = {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
     name: siteConfig.name,
     url: SITE_URL,
+    inLanguage: "en",
+    publisher: { "@id": `${SITE_URL}/#organization` },
   };
 
   return (
@@ -97,11 +117,15 @@ export default function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
+          dangerouslySetInnerHTML={{
+            __html: serializeStructuredData(jsonLdOrg),
+          }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
+          dangerouslySetInnerHTML={{
+            __html: serializeStructuredData(jsonLdWebSite),
+          }}
         />
       </head>
       <body>{children}</body>

@@ -7,7 +7,7 @@ import {
   where,
 } from "firebase/firestore";
 import { BlogPost } from "@/types";
-import { db } from "@/lib/firebase";
+import { db, hasFirestoreConfig } from "@/lib/firebase";
 
 function isExpectedAbort(error: unknown): boolean {
   if (!error || typeof error !== "object") return false;
@@ -21,6 +21,8 @@ function isExpectedAbort(error: unknown): boolean {
 }
 
 export async function loadPublishedBlogPosts(): Promise<BlogPost[] | null> {
+  if (!hasFirestoreConfig) return null;
+
   try {
     const metadata = await getDoc(doc(db, "cmsMetadata", "blog"));
     if (metadata.data()?.initialized !== true) return null;

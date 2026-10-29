@@ -2,20 +2,20 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceBySlug } from "@/data/servicesData";
 import { ServicePageTemplate } from "@/components/ServicePageTemplate";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "UI/UX Design & Website Design Services | RouR Tech",
   description:
     "Human-centered UI/UX design, interactive prototypes, design systems, and responsive website interfaces created in Figma for brand clarity and conversion.",
   alternates: {
-    canonical: `${SITE_URL}/services/ui-ux-design`,
+    canonical: absoluteSiteUrl("/services/ui-ux-design"),
   },
   openGraph: {
     title: "UI/UX Design & Website Design Services | RouR Tech",
     description:
       "Human-centered UI/UX design, interactive prototypes, design systems, and responsive website interfaces created in Figma.",
-    url: `${SITE_URL}/services/ui-ux-design`,
+    url: absoluteSiteUrl("/services/ui-ux-design"),
     siteName: "RouR Tech",
     type: "website",
   },

@@ -1,8 +1,10 @@
-import { MetadataRoute } from "next";
-import { initialBlogPosts } from "@/data/blogData";
-import { SITE_URL } from "@/lib/siteConfig";
+import type { MetadataRoute } from "next";
+import { absoluteSiteUrl } from "@/lib/siteConfig";
+import { listPublishedBlogPostSlugs } from "@/lib/serverBlogPosts";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const serviceRoutes = [
     "web-development",
     "ui-ux-design",
@@ -11,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "custom-software",
     "maintenance-security",
   ].map((slug) => ({
-    url: `${SITE_URL}/services/${slug}`,
+    url: absoluteSiteUrl(`/services/${slug}`),
   }));
 
   const companyRoutes = [
@@ -20,22 +22,35 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "faq",
     "blog",
     "resources",
+    "portfolio",
   ].map((route) => ({
-    url: `${SITE_URL}/${route}`,
+    url: absoluteSiteUrl(`/${route}`),
   }));
 
-  const blogPostRoutes = initialBlogPosts
-    .filter((post) => post.status === "published")
-    .map((post) => ({
-      url: `${SITE_URL}/blog/${post.slug}`,
-    }));
+  const legalRoutes = [
+    "privacy-policy",
+    "cookie-policy",
+    "terms-and-conditions",
+    "disclaimer",
+    "data-deletion",
+    "acceptable-use-policy",
+    "refund-policy",
+    "shipping-policy",
+  ].map((route) => ({
+    url: absoluteSiteUrl(`/${route}`),
+  }));
+
+  const blogPostRoutes = (await listPublishedBlogPostSlugs()).map((slug) => ({
+    url: absoluteSiteUrl(`/blog/${slug}`),
+  }));
 
   return [
     {
-      url: SITE_URL,
+      url: absoluteSiteUrl(),
     },
     ...serviceRoutes,
     ...companyRoutes,
+    ...legalRoutes,
     ...blogPostRoutes,
   ];
 }

@@ -26,7 +26,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
+import { serializeStructuredData } from "@/lib/structuredData";
 
 interface ServicePageTemplateProps {
   service: ServiceItem;
@@ -59,14 +60,14 @@ export const ServicePageTemplate: React.FC<ServicePageTemplateProps> = ({ servic
   const jsonLdService = {
     "@context": "https://schema.org",
     "@type": "Service",
+    "@id": absoluteSiteUrl(`/services/${service.slug || service.id}`),
     "name": service.title,
     "description": service.shortDescription,
     "provider": {
-      "@type": "Organization",
-      "name": "RouR Tech",
-      "url": SITE_URL,
+      "@id": `${SITE_URL}/#organization`,
     },
     "serviceType": service.title,
+    "url": absoluteSiteUrl(`/services/${service.slug || service.id}`),
   };
 
   const jsonLdBreadcrumb = {
@@ -89,7 +90,7 @@ export const ServicePageTemplate: React.FC<ServicePageTemplateProps> = ({ servic
         "@type": "ListItem",
         "position": 3,
         "name": service.title,
-        "item": `${SITE_URL}/services/${service.slug || service.id}`,
+        "item": absoluteSiteUrl(`/services/${service.slug || service.id}`),
       },
     ],
   };
@@ -129,16 +130,22 @@ export const ServicePageTemplate: React.FC<ServicePageTemplateProps> = ({ servic
       {/* Structured Data Script */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdService) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(jsonLdService),
+        }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(jsonLdBreadcrumb),
+        }}
       />
       {jsonLdFaq && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }}
+          dangerouslySetInnerHTML={{
+            __html: serializeStructuredData(jsonLdFaq),
+          }}
         />
       )}
 
