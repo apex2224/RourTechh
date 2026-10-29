@@ -20,6 +20,11 @@ const card = {
       supportedProtocolVersions: [protocolVersion],
     },
   ],
+  capabilities: {
+    tools: {
+      listChanged: false,
+    },
+  },
 };
 
 const corsHeaders = {

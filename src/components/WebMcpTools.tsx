@@ -6,7 +6,6 @@ import { servicesData } from "@/data/servicesData";
 
 interface WebMcpTool {
   name: string;
-  title: string;
   description: string;
   inputSchema: {
     type: "object";
@@ -41,7 +40,6 @@ interface DocumentWithModelContext extends Document {
 const publicTools: WebMcpTool[] = [
   {
     name: "rourtech.list_services",
-    title: "List RouR Tech services",
     description:
       "Returns RouR Tech's publicly listed services, brief descriptions, and service-page URLs.",
     inputSchema: {
@@ -60,7 +58,6 @@ const publicTools: WebMcpTool[] = [
   },
   {
     name: "rourtech.get_public_contact_details",
-    title: "Get RouR Tech public contact details",
     description:
       "Returns RouR Tech's publicly listed business email, telephone, WhatsApp link, location, and website URL.",
     inputSchema: {
@@ -81,15 +78,9 @@ const publicTools: WebMcpTool[] = [
 
 export default function WebMcpTools() {
   useEffect(() => {
-    let modelContext: WebMcpModelContext | undefined;
-
-    try {
-      modelContext =
-        (navigator as NavigatorWithModelContext).modelContext ??
-        (document as DocumentWithModelContext).modelContext;
-    } catch {
-      return;
-    }
+    const modelContext =
+      (document as DocumentWithModelContext).modelContext ??
+      (navigator as NavigatorWithModelContext).modelContext;
 
     if (!modelContext || typeof modelContext.registerTool !== "function") {
       return;
@@ -101,9 +92,11 @@ export default function WebMcpTools() {
       try {
         void Promise.resolve(
           modelContext.registerTool(tool, { signal: controller.signal }),
-        ).catch(() => undefined);
-      } catch {
-        // An unavailable or incompatible experimental API must not affect the page.
+        ).catch((error: unknown) => {
+          console.error(`WebMCP tool registration failed (${tool.name}):`, error);
+        });
+      } catch (error) {
+        console.error(`WebMCP tool registration failed (${tool.name}):`, error);
       }
     }
 
@@ -115,9 +108,11 @@ export default function WebMcpTools() {
           try {
             void Promise.resolve(
               modelContext.unregisterTool(tool.name),
-            ).catch(() => undefined);
-          } catch {
-            // Cleanup is best-effort for experimental WebMCP implementations.
+            ).catch((error: unknown) => {
+              console.error(`WebMCP tool cleanup failed (${tool.name}):`, error);
+            });
+          } catch (error) {
+            console.error(`WebMCP tool cleanup failed (${tool.name}):`, error);
           }
         }
       }

@@ -18,6 +18,12 @@ interface ContactSectionProps {
   onInquirySubmitted?: (inquiry: InquiryRecord) => void;
 }
 
+const webMcpFormAttributes = {
+  toolname: "rourtech.submit_project_inquiry",
+  tooldescription:
+    "Prepare and submit a project inquiry to RouR Tech using the contact form. The visitor must review and submit their details.",
+};
+
 async function sendLeadNotification(inquiry: InquiryRecord): Promise<void> {
   const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID?.trim();
   const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID?.trim();
@@ -448,6 +454,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
               </div>
             ) : (
               <form
+                {...webMcpFormAttributes}
                 onSubmit={handleSubmit}
                 noValidate
                 className="p-6 sm:p-9 bg-[#F8F8F6] rounded-2xl border border-[#E8E8E8] shadow-xs space-y-6"
