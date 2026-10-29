@@ -62,6 +62,30 @@ interface CmsAdminModalProps {
   ) => Promise<void>;
 }
 
+function getArticleSaveErrorMessage(error: unknown): string {
+  const code = getErrorCode(error);
+
+  if (code === "permission-denied") {
+    return "Firestore denied this save (permission-denied). Check that the signed-in admin UID is authorized and that the current Firestore rules are deployed to the same Firebase project.";
+  }
+
+  if (code === "invalid-argument") {
+    return "Firestore rejected the article data (invalid-argument). Check the article fields and content limits, then try again.";
+  }
+
+  if (code === "unavailable") {
+    return "Firestore is temporarily unreachable (unavailable). Check your connection and try again.";
+  }
+
+  if (code === "failed-precondition") {
+    return "Firestore could not complete the save (failed-precondition). Check the browser console for the operation details.";
+  }
+
+  return code
+    ? `Could not save the article to Firestore (${code}). Check the browser console for details.`
+    : "Could not save the article to Firestore. Check the browser console for details.";
+}
+
 export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
   isOpen,
 
@@ -619,6 +643,31 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
     }
 
     const postId = editingPost?.id || `post-${Date.now()}`;
+    const articleToValidate = createPostFromForm(imageUrl, postId);
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(articleToValidate.slug)) {
+      setArticlesError(
+        "Enter an article title or URL slug using English letters and numbers.",
+      );
+      return;
+    }
+    if (articleToValidate.tags.length > 30) {
+      setArticlesError("An article can have no more than 30 tags.");
+      return;
+    }
+    if (articleToValidate.content.length > 100000) {
+      setArticlesError("Article content must be 100,000 characters or fewer.");
+      return;
+    }
+    if (
+      articleToValidate.seoTitle.length > 250 ||
+      articleToValidate.seoDescription.length > 500
+    ) {
+      setArticlesError(
+        "SEO title must be 250 characters or fewer and description must be 500 characters or fewer.",
+      );
+      return;
+    }
+
     setIsSavingArticle(true);
     setFeaturedImageError("");
     setArticlesError("");
@@ -661,9 +710,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       setIsCreating(false);
     } catch (error) {
       console.error("Failed to save article to Firestore:", error);
-      setArticlesError(
-        "Could not save the article to Firestore. Verify the authorized admin account and Firestore rules, then try again.",
-      );
+      setArticlesError(getArticleSaveErrorMessage(error));
     } finally {
       setIsSavingArticle(false);
     }
@@ -1166,6 +1213,7 @@ Sitemap: ${SITE_URL}/sitemap.xml
                         type="text"
                         value={seoTitle}
                         onChange={(e) => setSeoTitle(e.target.value)}
+                        maxLength={250}
                         placeholder="Page title displayed in Google search results"
                         className="w-full px-3 py-1.5 bg-white border border-[#E8E8E8] rounded-lg text-xs"
                       />
@@ -1180,6 +1228,7 @@ Sitemap: ${SITE_URL}/sitemap.xml
                         type="text"
                         value={seoDescription}
                         onChange={(e) => setSeoDescription(e.target.value)}
+                        maxLength={500}
                         placeholder="Search snippet summary shown beneath the title"
                         className="w-full px-3 py-1.5 bg-white border border-[#E8E8E8] rounded-lg text-xs"
                       />
