@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { type ReactNode, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "./Header";
-import { Hero } from "./Hero";
 import { ServicesSection } from "./ServicesSection";
 import { ProcessSection } from "./ProcessSection";
 import { WhyChooseUs } from "./WhyChooseUs";
@@ -12,37 +11,15 @@ import { FAQSection } from "./FAQSection";
 import { BlogSection } from "./BlogSection";
 import { NewsletterSection } from "./NewsletterSection";
 import { Footer } from "./Footer";
-import { MapPin, MessageCircle, Phone, X } from "lucide-react";
-import { initialBlogPosts } from "@/data/blogData";
-import { BlogPost } from "@/types";
-import { loadPublishedBlogPosts } from "@/lib/blogPosts";
+import { Mail, MapPin, MessageCircle, Phone, X } from "lucide-react";
+import type { BlogPost } from "@/types";
 import { siteConfig } from "@/lib/siteConfig";
 
-export default function HomeClient() {
+export default function HomeClient({ hero }: { hero: ReactNode }) {
   const router = useRouter();
-
-  const [posts, setPosts] = useState<BlogPost[]>(initialBlogPosts);
 
   const [prefilledService, setPrefilledService] = useState<string>("");
   const [isContactPopupOpen, setIsContactPopupOpen] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadPublishedBlogPosts()
-      .then((publishedPosts) => {
-        if (!cancelled && publishedPosts !== null) setPosts(publishedPosts);
-      })
-      .catch((error) => {
-        console.error(
-          "Could not load published articles from Firestore:",
-          error,
-        );
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const handleScrollToContact = () => {
     setTimeout(() => {
@@ -78,13 +55,7 @@ export default function HomeClient() {
       />
 
       <main className="flex-1">
-        <Hero
-          onStartProject={handleOpenContactPopup}
-          onExploreWork={() => {
-            const el = document.getElementById("services");
-            el?.scrollIntoView({ behavior: "smooth" });
-          }}
-        />
+        {hero}
         <div className="content-visibility-auto">
           <ServicesSection
             onSelectServiceForInquiry={handleSelectServiceForInquiry}
@@ -95,7 +66,7 @@ export default function HomeClient() {
           />
           <ProcessSection />
           <WhyChooseUs />
-          <BlogSection posts={posts} onSelectPost={handleSelectArticle} />
+          <BlogSection onSelectPost={handleSelectArticle} />
           <FAQSection onStartProject={handleOpenContactPopup} />
           <ContactSection
             prefilledService={prefilledService}
@@ -147,6 +118,13 @@ export default function HomeClient() {
             </p>
 
             <div className="mt-6 grid gap-2">
+              <a
+                href={`mailto:${siteConfig.contact.email}`}
+                className="flex items-center gap-3 border border-[#E8E8E8] p-3 text-sm font-semibold text-[#111111] hover:border-[#FF5B4D] transition-colors"
+              >
+                <Mail className="h-5 w-5 text-[#FF5B4D]" aria-hidden="true" />
+                {siteConfig.contact.email}
+              </a>
               <a
                 href={siteConfig.contact.whatsapp}
                 target="_blank"

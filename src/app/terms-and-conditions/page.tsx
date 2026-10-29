@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions | RouR Tech",
   description: "Terms for using the RouR Tech website and engaging our services.",
-  alternates: { canonical: `${SITE_URL}/terms-and-conditions` },
+  alternates: { canonical: absoluteSiteUrl("/terms-and-conditions") },
 };
 
 export default function TermsAndConditionsPage() {
@@ -22,6 +22,20 @@ export default function TermsAndConditionsPage() {
               with these terms. Content is provided for general information
               about RouR Tech and does not by itself create a client
               relationship or guarantee a project outcome.
+            </p>
+          ),
+        },
+        {
+          title: "Website content and resources",
+          content: (
+            <p>
+              Articles, guides, examples, and other published resources are
+              provided for general information. You may read and share links to
+              them. Unless a page or applicable licence says otherwise, you
+              must not republish substantial content, remove attribution,
+              represent it as your own, or use RouR Tech branding without
+              permission. Quotation, criticism, and other uses permitted by
+              applicable law are not restricted by this paragraph.
             </p>
           ),
         },
@@ -68,6 +82,18 @@ export default function TermsAndConditionsPage() {
           ),
         },
         {
+          title: "External links and third-party services",
+          content: (
+            <p>
+              Links to external websites and references to third-party services
+              are provided for convenience or context. They are operated by
+              their respective providers; we do not control or adopt their
+              content, availability, terms, or privacy practices. Your use of
+              those services is subject to their own terms.
+            </p>
+          ),
+        },
+        {
           title: "Disclaimers and liability",
           content: (
             <p>
@@ -84,13 +110,27 @@ export default function TermsAndConditionsPage() {
           title: "Changes and contact",
           content: (
             <p>
-              We may update these terms by publishing a revised version on
-              this page. Continued use after an update means the revised terms
-              apply. Questions should be sent through our{" "}
+              We may update these website terms by publishing a revised version
+              with an updated date. Changes to a separate client engagement
+              remain governed by the applicable written agreement and any
+              legally required notice or acceptance. Questions or concerns
+              should be sent through our{" "}
               <a href="/contact" className="text-[#FF5B4D] font-semibold">
                 contact page
               </a>
               .
+            </p>
+          ),
+        },
+        {
+          title: "Applicable rights",
+          content: (
+            <p>
+              These terms do not exclude or limit any consumer or other
+              statutory right, remedy, or liability that cannot lawfully be
+              excluded or limited. If a provision cannot be enforced, the
+              remaining provisions continue only to the extent permitted by
+              applicable law.
             </p>
           ),
         },

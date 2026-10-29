@@ -9,20 +9,21 @@ import {
   Globe2,
   Code2,
 } from "lucide-react";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
+import { serializeStructuredData } from "@/lib/structuredData";
 
 export const metadata: Metadata = {
   title: "Careers | RouR Tech",
   description:
     "Recruitment status and application details are awaiting confirmation from RouR Tech.",
   alternates: {
-    canonical: `${SITE_URL}/careers`,
+    canonical: absoluteSiteUrl("/careers"),
   },
   openGraph: {
     title: "Careers | RouR Tech",
     description:
       "Recruitment status and application details are awaiting confirmation from RouR Tech.",
-    url: `${SITE_URL}/careers`,
+    url: absoluteSiteUrl("/careers"),
     siteName: "RouR Tech",
     type: "website",
   },
@@ -53,7 +54,7 @@ export default function CareersPage() {
         "@type": "ListItem",
         "position": 2,
         "name": "Careers",
-        "item": `${SITE_URL}/careers`,
+        "item": absoluteSiteUrl("/careers"),
       },
     ],
   };
@@ -85,7 +86,9 @@ export default function CareersPage() {
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(jsonLdBreadcrumb),
+        }}
       />
 
       <Header isArticleView={false} />

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Acceptable Use Policy | RouR Tech",
   description: "Rules for safe and lawful use of RouR Tech websites and services.",
-  alternates: { canonical: `${SITE_URL}/acceptable-use-policy` },
+  alternates: { canonical: absoluteSiteUrl("/acceptable-use-policy") },
 };
 
 export default function AcceptableUsePolicyPage() {
@@ -41,6 +41,22 @@ export default function AcceptableUsePolicyPage() {
                 contact page
               </a>
               .
+            </p>
+          ),
+        },
+        {
+          title: "Good-faith security reports",
+          content: (
+            <p>
+              If you discover a suspected vulnerability, do not access, copy,
+              alter, or disclose other people&apos;s data or disrupt a service.
+              Stop testing and report the issue through our{" "}
+              <a href="/contact" className="text-[#FF5B4D] font-semibold">
+                contact page
+              </a>{" "}
+              with a concise description and steps to reproduce, avoiding
+              sensitive personal information. Testing is not authorized unless
+              we have expressly agreed to its scope in writing.
             </p>
           ),
         },

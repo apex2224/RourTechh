@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Mail } from "lucide-react";
 import { siteConfig } from "@/lib/siteConfig";
 
 interface FooterProps {
@@ -76,6 +76,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
               applications, resilient headless commerce systems, and
               conversion-focused digital experiences.
             </p>
+            <a
+              href={`mailto:${siteConfig.contact.email}`}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[#555555] hover:text-[#B84238] transition-colors"
+            >
+              <Mail className="h-4 w-4" aria-hidden="true" />
+              {siteConfig.contact.email}
+            </a>
             <div className="flex items-center gap-2 pt-2">
               <a
                 href={siteConfig.socialLinks.x}
@@ -130,7 +137,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
 
           <div className="lg:col-span-6 flex flex-col justify-between sm:items-end">
             <div className="text-left sm:text-right">
-              <span className="text-xs font-semibold text-[#FF5B4D] uppercase tracking-wider block mb-1">
+              <span className="text-xs font-semibold text-[#B84238] uppercase tracking-wider block mb-1">
                 Start a conversation
               </span>
               <p className="text-xl sm:text-2xl font-bold text-[#111111] font-display">
@@ -142,7 +149,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
               {onOpenContact ? (
                 <button
                   onClick={onOpenContact}
-                  className="px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-[#FF5B4D] hover:bg-[#E84E40] rounded-lg transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  className="px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-[#B84238] hover:bg-[#A33830] rounded-lg transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
                 >
                   <span>Initiate Discovery Call</span>
                   <ArrowUpRight className="w-4 h-4" />
@@ -150,7 +157,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
               ) : (
                 <Link
                   href="/contact"
-                  className="px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-[#FF5B4D] hover:bg-[#E84E40] rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
+                  className="px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-[#B84238] hover:bg-[#A33830] rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
                 >
                   <span>Initiate Discovery Call</span>
                   <ArrowUpRight className="w-4 h-4" />
@@ -164,9 +171,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 py-12 border-b border-[#E8E8E8] text-xs">
           {/* Services Column */}
           <div>
-            <h4 className="font-bold uppercase tracking-wider text-[#111111] mb-4">
+            <h2 className="font-bold uppercase tracking-wider text-[#111111] mb-4">
               Core Capabilities
-            </h4>
+            </h2>
             <ul className="space-y-2.5">
               {serviceLinks.map((s) => (
                 <li key={s.href}>
@@ -183,9 +190,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
 
           {/* Company Column */}
           <div>
-            <h4 className="font-bold uppercase tracking-wider text-[#111111] mb-4">
+            <h2 className="font-bold uppercase tracking-wider text-[#111111] mb-4">
               Company
-            </h4>
+            </h2>
             <ul className="space-y-2.5">
               {companyLinks.map((c) => (
                 <li key={c.href}>
@@ -202,9 +209,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
 
           {/* Resources Column */}
           <div>
-            <h4 className="font-bold uppercase tracking-wider text-[#111111] mb-4">
+            <h2 className="font-bold uppercase tracking-wider text-[#111111] mb-4">
               Resources & Insights
-            </h4>
+            </h2>
             <ul className="space-y-2.5">
               {resourceLinks.map((r) => (
                 <li key={r.href}>
@@ -219,7 +226,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
               <li className="pt-2">
                 <Link
                   href="/sitemap.xml"
-                  className="text-[#FF5B4D] hover:underline font-semibold block"
+                  className="text-[#B84238] hover:underline font-semibold block"
                 >
                   XML Sitemap
                 </Link>
@@ -237,9 +244,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
 
           {/* Legal & Policies Column */}
           <div>
-            <h4 className="font-bold uppercase tracking-wider text-[#111111] mb-4">
+            <h2 className="font-bold uppercase tracking-wider text-[#111111] mb-4">
               Legal & Policies
-            </h4>
+            </h2>
             <ul className="space-y-2.5">
               {legalLinks.map((l) => (
                 <li key={l.href}>
@@ -256,7 +263,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
         </div>
 
         {/* Bottom Tier: Copyright & Disclaimers */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#888888] gap-4">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#666666] gap-4">
           <p>© 2026 RouR Tech. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <Link

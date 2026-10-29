@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, ArrowUpRight } from 'lucide-react';
 import { faqData } from '../data/faqData';
+import { serializeStructuredData } from '@/lib/structuredData';
 
 interface FAQSectionProps {
   onStartProject: () => void;
@@ -21,7 +22,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onStartProject }) => {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: serializeStructuredData({
             '@context': 'https://schema.org',
             '@type': 'FAQPage',
             mainEntity: faqData.map((item) => ({
@@ -40,7 +41,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onStartProject }) => {
         
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="text-xs font-semibold text-[#FF5B4D] tracking-wider uppercase mb-2">
+          <div className="text-xs font-semibold text-[#B84238] tracking-wider uppercase mb-2">
             Frequently Asked Questions
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111111] font-display text-balance">
@@ -67,7 +68,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onStartProject }) => {
                   className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D]"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono-data text-[#888888]">{item.category}</span>
+                    <span className="text-xs font-mono-data text-[#666666]">{item.category}</span>
                     <span className="text-sm sm:text-base font-bold text-[#111111] font-display">
                       {item.question}
                     </span>
@@ -75,7 +76,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onStartProject }) => {
 
                   <div
                     className={`w-7 h-7 rounded-full bg-[#F8F8F6] flex items-center justify-center shrink-0 text-[#666666] transition-transform duration-200 ${
-                      isOpen ? 'rotate-180 text-[#FF5B4D] bg-[#FFF2F0]' : ''
+                      isOpen ? 'rotate-180 text-[#B84238] bg-[#FFF2F0]' : ''
                     }`}
                   >
                     <ChevronDown className="w-4 h-4" />

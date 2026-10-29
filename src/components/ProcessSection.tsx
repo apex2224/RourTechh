@@ -12,7 +12,7 @@ export const ProcessSection: React.FC = () => {
         
         {/* Section Header */}
         <div className="max-w-2xl mb-16">
-          <div className="text-xs font-semibold text-[#FF5B4D] tracking-wider uppercase mb-2">
+          <div className="text-xs font-semibold text-[#B84238] tracking-wider uppercase mb-2">
             Structured Workflow
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111111] font-display text-balance">
@@ -39,10 +39,10 @@ export const ProcessSection: React.FC = () => {
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className={`text-xs font-mono-data font-bold ${isActive ? 'text-[#FF5B4D]' : 'text-[#888888]'}`}>
+                  <span className={`text-xs font-mono-data font-bold ${isActive ? 'text-[#B84238]' : 'text-[#666666]'}`}>
                     {step.number}.
                   </span>
-                  <span className="text-[11px] text-[#888888] font-mono-data">{step.duration}</span>
+                  <span className="text-[11px] text-[#666666] font-mono-data">{step.duration}</span>
                 </div>
                 <div className={`text-sm font-bold font-display ${isActive ? 'text-[#111111]' : 'text-[#555555]'}`}>
                   {step.title}
@@ -58,7 +58,7 @@ export const ProcessSection: React.FC = () => {
             
             {/* Left Column: Phase Synopsis */}
             <div className="lg:col-span-6 space-y-4">
-              <div className="inline-flex items-center gap-2 text-xs font-mono-data text-[#FF5B4D] font-bold">
+              <div className="inline-flex items-center gap-2 text-xs font-mono-data text-[#B84238] font-bold">
                 <span>Phase {activeStep.number}</span>
                 <span aria-hidden="true">·</span>
                 <span>{activeStep.duration}</span>
@@ -72,7 +72,7 @@ export const ProcessSection: React.FC = () => {
                 {activeStep.description}
               </p>
 
-              <div className="pt-4 flex items-center gap-4 text-xs text-[#777777] border-t border-[#F0F0EE]">
+              <div className="pt-4 flex items-center gap-4 text-xs text-[#666666] border-t border-[#F0F0EE]">
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-[#FF5B4D]" />
                   <span>Sprint Velocity: Weekly Milestones</span>
@@ -109,12 +109,12 @@ export const ProcessSection: React.FC = () => {
             >
               ← Previous: {processStepsData[activeStepIndex > 0 ? activeStepIndex - 1 : processStepsData.length - 1].title}
             </button>
-            <span className="font-mono-data text-[#888888]">
+            <span className="font-mono-data text-[#666666]">
               Step {activeStepIndex + 1} of {processStepsData.length}
             </span>
             <button
               onClick={() => setActiveStepIndex((prev) => (prev < processStepsData.length - 1 ? prev + 1 : 0))}
-              className="text-[#111111] hover:text-[#FF5B4D] font-semibold transition-colors"
+              className="text-[#111111] hover:text-[#B84238] font-semibold transition-colors"
             >
               Next: {processStepsData[activeStepIndex < processStepsData.length - 1 ? activeStepIndex + 1 : 0].title} →
             </button>

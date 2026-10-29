@@ -1,20 +1,21 @@
 import { Metadata } from "next";
 import BlogListingClient from "@/components/BlogListingClient";
 import { initialBlogPosts } from "@/data/blogData";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
+import { serializeStructuredData } from "@/lib/structuredData";
 
 export const metadata: Metadata = {
   title: "Engineering Blog & Technical Insights — RouR Tech",
   description:
     "Architectural notes, technical SEO strategies, Core Web Vitals blueprints, and modern web application development insights from RouR Tech engineers.",
   alternates: {
-    canonical: `${SITE_URL}/blog`,
+    canonical: absoluteSiteUrl("/blog"),
   },
   openGraph: {
     title: "Engineering Blog & Technical Insights — RouR Tech",
     description:
       "Architectural notes, technical SEO strategies, Core Web Vitals blueprints, and modern web application development insights.",
-    url: `${SITE_URL}/blog`,
+    url: absoluteSiteUrl("/blog"),
     siteName: "RouR Tech",
     type: "website",
   },
@@ -35,12 +36,12 @@ export default function BlogListingPage() {
     name: "RouR Tech Insights",
     description:
       "Engineering blog discussing technical SEO, Next.js, and web performance.",
-    url: `${SITE_URL}/blog`,
+    url: absoluteSiteUrl("/blog"),
     blogPost: publishedPosts.map((post) => ({
       "@type": "BlogPosting",
       headline: post.title,
       description: post.seoDescription || post.excerpt,
-      url: `${SITE_URL}/blog/${post.slug}`,
+      url: absoluteSiteUrl(`/blog/${post.slug}`),
       datePublished: post.publishDate,
       author: {
         "@type":
@@ -66,7 +67,7 @@ export default function BlogListingPage() {
         "@type": "ListItem",
         "position": 2,
         "name": "Blog & Insights",
-        "item": `${SITE_URL}/blog`,
+        "item": absoluteSiteUrl("/blog"),
       },
     ],
   };
@@ -75,11 +76,15 @@ export default function BlogListingPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBlog) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(jsonLdBlog),
+        }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(jsonLdBreadcrumb),
+        }}
       />
       <BlogListingClient initialPosts={initialBlogPosts} />
     </>

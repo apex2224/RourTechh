@@ -13,7 +13,11 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ?? "",
 };
 
-const hasRequiredFirebaseConfig = Object.values(firebaseConfig).every(
+export const hasFirestoreConfig = Boolean(
+  firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId,
+);
+
+export const hasRequiredFirebaseConfig = Object.values(firebaseConfig).every(
   (value) => typeof value === "string" && value.trim().length > 0,
 );
 

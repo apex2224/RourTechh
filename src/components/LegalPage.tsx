@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { siteConfig } from "@/lib/siteConfig";
 
 export interface LegalSection {
   title: string;
@@ -53,7 +54,17 @@ export function LegalPage({
                 <p className="mt-3 text-sm text-[#666666]">{description}</p>
               ) : null}
               <p className="text-xs text-[#888888] mt-3 font-mono-data">
-                Last updated: October 20, 2026
+                Effective and last updated: October 29, 2026
+              </p>
+              <p className="mt-3 text-sm text-[#666666]">
+                Questions about this policy? Email{" "}
+                <a
+                  href={`mailto:${siteConfig.contact.email}`}
+                  className="font-semibold text-[#FF5B4D] hover:underline"
+                >
+                  {siteConfig.contact.email}
+                </a>
+                .
               </p>
             </header>
 

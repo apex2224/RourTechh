@@ -1,11 +1,9 @@
 import React, { useRef, useState } from "react";
-import emailjs from "@emailjs/browser";
-import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import {
   Send,
   CheckCircle2,
   AlertCircle,
+  Mail,
   MapPin,
   MessageCircle,
   Phone,
@@ -24,22 +22,25 @@ async function sendLeadNotification(inquiry: InquiryRecord): Promise<void> {
   const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID?.trim();
   const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID?.trim();
   const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY?.trim();
-  const recipientEmails = process.env.NEXT_PUBLIC_EMAILJS_TO_EMAIL?.split(",")
+  const additionalRecipientEmails = process.env.NEXT_PUBLIC_EMAILJS_TO_EMAIL?.split(",")
     .map((email) => email.trim())
     .filter(Boolean);
+  const recipientEmails = [
+    ...new Set([siteConfig.contact.email, ...(additionalRecipientEmails ?? [])]),
+  ];
 
   if (
     !serviceId ||
     !templateId ||
     !publicKey ||
-    !recipientEmails?.length ||
     recipientEmails.some((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
   ) {
     throw new Error(
-      "EmailJS service, template, public key, or recipient configuration is missing or invalid.",
+      "EmailJS service, template, or public key is missing, or a recipient email is invalid.",
     );
   }
 
+  const emailjs = await import("@emailjs/browser");
   await emailjs.send(
     serviceId,
     templateId,
@@ -164,21 +165,26 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     setSubmitError("");
     setEmailWarning(false);
 
-    const inquiryRef = doc(collection(db, "inquiries"));
-    const newRecord: InquiryRecord = {
-      id: inquiryRef.id,
-      createdAt: new Date().toISOString(),
-      name: name.trim(),
-      email: email.trim(),
-      ...(phone.trim() ? { phone: phone.trim() } : {}),
-      company: company.trim(),
-      service,
-      budget,
-      description: description.trim(),
-      status: "new",
-    };
-
     try {
+      const [{ collection, doc, serverTimestamp, setDoc }, { db }] =
+        await Promise.all([
+          import("firebase/firestore"),
+          import("@/lib/firebase"),
+        ]);
+      const inquiryRef = doc(collection(db, "inquiries"));
+      const newRecord: InquiryRecord = {
+        id: inquiryRef.id,
+        createdAt: new Date().toISOString(),
+        name: name.trim(),
+        email: email.trim(),
+        ...(phone.trim() ? { phone: phone.trim() } : {}),
+        company: company.trim(),
+        service,
+        budget,
+        description: description.trim(),
+        status: "new",
+      };
+
       // Save to Firestore first. serverTimestamp() matches the current rules.
       await setDoc(inquiryRef, {
         ...newRecord,
@@ -239,7 +245,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
           <div className="lg:col-span-5 space-y-8">
             <div>
-              <div className="text-xs font-semibold text-[#FF5B4D] tracking-wider uppercase mb-2">
+              <div className="text-xs font-semibold text-[#B84238] tracking-wider uppercase mb-2">
                 Initiate Project Discovery
               </div>
 
@@ -266,6 +272,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
 
             <div className="border-t border-[#E8E8E8] pt-6 space-y-3 text-sm">
               <h3 className="font-semibold text-[#111111]">CONTACT</h3>
+              <a
+                href={`mailto:${siteConfig.contact.email}`}
+                className="flex items-center gap-3 text-[#555555] hover:text-[#111111] transition-colors"
+              >
+                <Mail className="h-4 w-4 text-[#FF5B4D]" aria-hidden="true" />
+                <span>{siteConfig.contact.email}</span>
+              </a>
               <a
                 href={`tel:${siteConfig.contact.phone}`}
                 className="flex items-center gap-3 text-[#555555] hover:text-[#111111] transition-colors"
@@ -377,21 +390,21 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 </div>
 
                 <div className="p-4 bg-white rounded-lg border border-[#E8E8E8] text-left text-xs space-y-1.5 max-w-md mx-auto">
-                  <div className="text-[#888888]">
+                  <div className="text-[#666666]">
                     Reference ID:{" "}
                     <span className="font-mono text-[#111111]">
                       {submittedRecord.id}
                     </span>
                   </div>
 
-                  <div className="text-[#888888]">
+                  <div className="text-[#666666]">
                     Selected Service:{" "}
                     <span className="font-semibold text-[#111111]">
                       {submittedRecord.service}
                     </span>
                   </div>
 
-                  <div className="text-[#888888]">
+                  <div className="text-[#666666]">
                     Budget Preference:{" "}
                     <span className="font-mono text-[#111111]">
                       {submittedRecord.budget}
@@ -447,7 +460,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       htmlFor="inquiry-name"
                       className="block text-xs font-bold uppercase tracking-wider text-[#333333] mb-1.5"
                     >
-                      Your Full Name <span className="text-[#FF5B4D]">*</span>
+                      Your Full Name <span className="text-[#B84238]">*</span>
                     </label>
 
                     <input
@@ -457,7 +470,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       maxLength={120}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Sarah Jenkins"
-                      className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#999999] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors ${
+                      className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#666666] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors ${
                         errors.name
                           ? "border-red-500 bg-red-50/20"
                           : "border-[#E8E8E8]"
@@ -478,7 +491,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       htmlFor="inquiry-email"
                       className="block text-xs font-bold uppercase tracking-wider text-[#333333] mb-1.5"
                     >
-                      Work Email <span className="text-[#FF5B4D]">*</span>
+                      Work Email <span className="text-[#B84238]">*</span>
                     </label>
 
                     <input
@@ -488,7 +501,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       maxLength={254}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="sarah@company.com"
-                      className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#999999] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors ${
+                      className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#666666] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors ${
                         errors.email
                           ? "border-red-500 bg-red-50/20"
                           : "border-[#E8E8E8]"
@@ -511,7 +524,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     className="block text-xs font-bold uppercase tracking-wider text-[#333333] mb-1.5"
                   >
                     Company / Organization{" "}
-                    <span className="text-[#FF5B4D]">*</span>
+                    <span className="text-[#B84238]">*</span>
                   </label>
 
                   <input
@@ -521,7 +534,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     maxLength={160}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="Acme Corp or Stealth Startup"
-                    className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#999999] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors ${
+                    className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#666666] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors ${
                       errors.company
                         ? "border-red-500 bg-red-50/20"
                         : "border-[#E8E8E8]"
@@ -552,7 +565,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     maxLength={30}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+1 555 010 1234"
-                    className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#999999] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors ${
+                    className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#666666] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors ${
                       errors.phone
                         ? "border-red-500 bg-red-50/20"
                         : "border-[#E8E8E8]"
@@ -623,7 +636,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     className="block text-xs font-bold uppercase tracking-wider text-[#333333] mb-1.5"
                   >
                     Project Brief & Goals{" "}
-                    <span className="text-[#FF5B4D]">*</span>
+                    <span className="text-[#B84238]">*</span>
                   </label>
 
                   <textarea
@@ -633,7 +646,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     maxLength={5000}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe your current system, objectives, target launch date, and any known technical constraints..."
-                    className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#999999] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors resize-y ${
+                    className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-sm text-[#111111] placeholder:text-[#666666] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D] transition-colors resize-y ${
                       errors.description
                         ? "border-red-500 bg-red-50/20"
                         : "border-[#E8E8E8]"
@@ -659,7 +672,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 px-6 text-sm font-semibold text-white bg-[#FF5B4D] hover:bg-[#E84E40] active:scale-[0.99] rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+                    className="w-full py-3.5 px-6 text-sm font-semibold text-white bg-[#B84238] hover:bg-[#A33830] active:scale-[0.99] rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
                   >
                     {isSubmitting ? (
                       <span className="flex items-center gap-2">
@@ -676,7 +689,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     )}
                   </button>
 
-                  <p className="text-[11px] text-center text-[#777777] mt-3">
+                  <p className="text-[11px] text-center text-[#666666] mt-3">
                     Please avoid including sensitive or confidential information
                     in this form.
                   </p>
