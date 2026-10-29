@@ -36,6 +36,19 @@ const nextConfig = {
         ],
       },
       {
+        source: "/",
+        headers: [
+          {
+            key: "Link",
+            value: '</llms.txt>; rel="alternate"; type="text/plain"',
+          },
+          {
+            key: "Vary",
+            value: "Accept",
+          },
+        ],
+      },
+      {
         source: "/admin",
         headers: [
           { key: "Cache-Control", value: "private, no-store, max-age=0" },

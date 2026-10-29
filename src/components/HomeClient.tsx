@@ -11,6 +11,7 @@ import { FAQSection } from "./FAQSection";
 import { BlogSection } from "./BlogSection";
 import { NewsletterSection } from "./NewsletterSection";
 import { Footer } from "./Footer";
+import WebMcpTools from "./WebMcpTools";
 import { Mail, MapPin, MessageCircle, Phone, X } from "lucide-react";
 import type { BlogPost } from "@/types";
 import { siteConfig } from "@/lib/siteConfig";
@@ -48,6 +49,7 @@ export default function HomeClient({ hero }: { hero: ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
+      <WebMcpTools />
       <Header
         onOpenContact={handleOpenContactPopup}
         onNavigateHome={() => router.push("/")}
