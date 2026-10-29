@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import type { JSONContent } from "@tiptap/core";
 import {
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -19,6 +20,8 @@ import {
 import { auth, db } from "@/lib/firebase";
 import { isAdminUser } from "@/lib/adminAuthorization";
 import { BlogFeaturedImage } from "@/components/BlogFeaturedImage";
+import RichBlogEditor from "@/components/RichBlogEditor";
+import RichArticleContent from "@/components/RichArticleContent";
 import {
   getFirestoreBlogImageId,
   getFirestoreBlogImageUrl,
@@ -28,6 +31,12 @@ import {
 import { SITE_URL } from "@/lib/siteConfig";
 import { initialBlogPosts } from "@/data/blogData";
 import { getErrorCode } from "@/lib/errorCode";
+import {
+  createEmptyRichDocument,
+  isRichDocument,
+  markdownToRichDocument,
+  richDocumentToPlainText,
+} from "@/lib/richContent";
 
 import {
   X,
@@ -115,7 +124,9 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
   const [excerpt, setExcerpt] = useState("");
 
-  const [content, setContent] = useState("");
+  const [contentJson, setContentJson] = useState<JSONContent>(
+    createEmptyRichDocument(),
+  );
 
   const [tagsStr, setTagsStr] = useState("");
 
@@ -441,9 +452,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
     setExcerpt("");
 
-    setContent(
-      "### Overview\n\nProvide the main introduction here...\n\n---\n\n### Architectural Details\n\nDetail technical specifications, benchmarks, or diagrams.",
-    );
+    setContentJson(createEmptyRichDocument());
 
     setTagsStr("Web Development, Next.js, Architecture");
 
@@ -481,7 +490,11 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
     setExcerpt(p.excerpt);
 
-    setContent(p.content);
+    setContentJson(
+      isRichDocument(p.contentJson)
+        ? p.contentJson
+        : markdownToRichDocument(p.content),
+    );
 
     setTagsStr(p.tags.join(", "));
 
@@ -513,6 +526,8 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       .map((tag) => tag.trim())
       .filter(Boolean);
 
+    const articleText = richDocumentToPlainText(contentJson);
+
     return {
       id,
       slug: finalSlug,
@@ -536,13 +551,17 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
           day: "numeric",
           year: "numeric",
         }),
-      readTime: `${Math.max(3, Math.ceil(content.split(/\s+/).length / 200))} min read`,
+      readTime: `${Math.max(3, Math.ceil(articleText.split(/\s+/).filter(Boolean).length / 200))} min read`,
       excerpt:
-        excerpt.trim() || content.slice(0, 160).replace(/[#\*`-]/g, "") + "...",
-      content: content.trim(),
+        excerpt.trim() || articleText.slice(0, 160) + "...",
+      content: editingPost?.content ?? "",
+      contentJson,
       status,
       ...(relatedServiceId
         ? { relatedServiceId: relatedServiceId as ServiceId }
+        : {}),
+      ...(editingPost?.relatedPostSlugs
+        ? { relatedPostSlugs: editingPost.relatedPostSlugs }
         : {}),
     };
   };
@@ -1287,14 +1306,13 @@ Sitemap: ${SITE_URL}/sitemap.xml
 
                   <div>
                     <label className="block text-xs font-bold uppercase text-[#333333] mb-1">
-                      Full Content (Markdown format)
+                      Article content
                     </label>
-
-                    <textarea
-                      rows={8}
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      className="w-full px-3 py-2 bg-white border border-[#E8E8E8] rounded-lg text-xs font-mono"
+                    <RichBlogEditor
+                      key={editingPost?.id ?? "new-article"}
+                      value={contentJson}
+                      posts={posts}
+                      onChange={setContentJson}
                     />
                   </div>
 
@@ -1909,48 +1927,10 @@ Sitemap: ${SITE_URL}/sitemap.xml
             />
 
             <div className="rounded-2xl border border-[#E8E8E8] bg-white p-6 leading-relaxed text-[#444444] sm:p-10">
-              {previewPost.content.split("\n\n").map((paragraph, index) => {
-                const trimmed = paragraph.trim();
-                if (!trimmed) return null;
-                if (trimmed.startsWith("### ")) {
-                  return (
-                    <h2
-                      key={index}
-                      className="mb-3 mt-8 border-t border-[#F0F0EE] pt-6 text-2xl font-bold text-[#111111] first:mt-0 first:border-0 first:pt-0"
-                    >
-                      {trimmed.slice(4)}
-                    </h2>
-                  );
-                }
-                if (trimmed === "---") {
-                  return <hr key={index} className="my-6 border-[#E8E8E8]" />;
-                }
-                if (trimmed.startsWith("* ") || trimmed.startsWith("- ")) {
-                  return (
-                    <ul key={index} className="my-4 list-disc space-y-2 pl-5">
-                      {trimmed.split("\n").map((item, itemIndex) => (
-                        <li key={itemIndex}>{item.replace(/^[\*-]\s+/, "")}</li>
-                      ))}
-                    </ul>
-                  );
-                }
-                if (trimmed.startsWith("```")) {
-                  return (
-                    <pre
-                      key={index}
-                      className="my-5 overflow-x-auto rounded-lg bg-[#141414] p-4 text-xs text-neutral-100"
-                    >
-                      <code>{trimmed.replace(/```[a-z]*\n?/g, "").trim()}</code>
-                    </pre>
-                  );
-                }
-                return (
-                  <p key={index} className="my-4 whitespace-pre-wrap">
-                    {trimmed}
-                  </p>
-                );
-              })}
-
+              <RichArticleContent
+                contentJson={previewPost.contentJson}
+                legacyContent={previewPost.content}
+              />
               {previewPost.tags.length > 0 && (
                 <div className="mt-8 flex flex-wrap gap-2 border-t border-[#E8E8E8] pt-5 text-xs text-[#555555]">
                   {previewPost.tags.map((tag) => (

@@ -2,20 +2,20 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceBySlug } from "@/data/servicesData";
 import { ServicePageTemplate } from "@/components/ServicePageTemplate";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Website & Web Application Development Services | RouR Tech",
   description:
     "Custom Next.js and React websites and web applications, with responsive interfaces, maintainable architecture, and performance considered throughout delivery.",
   alternates: {
-    canonical: `${SITE_URL}/services/web-development`,
+    canonical: absoluteSiteUrl("/services/web-development"),
   },
   openGraph: {
     title: "Website & Web Application Development Services | RouR Tech",
     description:
       "Custom Next.js and React websites and web applications, with responsive interfaces and maintainable architecture.",
-    url: `${SITE_URL}/services/web-development`,
+    url: absoluteSiteUrl("/services/web-development"),
     siteName: "RouR Tech",
     type: "website",
   },

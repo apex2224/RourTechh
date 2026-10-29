@@ -1,6 +1,7 @@
 import { BlogPost } from "@/types";
 
 const DATABASE_ID = "default";
+const PUBLISHED_POSTS_LIMIT = 1000;
 
 type FirestoreValue = Record<string, unknown>;
 
@@ -95,6 +96,71 @@ function normalizeBlogPost(
         excerpt: typeof data.excerpt === "string" ? data.excerpt : "",
         status: "published",
     };
+}
+
+export async function listPublishedBlogPostSlugs(): Promise<string[]> {
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim();
+
+    if (!projectId) {
+        console.error(
+            "Missing NEXT_PUBLIC_FIREBASE_PROJECT_ID for the blog sitemap.",
+        );
+        return [];
+    }
+
+    const endpoint = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(
+        projectId,
+    )}/databases/${encodeURIComponent(
+        DATABASE_ID,
+    )}/documents:runQuery`;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            next: { revalidate: 3600 },
+            body: JSON.stringify({
+                structuredQuery: {
+                    from: [{ collectionId: "articles" }],
+                    where: {
+                        fieldFilter: {
+                            field: { fieldPath: "status" },
+                            op: "EQUAL",
+                            value: { stringValue: "published" },
+                        },
+                    },
+                    limit: PUBLISHED_POSTS_LIMIT,
+                },
+            }),
+        });
+
+        if (!response.ok) {
+            console.error(
+                `Firestore blog sitemap lookup failed (${response.status}): ${await response.text()}`,
+            );
+            return [];
+        }
+
+        const rows = (await response.json()) as Array<{
+            document?: { fields?: Record<string, FirestoreValue> };
+        }>;
+
+        return rows.flatMap((row) => {
+            const slugValue = row.document?.fields?.slug;
+            const slug =
+                slugValue && "stringValue" in slugValue
+                    ? slugValue.stringValue
+                    : undefined;
+
+            return typeof slug === "string" &&
+                /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)
+                ? [slug]
+                : [];
+        });
+    } catch (error) {
+        console.error("Firestore blog sitemap lookup failed:", error);
+        return [];
+    }
 }
 
 export async function loadPublishedBlogPostBySlug(

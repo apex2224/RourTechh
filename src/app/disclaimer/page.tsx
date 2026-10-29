@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Disclaimer | RouR Tech",
   description: "Important information about RouR Tech website content and service results.",
-  alternates: { canonical: `${SITE_URL}/disclaimer` },
+  alternates: { canonical: absoluteSiteUrl("/disclaimer") },
 };
 
 export default function DisclaimerPage() {
@@ -45,6 +45,19 @@ export default function DisclaimerPage() {
               websites. We do not control their availability, security,
               content, or privacy practices. Their own terms and policies
               apply.
+            </p>
+          ),
+        },
+        {
+          title: "No guaranteed outcomes",
+          content: (
+            <p>
+              Statements about search visibility, conversions, performance,
+              availability, security, or business results are not guarantees.
+              Outcomes depend on implementation, content, competition,
+              provider systems, user devices, networks, and other conditions.
+              Any specific commitment must appear in a written agreement
+              signed for the relevant engagement.
             </p>
           ),
         },

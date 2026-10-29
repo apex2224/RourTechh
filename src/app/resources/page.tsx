@@ -11,20 +11,21 @@ import {
   ArrowUpRight,
   Sparkles
 } from "lucide-react";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
+import { serializeStructuredData } from "@/lib/structuredData";
 
 export const metadata: Metadata = {
   title: "Engineering Resources & Technical Guides — RouR Tech",
   description:
     "Free technical checklists, Core Web Vitals optimization frameworks, and architectural guides crafted by RouR Tech engineers.",
   alternates: {
-    canonical: `${SITE_URL}/resources`,
+    canonical: absoluteSiteUrl("/resources"),
   },
   openGraph: {
     title: "Engineering Resources & Technical Guides — RouR Tech",
     description:
       "Free technical checklists, Core Web Vitals optimization frameworks, and architectural guides crafted by RouR Tech engineers.",
-    url: `${SITE_URL}/resources`,
+    url: absoluteSiteUrl("/resources"),
     siteName: "RouR Tech",
     type: "website",
   },
@@ -51,7 +52,7 @@ export default function ResourcesPage() {
         "@type": "ListItem",
         "position": 2,
         "name": "Resources",
-        "item": `${SITE_URL}/resources`,
+        "item": absoluteSiteUrl("/resources"),
       },
     ],
   };
@@ -69,15 +70,15 @@ export default function ResourcesPage() {
         "Splitting main-thread task execution with requestIdleCallback",
         "Static edge caching configurations for global CDNs",
       ],
-      link: "/blog/how-to-build-an-seo-friendly-website",
-      actionText: "Read Architecture Guide",
+      link: "/services/technical-seo",
+      actionText: "Explore Technical SEO Service",
     },
     {
       icon: <Terminal className="w-6 h-6 text-[#FF5B4D]" />,
-      badge: "Technical SEO Guide",
+      badge: "Technical SEO Overview",
       title: "Schema.org & Search Graph Blueprint",
       description:
-        "Standardized JSON-LD schemas for organizations, web applications, products, and articles. Ensure zero syntax errors and qualify for Google rich search results.",
+        "An overview of JSON-LD for organizations, web applications, and articles, including validation and eligibility checks. Structured data does not guarantee enhanced search results.",
       points: [
         "Organization & WebSite entity graph nesting",
         "BreadcrumbList automated schema generators",
@@ -114,8 +115,8 @@ export default function ResourcesPage() {
         "Automating token exports via GitHub Actions",
         "Preventing design debt during rapid sprint cycles",
       ],
-      link: "/blog/modern-ui-ux-design-systems",
-      actionText: "Read Design Systems Article",
+      link: "/services/ui-ux-design",
+      actionText: "Explore UI/UX Design Service",
     },
   ];
 
@@ -123,7 +124,9 @@ export default function ResourcesPage() {
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#111111] antialiased">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(jsonLdBreadcrumb),
+        }}
       />
 
       <Header isArticleView={false} />
@@ -151,13 +154,13 @@ export default function ResourcesPage() {
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#FFF2F0] rounded-full border border-[#FF5B4D]/20 text-[#FF5B4D] text-xs font-bold uppercase tracking-wider mb-6">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Free Engineering Frameworks</span>
+              <span>              Engineering Resources</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#111111] font-display tracking-tight leading-[1.1] mb-6">
               Technical Resources & Blueprints
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-[#555555] leading-relaxed max-w-2xl mx-auto mb-6 font-body">
-              Actionable guides, performance checklists, and architecture frameworks distilled from real-world digital engineering engagements.
+              Practical overviews, performance checklists, and architecture topics for teams building and maintaining modern web applications.
             </p>
           </div>
         </section>

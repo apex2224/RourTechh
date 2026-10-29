@@ -8,8 +8,19 @@ const isValidAppUrl = !!rawAppUrl && URL.canParse(rawAppUrl);
 
 export const SITE_URL =
   isValidAppUrl
-    ? rawAppUrl
+    ? new URL(rawAppUrl).origin
     : "https://rourtech.com";
+
+export function absoluteSiteUrl(path = "/"): string {
+  const pathWithoutTrailingSlash = `/${path.replace(/^\/+|\/+$/g, "")}`;
+  const normalizedPath =
+    path === "/"
+      ? "/"
+      : /\.[a-z0-9]{2,5}$/i.test(pathWithoutTrailingSlash)
+        ? pathWithoutTrailingSlash
+        : `${pathWithoutTrailingSlash}/`;
+  return new URL(normalizedPath, `${SITE_URL}/`).toString();
+}
 
 export const siteConfig = {
   name: "RouR Tech",
@@ -24,6 +35,7 @@ export const siteConfig = {
     linkedin: "https://www.linkedin.com/company/rourtech/",
   },
   contact: {
+    email: "contact@rourtech.com",
     phone: "+918091011912",
     displayPhone: "+91 80910 11912",
     whatsapp: "https://wa.me/918091011912",

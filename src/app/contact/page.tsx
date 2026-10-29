@@ -1,20 +1,21 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import ContactPageClient from "@/components/ContactPageClient";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl, siteConfig } from "@/lib/siteConfig";
+import { serializeStructuredData } from "@/lib/structuredData";
 
 export const metadata: Metadata = {
   title: "Contact RouR Tech — Initiate Project Discovery & Inquiries",
   description:
     "Contact RouR Tech to discuss a website, UI/UX design, technical SEO, or custom software project.",
   alternates: {
-    canonical: `${SITE_URL}/contact`,
+    canonical: absoluteSiteUrl("/contact"),
   },
   openGraph: {
     title: "Contact RouR Tech — Initiate Project Discovery & Inquiries",
     description:
       "Contact RouR Tech to discuss a website, web application, design, SEO, or software project.",
-    url: `${SITE_URL}/contact`,
+    url: absoluteSiteUrl("/contact"),
     siteName: "RouR Tech",
     type: "website",
   },
@@ -33,14 +34,17 @@ export default function ContactPage() {
     name: "Contact RouR Tech",
     description:
       "Initiate project discovery with RouR Tech's solutions architects.",
-    url: `${SITE_URL}/contact`,
+    url: absoluteSiteUrl("/contact"),
+    email: siteConfig.contact.email,
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdContact) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(jsonLdContact),
+        }}
       />
       <Suspense fallback={<div className="min-h-screen bg-[#F8F8F6]" />}>
         <ContactPageClient />

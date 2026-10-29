@@ -53,7 +53,7 @@ export const WhyChooseUs = () => (
   >
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mb-12">
-        <div className="text-xs font-semibold text-[#FF5B4D] tracking-wider uppercase mb-2">
+        <div className="text-xs font-semibold text-[#B84238] tracking-wider uppercase mb-2">
           Project priorities
         </div>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111111] font-display text-balance">
@@ -73,7 +73,7 @@ export const WhyChooseUs = () => (
             className="p-7 bg-[#F8F8F6] rounded-xl border border-[#E8E8E8] hover:border-[#D1D1CB] hover-lift transition-all"
           >
             <div className="w-11 h-11 rounded-lg bg-white border border-[#E8E8E8] flex items-center justify-center mb-5">
-              <Icon className="w-5 h-5 text-[#FF5B4D]" aria-hidden="true" />
+              <Icon className="w-5 h-5 text-[#B84238]" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-bold text-[#111111] font-display mb-3">
               {title}

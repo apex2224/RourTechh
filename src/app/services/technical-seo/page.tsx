@@ -2,20 +2,20 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceBySlug } from "@/data/servicesData";
 import { ServicePageTemplate } from "@/components/ServicePageTemplate";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Technical SEO & Website Optimization Services | RouR Tech",
   description:
     "Technical SEO audits, Core Web Vitals remediation, Schema.org JSON-LD structured data graphs, and crawl indexability optimization for long-term organic growth.",
   alternates: {
-    canonical: `${SITE_URL}/services/technical-seo`,
+    canonical: absoluteSiteUrl("/services/technical-seo"),
   },
   openGraph: {
     title: "Technical SEO & Website Optimization Services | RouR Tech",
     description:
       "Technical SEO audits, Core Web Vitals remediation, Schema.org JSON-LD structured data graphs, and crawl indexability optimization.",
-    url: `${SITE_URL}/services/technical-seo`,
+    url: absoluteSiteUrl("/services/technical-seo"),
     siteName: "RouR Tech",
     type: "website",
   },

@@ -19,7 +19,7 @@ export const NewsletterSection: React.FC = () => {
   return (
     <section className="py-16 md:py-20 border-b border-[#E8E8E8] bg-[#F8F8F6]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#FF5B4D] tracking-wider uppercase mb-3">
+        <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#B84238] tracking-wider uppercase mb-3">
           <Mail className="w-3.5 h-3.5" />
           <span>Bi-Weekly Architectural Dispatch</span>
         </div>
@@ -29,7 +29,7 @@ export const NewsletterSection: React.FC = () => {
         </h2>
 
         <p className="text-sm text-[#555555] max-w-xl mx-auto mb-8">
-          Join 8,400+ engineering leaders, CTOs, and product designers receiving our unfiltered breakdowns on Core Web Vitals, headless commerce, and systems architecture.
+          Explore practical notes on Core Web Vitals, headless commerce, and systems architecture.
         </p>
 
         {subscribed ? (
@@ -45,7 +45,7 @@ export const NewsletterSection: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your work email address"
-                className="grow px-4 py-3 bg-white border border-[#E8E8E8] rounded-lg text-sm text-[#111111] placeholder:text-[#999999] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D]"
+                className="grow px-4 py-3 bg-white border border-[#E8E8E8] rounded-lg text-sm text-[#111111] placeholder:text-[#666666] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D]"
               />
               <button
                 type="submit"
@@ -56,7 +56,7 @@ export const NewsletterSection: React.FC = () => {
               </button>
             </div>
             {error && <p className="text-xs text-red-600 text-left">{error}</p>}
-            <p className="text-[11px] text-[#888888] text-center pt-1">
+            <p className="text-[11px] text-[#666666] text-center pt-1">
               Sent every second Thursday. Unsubscribe with 1 click at any time.
             </p>
           </form>

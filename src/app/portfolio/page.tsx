@@ -1,19 +1,20 @@
 import { Metadata } from "next";
 import PortfolioPageClient from "@/components/PortfolioPageClient";
-import { SITE_URL } from "@/lib/siteConfig";
+import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
+import { serializeStructuredData } from "@/lib/structuredData";
 
 export const metadata: Metadata = {
   title: "Project Work | RouR Tech",
   description:
     "Explore selected websites built by RouR Tech, including education technology and premium branded residences projects.",
   alternates: {
-    canonical: `${SITE_URL}/portfolio`,
+    canonical: absoluteSiteUrl("/portfolio"),
   },
   openGraph: {
     title: "Project Work | RouR Tech",
     description:
       "Explore selected websites built by RouR Tech, including education technology and premium branded residences projects.",
-    url: `${SITE_URL}/portfolio`,
+    url: absoluteSiteUrl("/portfolio"),
     siteName: "RouR Tech",
     type: "website",
   },
@@ -22,10 +23,6 @@ export const metadata: Metadata = {
     title: "Project Work | RouR Tech",
     description:
       "Explore selected websites built by RouR Tech, including education technology and premium branded residences projects.",
-  },
-  robots: {
-    index: false,
-    follow: true,
   },
 };
 
@@ -44,7 +41,7 @@ export default function PortfolioPage() {
         "@type": "ListItem",
         "position": 2,
         "name": "Project Work",
-        "item": `${SITE_URL}/portfolio`,
+        "item": absoluteSiteUrl("/portfolio"),
       },
     ],
   };
@@ -53,7 +50,9 @@ export default function PortfolioPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeStructuredData(jsonLdBreadcrumb),
+        }}
       />
       <PortfolioPageClient />
     </>
