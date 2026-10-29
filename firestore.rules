@@ -88,7 +88,7 @@ service cloud.firestore {
         && data.keys().hasOnly([
           "id", "slug", "title", "seoTitle", "seoDescription", "category",
           "tags", "author", "featuredImage", "publishDate", "readTime",
-          "excerpt", "content", "status", "relatedServiceId",
+          "excerpt", "content", "contentJson", "status", "relatedServiceId",
           "relatedPostSlugs", "blogType"
         ])
         && data.id is string
@@ -135,6 +135,10 @@ service cloud.firestore {
         && data.readTime is string
         && data.excerpt is string
         && data.content is string
+        && (
+          !data.keys().hasAny(["contentJson"])
+          || data.contentJson is map
+        )
         && data.content.size() <= 100000
         && (data.status == "published" || data.status == "draft");
     }
