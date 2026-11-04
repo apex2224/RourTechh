@@ -54,7 +54,7 @@ export default function FaqPage() {
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "FAQs",
+        "name": "Frequently Asked Questions",
         "item": absoluteSiteUrl("/faq"),
       },
     ],

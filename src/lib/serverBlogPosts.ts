@@ -164,7 +164,9 @@ export async function listPublishedBlogPostSlugs(): Promise<string[]> {
     }
 }
 
-export async function loadPublishedBlogPostsForServer(): Promise<BlogPost[]> {
+export async function loadPublishedBlogPostsForServer(
+    limit = PUBLISHED_POSTS_LIMIT,
+): Promise<BlogPost[]> {
     const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim();
 
     if (!projectId) {
@@ -215,7 +217,7 @@ export async function loadPublishedBlogPostsForServer(): Promise<BlogPost[]> {
                             { fieldPath: "status" },
                         ],
                     },
-                    limit: PUBLISHED_POSTS_LIMIT,
+                    limit,
                 },
             }),
         });

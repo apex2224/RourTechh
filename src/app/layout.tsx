@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import localFont from "next/font/local";
 import "./globals.css";
 import { absoluteSiteUrl, SITE_URL, siteConfig } from "@/lib/siteConfig";
@@ -115,6 +116,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
       <head>
+        <Script
+          src="https://www.clarity.ms/tag/z8hhi3foys"
+          strategy="beforeInteractive"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

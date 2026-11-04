@@ -53,13 +53,15 @@ export default function FaqPageClient() {
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="bg-white border-b border-[#E8E8E8] py-3">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <ol className="flex items-center space-x-2 text-xs text-[#666666]">
+            <ol className="m-0 flex list-none items-center gap-2 p-0 text-xs text-[#666666]">
               <li>
                 <Link href="/" className="hover:text-[#111111] transition-colors">
                   Home
                 </Link>
               </li>
-              <li className="text-[#888888] font-bold">/</li>
+              <li className="text-[#888888] font-bold" aria-hidden="true">
+                →
+              </li>
               <li className="text-[#111111] font-semibold" aria-current="page">
                 Frequently Asked Questions
               </li>
@@ -146,7 +148,20 @@ export default function FaqPageClient() {
                         <span className="text-[11px] font-bold text-[#FF5B4D] uppercase tracking-wider block mb-2">
                           {faq.category}
                         </span>
-                        <p>{faq.answer}</p>
+                        <p>
+                          {faq.answer}
+                          {faq.relatedServiceHref && faq.relatedServiceName && (
+                            <>
+                              {" "}
+                              <Link
+                                href={faq.relatedServiceHref}
+                                className="font-semibold text-[#B84238] underline underline-offset-2"
+                              >
+                                Explore our {faq.relatedServiceName}.
+                              </Link>
+                            </>
+                          )}
+                        </p>
                       </div>
                     </div>
                   );

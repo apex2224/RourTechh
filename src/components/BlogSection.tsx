@@ -6,18 +6,24 @@ import { BlogFeaturedImage } from './BlogFeaturedImage';
 
 interface BlogSectionProps {
   onSelectPost: (post: BlogPost) => void;
+  initialPosts: BlogPost[];
 }
 
 export const BlogSection: React.FC<BlogSectionProps> = ({
   onSelectPost,
+  initialPosts,
 }) => {
   const sectionRef = useRef<HTMLElement>(null);
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [posts, setPosts] = useState<BlogPost[]>(
+    initialPosts.filter((post) => post.status === 'published'),
+  );
+  const [isLoading, setIsLoading] = useState(initialPosts.length === 0);
   const publishedPosts = posts.filter((p) => p.status === 'published');
   const featuredPosts = publishedPosts.slice(0, 3);
 
   useEffect(() => {
+    if (initialPosts.length > 0) return;
+
     const section = sectionRef.current;
     if (!section) return;
 
@@ -90,15 +96,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({
         </div>
 
         {/* Article Cards Grid */}
-        {isLoading ? (
-          <div
-            className="text-center py-16 bg-[#F8F8F6] rounded-xl border border-[#E8E8E8]"
-            role="status"
-            aria-live="polite"
-          >
-            <p className="text-sm font-semibold text-[#111111]">Loading articles...</p>
-          </div>
-        ) : featuredPosts.length === 0 ? (
+        {isLoading ? null : featuredPosts.length === 0 ? (
           <div className="text-center py-16 bg-[#F8F8F6] rounded-xl border border-[#E8E8E8]">
             <BookOpen className="w-8 h-8 text-[#666666] mx-auto mb-3" />
             <p className="text-sm font-semibold text-[#111111]">No articles found</p>

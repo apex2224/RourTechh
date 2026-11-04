@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { Hero } from "@/components/Hero";
 import HomeClient from "@/components/HomeClient";
 import { absoluteSiteUrl, SITE_URL, siteConfig } from "@/lib/siteConfig";
+import { loadPublishedBlogPostsForServer } from "@/lib/serverBlogPosts";
 
 export const metadata: Metadata = {
   title: "RouR Tech — Engineering High-Performance Digital Products & Web Applications",
@@ -35,6 +36,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
-  return <HomeClient hero={<Hero />} />;
+export default async function HomePage() {
+  const blogPosts = await loadPublishedBlogPostsForServer(3);
+  return <HomeClient hero={<Hero />} blogPosts={blogPosts} />;
 }

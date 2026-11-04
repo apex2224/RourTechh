@@ -16,7 +16,13 @@ import { Mail, MapPin, MessageCircle, Phone, X } from "lucide-react";
 import type { BlogPost } from "@/types";
 import { siteConfig } from "@/lib/siteConfig";
 
-export default function HomeClient({ hero }: { hero: ReactNode }) {
+export default function HomeClient({
+  hero,
+  blogPosts,
+}: {
+  hero: ReactNode;
+  blogPosts: BlogPost[];
+}) {
   const router = useRouter();
 
   const [prefilledService, setPrefilledService] = useState<string>("");
@@ -68,7 +74,10 @@ export default function HomeClient({ hero }: { hero: ReactNode }) {
           />
           <ProcessSection />
           <WhyChooseUs />
-          <BlogSection onSelectPost={handleSelectArticle} />
+          <BlogSection
+            onSelectPost={handleSelectArticle}
+            initialPosts={blogPosts}
+          />
           <FAQSection onStartProject={handleOpenContactPopup} />
           <ContactSection
             prefilledService={prefilledService}

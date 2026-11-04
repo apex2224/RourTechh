@@ -2,13 +2,30 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { initialBlogPosts } from "@/data/blogData";
 import BlogPostClient from "@/components/BlogPostClient";
-import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
+import {
+  absoluteSiteUrl,
+  BLOG_FALLBACK_IMAGE,
+  SITE_URL,
+} from "@/lib/siteConfig";
 import { serializeStructuredData } from "@/lib/structuredData";
 import { loadPublishedBlogPostBySlug } from "@/lib/serverBlogPosts";
 
 export const dynamic = "force-dynamic";
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+function getBlogPostImageUrl(featuredImage: string): string {
+  if (
+    !featuredImage ||
+    featuredImage.startsWith("firestore-image:")
+  ) {
+    return absoluteSiteUrl(BLOG_FALLBACK_IMAGE);
+  }
+
+  return featuredImage.startsWith("http")
+    ? featuredImage
+    : absoluteSiteUrl(featuredImage);
 }
 
 async function getPost(slug: string) {
@@ -31,13 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const imageUrl = post.featuredImage
-    ? post.featuredImage.startsWith("http")
-      ? post.featuredImage
-      : absoluteSiteUrl(post.featuredImage)
-    : absoluteSiteUrl(
-        "/src/assets/images/hero_digital_agency_1791271576191-optimized.webp",
-      );
+  const imageUrl = getBlogPostImageUrl(post.featuredImage);
   const canonicalUrl = absoluteSiteUrl(`/blog/${post.slug}`);
 
   return {
@@ -82,13 +93,7 @@ export default async function BlogPostPage({ params }: Props) {
     post,
     ...initialBlogPosts.filter((item) => item.slug !== post.slug),
   ];
-  const imageUrl = post.featuredImage
-    ? post.featuredImage.startsWith("http")
-      ? post.featuredImage
-      : absoluteSiteUrl(post.featuredImage)
-    : absoluteSiteUrl(
-        "/src/assets/images/hero_digital_agency_1791271576191-optimized.webp",
-      );
+  const imageUrl = getBlogPostImageUrl(post.featuredImage);
   const canonicalUrl = absoluteSiteUrl(`/blog/${post.slug}`);
   const datePublished = Date.parse(post.publishDate);
   const jsonLdArticle = {
