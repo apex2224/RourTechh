@@ -43,6 +43,7 @@ function decodeFirestoreFields(
 function normalizeBlogPost(
     value: unknown,
     documentId: string,
+    allowMissingContent = false,
 ): BlogPost | null {
     if (!value || typeof value !== "object") return null;
 
@@ -51,7 +52,7 @@ function normalizeBlogPost(
     if (
         typeof data.title !== "string" ||
         typeof data.slug !== "string" ||
-        typeof data.content !== "string" ||
+        (!allowMissingContent && typeof data.content !== "string") ||
         data.status !== "published"
     ) {
         return null;
@@ -67,7 +68,7 @@ function normalizeBlogPost(
         id: typeof data.id === "string" && data.id ? data.id : documentId,
         title: data.title,
         slug: data.slug,
-        content: data.content,
+        content: typeof data.content === "string" ? data.content : "",
         seoTitle: typeof data.seoTitle === "string" ? data.seoTitle : data.title,
         seoDescription:
             typeof data.seoDescription === "string" ? data.seoDescription : "",
@@ -159,6 +160,95 @@ export async function listPublishedBlogPostSlugs(): Promise<string[]> {
         });
     } catch (error) {
         console.error("Firestore blog sitemap lookup failed:", error);
+        return [];
+    }
+}
+
+export async function loadPublishedBlogPostsForServer(): Promise<BlogPost[]> {
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim();
+
+    if (!projectId) {
+        console.error(
+            "Missing NEXT_PUBLIC_FIREBASE_PROJECT_ID for server blog listing.",
+        );
+        return [];
+    }
+
+    const endpoint = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(
+        projectId,
+    )}/databases/${encodeURIComponent(
+        DATABASE_ID,
+    )}/documents:runQuery`;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            next: { revalidate: 3600 },
+            body: JSON.stringify({
+                structuredQuery: {
+                    from: [{ collectionId: "articles" }],
+                    where: {
+                        fieldFilter: {
+                            field: { fieldPath: "status" },
+                            op: "EQUAL",
+                            value: { stringValue: "published" },
+                        },
+                    },
+                    select: {
+                        fields: [
+                            { fieldPath: "id" },
+                            { fieldPath: "slug" },
+                            { fieldPath: "title" },
+                            { fieldPath: "seoTitle" },
+                            { fieldPath: "seoDescription" },
+                            { fieldPath: "category" },
+                            { fieldPath: "blogType" },
+                            { fieldPath: "tags" },
+                            { fieldPath: "author" },
+                            { fieldPath: "featuredImage" },
+                            { fieldPath: "publishDate" },
+                            { fieldPath: "readTime" },
+                            { fieldPath: "excerpt" },
+                            { fieldPath: "relatedServiceId" },
+                            { fieldPath: "relatedPostSlugs" },
+                            { fieldPath: "status" },
+                        ],
+                    },
+                    limit: PUBLISHED_POSTS_LIMIT,
+                },
+            }),
+        });
+
+        if (!response.ok) {
+            console.error(
+                `Firestore blog listing lookup failed (${response.status}): ${await response.text()}`,
+            );
+            return [];
+        }
+
+        const rows = (await response.json()) as Array<{
+            document?: {
+                name?: string;
+                fields?: Record<string, FirestoreValue>;
+            };
+        }>;
+
+        return rows.flatMap((row) => {
+            const document = row.document;
+            if (!document) return [];
+
+            const documentId = document.name?.split("/").pop() ?? "";
+            const post = normalizeBlogPost(
+                decodeFirestoreFields(document.fields ?? {}),
+                documentId,
+                true,
+            );
+
+            return post ? [post] : [];
+        });
+    } catch (error) {
+        console.error("Firestore blog listing lookup failed:", error);
         return [];
     }
 }

@@ -24,12 +24,17 @@ export default function BlogListingClient({ initialPosts }: BlogListingClientPro
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   useEffect(() => {
+    if (initialPosts.length > 0) return;
+
     let cancelled = false;
     loadPublishedBlogPosts()
       .then((published) => {
         if (!cancelled && published !== null) {
-          // Merge unique by slug
-          const map = new Map<string, BlogPost>();
+          const map = new Map(
+            initialPosts
+              .filter((post) => post.status === "published")
+              .map((post) => [post.slug, post]),
+          );
           published.forEach((p) => {
             if (p.status === "published") map.set(p.slug, p);
           });

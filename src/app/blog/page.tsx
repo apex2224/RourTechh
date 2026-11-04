@@ -3,6 +3,9 @@ import BlogListingClient from "@/components/BlogListingClient";
 import { initialBlogPosts } from "@/data/blogData";
 import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
 import { serializeStructuredData } from "@/lib/structuredData";
+import { loadPublishedBlogPostsForServer } from "@/lib/serverBlogPosts";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Engineering Blog & Technical Insights — RouR Tech",
@@ -27,8 +30,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogListingPage() {
-  const publishedPosts = initialBlogPosts.filter((p) => p.status === "published");
+export default async function BlogListingPage() {
+  const serverPosts = await loadPublishedBlogPostsForServer();
+  const postsBySlug = new Map(
+    initialBlogPosts
+      .filter((post) => post.status === "published")
+      .map((post) => [post.slug, post]),
+  );
+  serverPosts.forEach((post) => postsBySlug.set(post.slug, post));
+  const publishedPosts = Array.from(postsBySlug.values());
 
   const jsonLdBlog = {
     "@context": "https://schema.org",
@@ -86,7 +96,7 @@ export default function BlogListingPage() {
           __html: serializeStructuredData(jsonLdBreadcrumb),
         }}
       />
-      <BlogListingClient initialPosts={initialBlogPosts} />
+      <BlogListingClient initialPosts={publishedPosts} />
     </>
   );
 }
