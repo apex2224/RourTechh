@@ -129,6 +129,7 @@ export default function FaqPageClient() {
                         onClick={() => toggleFaq(faq.id)}
                         className="w-full px-6 py-5 text-left flex items-center justify-between text-base font-bold text-[#111111] hover:text-[#FF5B4D] transition-colors"
                         aria-expanded={isOpen}
+                        aria-controls={`faq-answer-${faq.id}`}
                       >
                         <span className="pr-4">{faq.question}</span>
                         <ChevronRight
@@ -137,14 +138,16 @@ export default function FaqPageClient() {
                           }`}
                         />
                       </button>
-                      {isOpen && (
-                        <div className="px-6 pb-6 pt-1 text-sm text-[#555555] leading-relaxed border-t border-[#F0F0EE]">
-                          <span className="text-[11px] font-bold text-[#FF5B4D] uppercase tracking-wider block mb-2">
-                            {faq.category}
-                          </span>
-                          <p>{faq.answer}</p>
-                        </div>
-                      )}
+                      <div
+                        id={`faq-answer-${faq.id}`}
+                        hidden={!isOpen}
+                        className="px-6 pb-6 pt-1 text-sm text-[#555555] leading-relaxed border-t border-[#F0F0EE]"
+                      >
+                        <span className="text-[11px] font-bold text-[#FF5B4D] uppercase tracking-wider block mb-2">
+                          {faq.category}
+                        </span>
+                        <p>{faq.answer}</p>
+                      </div>
                     </div>
                   );
                 })
