@@ -11,6 +11,9 @@ export const SITE_URL =
     ? new URL(rawAppUrl).origin
     : "https://rourtech.com";
 
+export const BLOG_FALLBACK_IMAGE =
+  "/src/assets/images/hero_digital_agency_1791271576191-optimized.webp";
+
 export function absoluteSiteUrl(path = "/"): string {
   const pathWithoutTrailingSlash = `/${path.replace(/^\/+|\/+$/g, "")}`;
   const normalizedPath =

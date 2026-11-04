@@ -120,20 +120,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: STATIC_CONTENT_LAST_MODIFIED,
   }));
 
-  const legalRoutes = [
-    "privacy-policy",
-    "cookie-policy",
-    "terms-and-conditions",
-    "disclaimer",
-    "data-deletion",
-    "acceptable-use-policy",
-    "refund-policy",
-    "shipping-policy",
-  ].map((route) => ({
-    url: absoluteSiteUrl(`/${route}`),
-    lastModified: STATIC_CONTENT_LAST_MODIFIED,
-  }));
-
   const blogPostRoutes = (await listPublishedBlogPosts()).map(
     ({ slug, lastModified }) => ({
       url: absoluteSiteUrl(`/blog/${slug}`),
@@ -148,7 +134,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     ...serviceRoutes,
     ...companyRoutes,
-    ...legalRoutes,
     ...blogPostRoutes,
   ];
 }

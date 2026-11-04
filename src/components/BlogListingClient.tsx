@@ -163,18 +163,12 @@ export default function BlogListingClient({ initialPosts }: BlogListingClientPro
                     <div>
                       {/* Featured Image */}
                       <Link href={`/blog/${post.slug}`} className="block relative aspect-video w-full bg-neutral-100 overflow-hidden border-b border-[#E8E8E8]">
-                        {post.featuredImage ? (
-                          <BlogFeaturedImage
-                            imageUrl={post.featuredImage}
-                            alt={post.title}
-                            className="h-full w-full"
-                            imageClassName="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-xs text-neutral-400 font-mono">
-                            {post.category}
-                          </div>
-                        )}
+                        <BlogFeaturedImage
+                          imageUrl={post.featuredImage}
+                          alt={post.title}
+                          className="h-full w-full"
+                          imageClassName="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                        />
                         <span className="absolute top-3 left-3 px-2.5 py-1 bg-black/75 backdrop-blur-md rounded-md text-[11px] font-semibold text-white tracking-wide">
                           {post.category}
                         </span>
