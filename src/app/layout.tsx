@@ -94,6 +94,10 @@ export default function RootLayout({
       addressRegion: "Himachal Pradesh",
       addressCountry: "IN",
     },
+    areaServed: [
+      { "@type": "City", name: "Kangra" },
+      { "@type": "State", name: "Himachal Pradesh" },
+    ],
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer inquiries",

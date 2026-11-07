@@ -5,16 +5,16 @@ import { absoluteSiteUrl, SITE_URL, siteConfig } from "@/lib/siteConfig";
 import { loadPublishedBlogPostsForServer } from "@/lib/serverBlogPosts";
 
 export const metadata: Metadata = {
-  title: "RouR Tech — Engineering High-Performance Digital Products & Web Applications",
+  title: "Independent Web Development Company in Kangra, Himachal Pradesh | RouR Tech",
   description:
-    "RouR Tech builds blazing-fast, scalable, and SEO-friendly websites, Next.js web applications, headless commerce platforms, and custom software solutions.",
+    "RouR Tech is an independent web development company based in Kangra, Himachal Pradesh, building websites, web applications, e-commerce platforms, and custom software.",
   alternates: {
     canonical: absoluteSiteUrl(),
   },
   openGraph: {
-    title: "RouR Tech — Engineering High-Performance Digital Products",
+    title: "Independent Web Development Company in Kangra, Himachal Pradesh | RouR Tech",
     description:
-      "RouR Tech builds blazing-fast, scalable, and SEO-friendly websites, Next.js web applications, headless commerce platforms, and custom software solutions.",
+      "RouR Tech is an independent web development company based in Kangra, Himachal Pradesh, building websites, web applications, e-commerce platforms, and custom software.",
     url: SITE_URL,
     siteName: siteConfig.name,
     type: "website",
@@ -29,9 +29,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "RouR Tech — Engineering High-Performance Digital Products",
+    title: "Independent Web Development Company in Kangra, Himachal Pradesh | RouR Tech",
     description:
-      "RouR Tech builds blazing-fast, scalable, and SEO-friendly websites, Next.js web applications, and headless commerce platforms.",
+      "RouR Tech is an independent web development company based in Kangra, Himachal Pradesh, building websites, web applications, e-commerce platforms, and custom software.",
     images: [siteConfig.ogImage],
   },
 };

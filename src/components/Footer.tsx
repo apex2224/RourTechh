@@ -34,6 +34,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
       title: "Website Maintenance, Security & Support",
       href: "/services/maintenance-security",
     },
+    {
+      title: "Web Development Company in Kangra",
+      href: "/web-development-company-in-kangra",
+    },
   ];
 
   const companyLinks = [

@@ -120,6 +120,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: STATIC_CONTENT_LAST_MODIFIED,
   }));
 
+  const localServiceRoute = {
+    url: absoluteSiteUrl("/web-development-company-in-kangra"),
+    lastModified: "2026-11-07",
+  };
+
   const blogPostRoutes = (await listPublishedBlogPosts()).map(
     ({ slug, lastModified }) => ({
       url: absoluteSiteUrl(`/blog/${slug}`),
@@ -134,6 +139,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     ...serviceRoutes,
     ...companyRoutes,
+    localServiceRoute,
     ...blogPostRoutes,
   ];
 }
