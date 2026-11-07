@@ -27,10 +27,9 @@ export function absoluteSiteUrl(path = "/"): string {
 
 export const siteConfig = {
   name: "RouR Tech",
-  legalName: "Legal business name to be confirmed by owner",
   shortName: "RouR Tech",
   description:
-    "RouR Tech offers website development, UI/UX design, technical SEO, e-commerce development, and custom software services.",
+    "RouR Tech is an independent web development company based in Kangra, Himachal Pradesh, offering web development, UI/UX design, technical SEO, e-commerce development, and custom software services.",
   url: SITE_URL,
   socialLinks: {
     x: "https://x.com/rourtech",
