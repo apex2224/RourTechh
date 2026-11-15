@@ -11,7 +11,7 @@ import { CaseStudyModal } from "./CaseStudyModal";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function PortfolioPageClient() {
+export default function PortfolioPageClient({ pageH1 }: { pageH1?: string }) {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [activeCaseStudy, setActiveCaseStudy] = useState<CaseStudy | null>(null);
@@ -60,7 +60,7 @@ export default function PortfolioPageClient() {
               <span>Portfolio</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#111111] font-display tracking-tight leading-[1.1] mb-6">
-              Project Work
+              {pageH1 || "Project Work"}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-[#555555] leading-relaxed max-w-3xl font-body mb-8">
               Explore selected websites and the technologies used to build

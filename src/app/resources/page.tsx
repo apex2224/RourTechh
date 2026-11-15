@@ -13,8 +13,11 @@ import {
 } from "lucide-react";
 import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
 import { serializeStructuredData } from "@/lib/structuredData";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Engineering Resources & Technical Guides — RouR Tech",
   description:
     "Free technical checklists, Core Web Vitals optimization frameworks, and architectural guides crafted by RouR Tech engineers.",
@@ -37,7 +40,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ResourcesPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("resources", defaultMetadata);
+}
+
+export default async function ResourcesPage() {
+  const pageSeo = await getPageSeo("resources");
   const jsonLdBreadcrumb = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -157,7 +165,7 @@ export default function ResourcesPage() {
               <span>              Engineering Resources</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#111111] font-display tracking-tight leading-[1.1] mb-6">
-              Technical Resources & Blueprints
+              {getPageH1(pageSeo, "Technical Resources & Blueprints")}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-[#555555] leading-relaxed max-w-2xl mx-auto mb-6 font-body">
               Practical overviews, performance checklists, and architecture topics for teams building and maintaining modern web applications.

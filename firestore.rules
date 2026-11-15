@@ -143,6 +143,32 @@ service cloud.firestore {
         && (data.status == "published" || data.status == "draft");
     }
 
+    function validPageSeo(pageId) {
+      let data = request.resource.data;
+      return pageId.matches("^[a-z0-9-]+$")
+        && data.keys().hasAll([
+          "h1", "seoTitle", "metaDescription", "focusKeyword",
+          "socialTitle", "socialDescription", "updatedAt"
+        ])
+        && data.keys().hasOnly([
+          "h1", "seoTitle", "metaDescription", "focusKeyword",
+          "socialTitle", "socialDescription", "updatedAt"
+        ])
+        && data.h1 is string
+        && data.h1.size() <= 200
+        && data.seoTitle is string
+        && data.seoTitle.size() <= 250
+        && data.metaDescription is string
+        && data.metaDescription.size() <= 500
+        && data.focusKeyword is string
+        && data.focusKeyword.size() <= 150
+        && data.socialTitle is string
+        && data.socialTitle.size() <= 250
+        && data.socialDescription is string
+        && data.socialDescription.size() <= 500
+        && data.updatedAt == request.time;
+    }
+
     match /inquiries/{inquiryId} {
       allow create: if validInquiry(inquiryId);
       allow get, list: if isAdmin();
@@ -197,6 +223,13 @@ service cloud.firestore {
         && isAdmin()
         && request.resource.data.keys().hasOnly(["initialized"])
         && request.resource.data.initialized == true;
+      allow delete: if false;
+    }
+
+    match /sitePageSeo/{pageId} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create, update: if isAdmin() && validPageSeo(pageId);
       allow delete: if false;
     }
   }

@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { absoluteSiteUrl } from "@/lib/siteConfig";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Refund & Cancellation Policy | RouR Tech",
   description: "Refund and cancellation terms for RouR Tech professional services.",
   alternates: { canonical: absoluteSiteUrl("/refund-policy") },
 };
 
-export default function RefundPolicyPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("refund-policy", defaultMetadata);
+}
+
+export default async function RefundPolicyPage() {
+  const pageSeo = await getPageSeo("refund-policy");
   return (
     <LegalPage
       title="Refund & Cancellation Policy"
+      pageH1={getPageH1(pageSeo, "Refund & Cancellation Policy")}
       description="Our approach to cancellations, project work already completed, and refunds."
       sections={[
         {

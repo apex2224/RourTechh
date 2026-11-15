@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 
-export const Hero = () => {
+export const Hero = ({ h1 }: { h1?: string }) => {
   return (
     <section className="relative flex min-h-0 items-center overflow-hidden border-b border-[#E8E8E8] py-10 md:min-h-[calc(100vh-72px)] md:py-12">
       <div
@@ -16,8 +16,14 @@ export const Hero = () => {
           </div>
 
           <h1 className="mx-auto max-w-4xl text-4xl sm:text-5xl md:text-5xl lg:text-7xl font-extrabold text-[#111111] leading-[1.04] tracking-tight font-display text-balance mb-5">
-            Digital products that are{" "}
-            <span className="text-[#B84238]">clear, fast, and built to last.</span>
+            {h1 || (
+              <>
+                Digital products that are{" "}
+                <span className="text-[#B84238]">
+                  clear, fast, and built to last.
+                </span>
+              </>
+            )}
           </h1>
 
           <p className="mx-auto max-w-2xl text-sm sm:text-base text-[#555555] leading-relaxed font-body mb-7">

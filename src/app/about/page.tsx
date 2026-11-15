@@ -14,8 +14,11 @@ import {
 } from "lucide-react";
 import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
 import { serializeStructuredData } from "@/lib/structuredData";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "About RouR Tech — Engineering High-Performance Digital Products",
   description:
     "Learn about RouR Tech's engineering philosophy, architecture standards, and client-first delivery model for modern web applications and digital platforms.",
@@ -38,7 +41,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AboutPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("about", defaultMetadata);
+}
+
+export default async function AboutPage() {
+  const pageSeo = await getPageSeo("about");
   const jsonLdBreadcrumbs = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -146,7 +154,10 @@ export default function AboutPage() {
               <span>About RouR Tech</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#111111] font-display tracking-tight leading-[1.1] mb-8">
-              We engineer digital products shaped around real business needs.
+              {getPageH1(
+                pageSeo,
+                "We engineer digital products shaped around real business needs.",
+              )}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-[#555555] leading-relaxed max-w-3xl font-body mb-10">
               RouR Tech is a specialized digital engineering studio. We combine

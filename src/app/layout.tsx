@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Figtree } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { absoluteSiteUrl, SITE_URL, siteConfig } from "@/lib/siteConfig";
 import { serializeStructuredData } from "@/lib/structuredData";
+import { SeoPreviewBridge } from "@/components/SeoPreviewBridge";
 
-const geist = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist",
+const figtree = Figtree({
+  subsets: ["latin"],
+  variable: "--font-figtree",
   display: "swap",
 });
 
@@ -118,7 +120,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${figtree.variable} ${geistMono.variable}`}>
       <head>
         <Script
           src="https://www.clarity.ms/tag/z8hhi3foys"
@@ -137,7 +139,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <SeoPreviewBridge />
+      </body>
     </html>
   );
 }

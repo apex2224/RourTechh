@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --font-display: var(--font-geist), sans-serif;
-    --font-body: var(--font-geist), sans-serif;
+    --font-display: var(--font-figtree), sans-serif;
+    --font-body: var(--font-figtree), sans-serif;
     --font-mono: var(--font-geist-mono), monospace;
     --color-bg-base: #f8f8f6;
     --color-surface: #ffffff;
@@ -63,6 +63,17 @@
 .content-visibility-auto {
   content-visibility: auto;
   contain-intrinsic-size: 1px 720px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+.rich-article-content h2,
+.rich-article-content h3 {
+  scroll-margin-top: 7rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

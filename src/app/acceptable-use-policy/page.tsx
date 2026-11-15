@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { absoluteSiteUrl } from "@/lib/siteConfig";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Acceptable Use Policy | RouR Tech",
   description: "Rules for safe and lawful use of RouR Tech websites and services.",
   alternates: { canonical: absoluteSiteUrl("/acceptable-use-policy") },
 };
 
-export default function AcceptableUsePolicyPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("acceptable-use-policy", defaultMetadata);
+}
+
+export default async function AcceptableUsePolicyPage() {
+  const pageSeo = await getPageSeo("acceptable-use-policy");
   return (
     <LegalPage
       title="Acceptable Use Policy"
+      pageH1={getPageH1(pageSeo, "Acceptable Use Policy")}
       description="Please use RouR Tech websites, forms, and services responsibly, lawfully, and respectfully."
       sections={[
         {

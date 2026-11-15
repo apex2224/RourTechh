@@ -6,14 +6,28 @@ import {
   loadFirestoreBlogImage,
 } from "@/lib/blogImages";
 
-const FALLBACK_IMAGE =
-  "/src/assets/images/hero_digital_agency_1791271576191-optimized.webp";
-
 interface BlogFeaturedImageProps {
   readonly imageUrl?: string | null;
   readonly alt: string;
   readonly className: string;
   readonly imageClassName?: string;
+}
+
+interface ImageState {
+  source: string | null;
+  resolvedUrl: string | null;
+  status: "loading" | "loaded" | "error";
+}
+
+function getInitialImageState(imageUrl?: string | null): ImageState {
+  const source = imageUrl || null;
+  const isFirestoreImage = source ? getFirestoreBlogImageId(source) : null;
+
+  return {
+    source,
+    resolvedUrl: source && !isFirestoreImage ? source : null,
+    status: source ? "loading" : "error",
+  };
 }
 
 export const BlogFeaturedImage: React.FC<BlogFeaturedImageProps> = ({
@@ -22,48 +36,53 @@ export const BlogFeaturedImage: React.FC<BlogFeaturedImageProps> = ({
   className,
   imageClassName = "h-full w-full object-cover",
 }) => {
-  const [imageFailed, setImageFailed] = useState(false);
-  const firestoreImageId = imageUrl ? getFirestoreBlogImageId(imageUrl) : null;
-  const initialImageUrl =
-    imageUrl && !firestoreImageId ? imageUrl : FALLBACK_IMAGE;
-  const [resolvedImageUrl, setResolvedImageUrl] =
-    useState<string>(initialImageUrl);
-  const [isLoading, setIsLoading] = useState(false);
+  const source = imageUrl || null;
+  const firestoreImageId = source ? getFirestoreBlogImageId(source) : null;
+  const [imageState, setImageState] = useState<ImageState>(() =>
+    getInitialImageState(imageUrl),
+  );
   const containerRef = useRef<HTMLDivElement>(null);
+  const isCurrentSource = imageState.source === source;
+  const resolvedImageUrl = isCurrentSource ? imageState.resolvedUrl : null;
+  const isImageLoading =
+    Boolean(source) && (!isCurrentSource || imageState.status === "loading");
+  const imageFailed =
+    !source || (isCurrentSource && imageState.status === "error");
   const isRemoteImage =
-    resolvedImageUrl.startsWith("https://") ||
-    resolvedImageUrl.startsWith("http://");
+    resolvedImageUrl?.startsWith("https://") ||
+    resolvedImageUrl?.startsWith("http://");
 
   useEffect(() => {
-    setImageFailed(false);
-
-    if (!imageUrl) {
-      setResolvedImageUrl(FALLBACK_IMAGE);
-      setIsLoading(false);
-      return;
-    }
-
-    if (!firestoreImageId) {
-      setResolvedImageUrl(imageUrl);
-      setIsLoading(false);
-      return;
-    }
-
     let cancelled = false;
     let observer: IntersectionObserver | null = null;
-    setIsLoading(true);
+
+    setImageState({
+      source,
+      resolvedUrl: source && !firestoreImageId ? source : null,
+      status: source ? "loading" : "error",
+    });
+
+    if (!source || !firestoreImageId) {
+      return () => {
+        cancelled = true;
+      };
+    }
 
     const loadImage = async () => {
       try {
         const dataUrl = await loadFirestoreBlogImage(firestoreImageId);
-        if (!cancelled) {
-          setResolvedImageUrl(dataUrl || FALLBACK_IMAGE);
-        }
+        if (cancelled) return;
+
+        setImageState({
+          source,
+          resolvedUrl: dataUrl,
+          status: dataUrl ? "loading" : "error",
+        });
       } catch (error) {
         console.error("Could not load the Firestore-backed blog image:", error);
-        if (!cancelled) setResolvedImageUrl(FALLBACK_IMAGE);
-      } finally {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled) {
+          setImageState({ source, resolvedUrl: null, status: "error" });
+        }
       }
     };
 
@@ -86,11 +105,27 @@ export const BlogFeaturedImage: React.FC<BlogFeaturedImageProps> = ({
       cancelled = true;
       observer?.disconnect();
     };
-  }, [imageUrl, firestoreImageId]);
+  }, [source, firestoreImageId]);
+
+  const handleImageLoad = () => {
+    setImageState((current) =>
+      current.source === source
+        ? { ...current, status: "loaded" }
+        : current,
+    );
+  };
+  const handleImageError = () => {
+    setImageState((current) =>
+      current.source === source
+        ? { ...current, resolvedUrl: null, status: "error" }
+        : current,
+    );
+  };
 
   return (
     <div
       ref={containerRef}
+      aria-busy={isImageLoading}
       className={`relative flex items-center justify-center overflow-hidden bg-[#ECECE8] ${className}`}
     >
       {resolvedImageUrl && !imageFailed ? (
@@ -103,13 +138,8 @@ export const BlogFeaturedImage: React.FC<BlogFeaturedImageProps> = ({
             height={900}
             loading="lazy"
             decoding="async"
-            onError={() => {
-              if (resolvedImageUrl !== FALLBACK_IMAGE) {
-                setResolvedImageUrl(FALLBACK_IMAGE);
-              } else {
-                setImageFailed(true);
-              }
-            }}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
           />
         ) : (
           <Image
@@ -121,35 +151,26 @@ export const BlogFeaturedImage: React.FC<BlogFeaturedImageProps> = ({
             height={900}
             loading="lazy"
             unoptimized={resolvedImageUrl.startsWith("data:")}
-            onError={() => {
-              if (resolvedImageUrl !== FALLBACK_IMAGE) {
-                setResolvedImageUrl(FALLBACK_IMAGE);
-              } else {
-                setImageFailed(true);
-              }
-            }}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
           />
         )
-      ) : (
+      ) : null}
+      {isImageLoading && (
         <div
-          className={`flex h-full w-full flex-col items-center justify-center gap-2 px-4 text-center text-xs text-[#777777] ${isLoading ? "skeleton" : ""}`}
+          className="skeleton absolute inset-0 z-10"
+          role="status"
+          aria-label={`Loading image: ${alt}`}
+        />
+      )}
+      {imageFailed && (
+        <div
+          className="absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-2 px-4 text-center text-xs text-[#777777]"
           role="img"
-          aria-label={
-            isLoading
-              ? "Loading featured image"
-              : imageUrl
-                ? "Featured image unavailable"
-                : "No featured image added"
-          }
+          aria-label={`Featured image unavailable: ${alt}`}
         >
           <ImageIcon className="h-6 w-6 text-[#999999]" aria-hidden="true" />
-          <span>
-            {isLoading
-              ? "Loading featured image…"
-              : imageUrl
-                ? "Featured image unavailable"
-                : "No featured image added"}
-          </span>
+          <span>Image unavailable</span>
         </div>
       )}
     </div>

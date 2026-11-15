@@ -10,6 +10,7 @@ import {
   Link2,
   List,
   ListOrdered,
+  ListTree,
   Minus,
   Plus,
   Quote,
@@ -26,6 +27,11 @@ import {
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import type { JSONContent } from "@tiptap/core";
 import { SITE_URL } from "@/lib/siteConfig";
+import {
+  ensureHeadingIds,
+  normalizeHeadingAnchors,
+  normalizeHtmlHeadingAnchors,
+} from "@/lib/headingIds";
 import { safeImageSource, safeLinkHref, richTextExtensions } from "@/lib/richContent";
 import type { BlogPost } from "@/types";
 
@@ -99,10 +105,14 @@ export default function RichBlogEditor({
   const [imageUrl, setImageUrl] = useState("");
   const [imageAlt, setImageAlt] = useState("");
   const [imageError, setImageError] = useState("");
+  const [tocMessage, setTocMessage] = useState("");
+  const [isSourceMode, setIsSourceMode] = useState(false);
+  const [sourceHtml, setSourceHtml] = useState("");
+  const [sourceError, setSourceError] = useState("");
 
   const editor = useEditor({
     extensions: richTextExtensions,
-    content: value,
+    content: ensureHeadingIds(normalizeHeadingAnchors(value)),
     immediatelyRender: false,
     editorProps: {
       attributes: {
@@ -113,6 +123,11 @@ export default function RichBlogEditor({
     },
     onUpdate: ({ editor: currentEditor }) => {
       onChange(currentEditor.getJSON());
+    },
+    onCreate: ({ editor: currentEditor }) => {
+      currentEditor.view.dispatch(
+        currentEditor.state.tr.setMeta("normalizeHeadingIds", true),
+      );
     },
   });
   const toolbarState = useEditorState({
@@ -251,9 +266,140 @@ export default function RichBlogEditor({
     }
   };
 
+  const insertTableOfContents = () => {
+    const headings: Array<{
+      level: 2 | 3;
+      id: string;
+      text: string;
+    }> = [];
+    editor.state.doc.descendants((node) => {
+      if (
+        node.type.name === "heading" &&
+        (node.attrs.level === 2 || node.attrs.level === 3) &&
+        typeof node.attrs.id === "string" &&
+        node.textContent.trim()
+      ) {
+        headings.push({
+          level: node.attrs.level,
+          id: node.attrs.id,
+          text: node.textContent.trim(),
+        });
+      }
+    });
+
+    if (headings.length === 0) {
+      setTocMessage("Add an H2 or H3 heading before inserting a table of contents.");
+      return;
+    }
+
+    const items: JSONContent[] = [];
+    let lastH2Item: JSONContent | null = null;
+    for (const heading of headings) {
+      const item: JSONContent = {
+        type: "listItem",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: heading.text,
+                marks: [
+                  {
+                    type: "link",
+                    attrs: { href: `#${heading.id}` },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      if (heading.level === 2 || !lastH2Item) {
+        items.push(item);
+        lastH2Item = heading.level === 2 ? item : null;
+      } else {
+        const h2Content = lastH2Item.content ?? [];
+        const childList = h2Content.find(
+          (node) => node.type === "bulletList",
+        );
+        if (childList) {
+          childList.content = [...(childList.content ?? []), item];
+        } else {
+          lastH2Item.content = [
+            ...h2Content,
+            { type: "bulletList", content: [item] },
+          ];
+        }
+      }
+    }
+
+    editor
+      .chain()
+      .focus()
+      .insertContent([
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "text",
+              text: "Table of contents",
+              marks: [{ type: "bold" }],
+            },
+          ],
+        },
+        { type: "bulletList", content: items },
+      ])
+      .run();
+    setTocMessage("Table of contents inserted with links to the article headings.");
+  };
+
+  const openSourceMode = () => {
+    setSourceHtml(editor.getHTML());
+    setSourceError("");
+    setIsSourceMode(true);
+  };
+
+  const cancelSourceMode = () => {
+    setSourceHtml("");
+    setSourceError("");
+    setIsSourceMode(false);
+  };
+
+  const applySourceHtml = () => {
+    try {
+      const applied = editor.commands.setContent(
+        normalizeHtmlHeadingAnchors(sourceHtml),
+        {
+          emitUpdate: true,
+          errorOnInvalidContent: true,
+        },
+      );
+      if (!applied) {
+        setSourceError("Could not apply this HTML. Check the markup and try again.");
+        return;
+      }
+
+      setIsSourceMode(false);
+      setSourceHtml("");
+      setSourceError("");
+    } catch (error) {
+      console.error("Could not apply article HTML source:", error);
+      setSourceError(
+        "Could not apply this HTML. Check the markup and try again.",
+      );
+    }
+  };
+
   return (
     <section className="overflow-hidden rounded-xl border border-[#E8E8E8] bg-white">
-      <div className="flex flex-wrap items-center gap-1 border-b border-[#E8E8E8] bg-[#F8F8F6] p-2">
+      <div
+        aria-disabled={isSourceMode}
+        className={`flex flex-wrap items-center gap-1 border-b border-[#E8E8E8] bg-[#F8F8F6] p-2 ${
+          isSourceMode ? "pointer-events-none opacity-50" : ""
+        }`}
+      >
         <label className="sr-only" htmlFor="rich-editor-block-style">
           Paragraph style
         </label>
@@ -416,6 +562,11 @@ export default function RichBlogEditor({
           onClick={openLinkDialog}
         />
         <ToolbarButton
+          label="Insert table of contents"
+          icon={ListTree}
+          onClick={insertTableOfContents}
+        />
+        <ToolbarButton
           label="Insert image"
           icon={ImagePlus}
           onClick={() => {
@@ -444,11 +595,72 @@ export default function RichBlogEditor({
           }
         />
       </div>
+      <div className="flex justify-end border-b border-[#E8E8E8] bg-[#F8F8F6] px-3 py-2">
+        <button
+          type="button"
+          onClick={isSourceMode ? cancelSourceMode : openSourceMode}
+          className="rounded-md border border-[#E8E8E8] bg-white px-3 py-1.5 text-xs font-semibold text-[#444444] hover:bg-[#F8F8F6]"
+        >
+          {isSourceMode ? "Cancel HTML source" : "Edit HTML source"}
+        </button>
+      </div>
 
       <p className="border-b border-[#F0F0EE] px-4 py-2 text-[11px] text-[#777777]">
-        Visual article editor · Use Ctrl/Cmd+B, Ctrl/Cmd+I, and Ctrl/Cmd+Z for formatting, and Tab/Shift+Tab to nest or outdent list items.
+        {isSourceMode
+          ? "HTML source mode · Heading IDs and #anchor links are preserved when valid."
+          : "Visual article editor · Use Ctrl/Cmd+B, Ctrl/Cmd+I, and Ctrl/Cmd+Z for formatting, and Tab/Shift+Tab to nest or outdent list items."}
       </p>
-      <EditorContent editor={editor} />
+      {tocMessage && (
+        <p className="border-b border-[#F0F0EE] px-4 py-2 text-xs text-[#555555]" role="status">
+          {tocMessage}
+        </p>
+      )}
+      {isSourceMode ? (
+        <div className="space-y-3 p-4">
+          <label className="sr-only" htmlFor="rich-editor-html-source">
+            Article HTML source
+          </label>
+          <textarea
+            id="rich-editor-html-source"
+            value={sourceHtml}
+            onChange={(event) => {
+              setSourceHtml(event.target.value);
+              setSourceError("");
+            }}
+            spellCheck={false}
+            className="min-h-[360px] w-full resize-y rounded-lg border border-[#E8E8E8] bg-[#171717] p-4 font-mono text-xs leading-6 text-[#F2F2EE] outline-none focus-visible:ring-2 focus-visible:ring-[#FF5B4D]"
+            aria-describedby="rich-editor-html-help"
+          />
+          <p id="rich-editor-html-help" className="text-xs text-[#666666]">
+            Keep heading IDs on H2/H3 tags (for example{" "}
+            <code>&lt;h2 id=&quot;frontend-development&quot;&gt;</code>) and
+            TOC links as <code>href=&quot;#frontend-development&quot;</code>.
+          </p>
+          {sourceError && (
+            <p role="alert" className="text-xs text-red-600">
+              {sourceError}
+            </p>
+          )}
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={cancelSourceMode}
+              className="rounded-lg border border-[#E8E8E8] px-3 py-2 text-xs font-semibold text-[#444444]"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={applySourceHtml}
+              className="rounded-lg bg-[#B84238] px-3 py-2 text-xs font-semibold text-white hover:bg-[#A33830]"
+            >
+              Apply HTML
+            </button>
+          </div>
+        </div>
+      ) : (
+        <EditorContent editor={editor} />
+      )}
 
       {isLinkDialogOpen && (
         <div

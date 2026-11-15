@@ -2,24 +2,31 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { BlogFeaturedImage } from "./BlogFeaturedImage";
 import { BlogPost } from "@/types";
 import { loadPublishedBlogPosts } from "@/lib/blogPosts";
+import { sortBlogPostsNewestFirst } from "@/lib/blogOrdering";
 import { Search, Clock, ArrowRight, BookOpen } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface BlogListingClientProps {
   initialPosts: BlogPost[];
+  pageH1?: string;
 }
 
-export default function BlogListingClient({ initialPosts }: BlogListingClientProps) {
+export default function BlogListingClient({
+  initialPosts,
+  pageH1,
+}: BlogListingClientProps) {
   const router = useRouter();
   const [posts, setPosts] = useState<BlogPost[]>(
-    initialPosts.filter((p) => p.status === "published"),
+    sortBlogPostsNewestFirst(
+      initialPosts.filter((p) => p.status === "published"),
+    ),
   );
+  const [isLoading, setIsLoading] = useState(initialPosts.length === 0);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
@@ -38,11 +45,14 @@ export default function BlogListingClient({ initialPosts }: BlogListingClientPro
           published.forEach((p) => {
             if (p.status === "published") map.set(p.slug, p);
           });
-          setPosts(Array.from(map.values()));
+          setPosts(sortBlogPostsNewestFirst(Array.from(map.values())));
         }
       })
       .catch((err) => {
         console.error("Could not load published blog posts from Firestore:", err);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
       });
 
     return () => {
@@ -112,7 +122,7 @@ export default function BlogListingClient({ initialPosts }: BlogListingClientPro
               <span>Architectural Insights</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#111111] font-display tracking-tight leading-[1.1] mb-6">
-              Engineering Notes, Technical SEO & Systems Design
+              {pageH1 || "Engineering Notes, Technical SEO & Systems Design"}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-[#555555] leading-relaxed max-w-2xl mx-auto mb-8 font-body">
               Deep-dives from our engineering team on Next.js performance, Core Web Vitals, headless commerce architecture, and scalable design systems.
@@ -153,7 +163,29 @@ export default function BlogListingClient({ initialPosts }: BlogListingClientPro
             </div>
 
             {/* Articles Grid */}
-            {filteredPosts.length > 0 ? (
+            {isLoading ? (
+              <div
+                className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+                role="status"
+                aria-label="Loading blog articles"
+              >
+                {Array.from({ length: 6 }, (_, index) => (
+                  <article
+                    key={index}
+                    className="overflow-hidden rounded-2xl border border-[#E8E8E8] bg-white"
+                  >
+                    <div className="skeleton aspect-video w-full" />
+                    <div className="space-y-4 p-6">
+                      <div className="skeleton h-3 w-1/3 rounded" />
+                      <div className="skeleton h-6 w-full rounded" />
+                      <div className="skeleton h-6 w-4/5 rounded" />
+                      <div className="skeleton h-3 w-full rounded" />
+                      <div className="skeleton h-3 w-5/6 rounded" />
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : filteredPosts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredPosts.map((post) => (
                   <article
@@ -211,21 +243,7 @@ export default function BlogListingClient({ initialPosts }: BlogListingClientPro
 
                     {/* Author & Read More */}
                     <div className="p-6 pt-0 border-t border-[#F0F0EE] flex items-center justify-between text-xs mt-4 pt-4">
-                      <div className="flex items-center gap-2.5">
-                        {post.author.avatar ? (
-                          <Image
-                            src={post.author.avatar}
-                            alt={post.author.name}
-                            className="w-7 h-7 rounded-full object-cover"
-                            width={32}
-                            height={32}
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="w-7 h-7 rounded-full bg-[#FFF2F0] text-[#FF5B4D] font-bold flex items-center justify-center text-[10px]">
-                            {post.author.name[0]}
-                          </div>
-                        )}
+                      <div className="flex items-center">
                         <span className="font-medium text-[#111111]">
                           {post.author.name}
                         </span>

@@ -2,8 +2,11 @@ import { Metadata } from "next";
 import PortfolioPageClient from "@/components/PortfolioPageClient";
 import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
 import { serializeStructuredData } from "@/lib/structuredData";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Project Work | RouR Tech",
   description:
     "Explore selected websites built by RouR Tech, including education technology and premium branded residences projects.",
@@ -26,7 +29,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PortfolioPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("portfolio", defaultMetadata);
+}
+
+export default async function PortfolioPage() {
+  const pageSeo = await getPageSeo("portfolio");
   const jsonLdBreadcrumb = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -54,7 +62,7 @@ export default function PortfolioPage() {
           __html: serializeStructuredData(jsonLdBreadcrumb),
         }}
       />
-      <PortfolioPageClient />
+      <PortfolioPageClient pageH1={getPageH1(pageSeo, "Project Work")} />
     </>
   );
 }

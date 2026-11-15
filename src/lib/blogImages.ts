@@ -15,6 +15,8 @@ export interface PreparedBlogImage {
 
 export type BlogImageUpdates = Record<string, PreparedBlogImage | null>;
 
+const pendingBlogImageLoads = new Map<string, Promise<string | null>>();
+
 export function getFirestoreBlogImageId(imageUrl: string): string | null {
   if (!imageUrl.startsWith(FIRESTORE_BLOG_IMAGE_PREFIX)) return null;
 
@@ -29,22 +31,36 @@ export function getFirestoreBlogImageUrl(imageId: string): string {
 export async function loadFirestoreBlogImage(
   imageId: string,
 ): Promise<string | null> {
-  const imageSnapshot = await getDoc(doc(db, "articleImages", imageId));
-  if (!imageSnapshot.exists()) return null;
+  const pendingLoad = pendingBlogImageLoads.get(imageId);
+  if (pendingLoad) return pendingLoad;
 
-  const image = imageSnapshot.data();
-  if (
-    image.contentType !== BLOG_IMAGE_CONTENT_TYPE ||
-    typeof image.imageData !== "string" ||
-    image.imageData.length > BLOG_IMAGE_MAX_BASE64_CHARACTERS ||
-    !Number.isInteger(image.byteLength) ||
-    image.byteLength <= 0 ||
-    image.byteLength > BLOG_IMAGE_MAX_BYTES
-  ) {
-    throw new Error(`Stored blog image "${imageId}" has an invalid format.`);
+  const imageLoad = (async () => {
+    const imageSnapshot = await getDoc(doc(db, "articleImages", imageId));
+    if (!imageSnapshot.exists()) return null;
+
+    const image = imageSnapshot.data();
+    if (
+      image.contentType !== BLOG_IMAGE_CONTENT_TYPE ||
+      typeof image.imageData !== "string" ||
+      image.imageData.length > BLOG_IMAGE_MAX_BASE64_CHARACTERS ||
+      !Number.isInteger(image.byteLength) ||
+      image.byteLength <= 0 ||
+      image.byteLength > BLOG_IMAGE_MAX_BYTES
+    ) {
+      throw new Error(`Stored blog image "${imageId}" has an invalid format.`);
+    }
+
+    return `data:${BLOG_IMAGE_CONTENT_TYPE};base64,${image.imageData}`;
+  })();
+  pendingBlogImageLoads.set(imageId, imageLoad);
+
+  try {
+    return await imageLoad;
+  } finally {
+    if (pendingBlogImageLoads.get(imageId) === imageLoad) {
+      pendingBlogImageLoads.delete(imageId);
+    }
   }
-
-  return `data:${BLOG_IMAGE_CONTENT_TYPE};base64,${image.imageData}`;
 }
 
 export async function prepareBlogImage(

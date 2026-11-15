@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { absoluteSiteUrl } from "@/lib/siteConfig";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Digital Delivery Policy | RouR Tech",
   description: "How RouR Tech delivers digital services and project deliverables.",
   alternates: { canonical: absoluteSiteUrl("/shipping-policy") },
 };
 
-export default function ShippingPolicyPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("shipping-policy", defaultMetadata);
+}
+
+export default async function ShippingPolicyPage() {
+  const pageSeo = await getPageSeo("shipping-policy");
   return (
     <LegalPage
       title="Digital Delivery & Handover Policy"
+      pageH1={getPageH1(pageSeo, "Digital Delivery & Handover Policy")}
       description="RouR Tech provides digital services and electronic project deliverables; we do not ship physical products through this website."
       sections={[
         {

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowRight, BookOpen } from 'lucide-react';
 import { BlogPost } from '../types';
 import { BlogFeaturedImage } from './BlogFeaturedImage';
+import { sortBlogPostsNewestFirst } from '@/lib/blogOrdering';
 
 interface BlogSectionProps {
   onSelectPost: (post: BlogPost) => void;
@@ -15,7 +16,9 @@ export const BlogSection: React.FC<BlogSectionProps> = ({
 }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const [posts, setPosts] = useState<BlogPost[]>(
-    initialPosts.filter((post) => post.status === 'published'),
+    sortBlogPostsNewestFirst(
+      initialPosts.filter((post) => post.status === 'published'),
+    ),
   );
   const [isLoading, setIsLoading] = useState(initialPosts.length === 0);
   const publishedPosts = posts.filter((p) => p.status === 'published');
@@ -96,7 +99,29 @@ export const BlogSection: React.FC<BlogSectionProps> = ({
         </div>
 
         {/* Article Cards Grid */}
-        {isLoading ? null : featuredPosts.length === 0 ? (
+        {isLoading ? (
+          <div
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            role="status"
+            aria-label="Loading featured articles"
+          >
+            {Array.from({ length: 3 }, (_, index) => (
+              <article
+                key={index}
+                className="overflow-hidden rounded-xl border border-[#E8E8E8] bg-[#F8F8F6]"
+              >
+                <div className="skeleton aspect-[16/9]" />
+                <div className="space-y-4 p-6 sm:p-7">
+                  <div className="skeleton h-3 w-1/3 rounded" />
+                  <div className="skeleton h-6 w-full rounded" />
+                  <div className="skeleton h-6 w-4/5 rounded" />
+                  <div className="skeleton h-3 w-full rounded" />
+                  <div className="skeleton h-3 w-5/6 rounded" />
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : featuredPosts.length === 0 ? (
           <div className="text-center py-16 bg-[#F8F8F6] rounded-xl border border-[#E8E8E8]">
             <BookOpen className="w-8 h-8 text-[#666666] mx-auto mb-3" />
             <p className="text-sm font-semibold text-[#111111]">No articles found</p>

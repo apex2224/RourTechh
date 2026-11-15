@@ -1,18 +1,27 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { absoluteSiteUrl } from "@/lib/siteConfig";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Privacy Policy | RouR Tech",
   description:
     "What RouR Tech collects through its website, how enquiries are handled, and how to raise a privacy request.",
   alternates: { canonical: absoluteSiteUrl("/privacy-policy") },
 };
 
-export default function PrivacyPolicyPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("privacy-policy", defaultMetadata);
+}
+
+export default async function PrivacyPolicyPage() {
+  const pageSeo = await getPageSeo("privacy-policy");
   return (
     <LegalPage
       title="Privacy Policy"
+      pageH1={getPageH1(pageSeo, "Privacy Policy")}
       description="This policy describes the information handled through the RouR Tech website and how to contact us about it."
       sections={[
         {

@@ -1,18 +1,27 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { absoluteSiteUrl } from "@/lib/siteConfig";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Cookie Policy | RouR Tech",
   description:
     "What cookies and browser storage were found in the RouR Tech website source and what remains unverified.",
   alternates: { canonical: absoluteSiteUrl("/cookie-policy") },
 };
 
-export default function CookiePolicyPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("cookie-policy", defaultMetadata);
+}
+
+export default async function CookiePolicyPage() {
+  const pageSeo = await getPageSeo("cookie-policy");
   return (
     <LegalPage
       title="Cookie Policy"
+      pageH1={getPageH1(pageSeo, "Cookie Policy")}
       description="This inventory reflects a source-code review; cookies and storage used by hosting infrastructure, providers, and browsers may require separate runtime verification."
       sections={[
         {

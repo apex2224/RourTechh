@@ -75,7 +75,15 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
       return { element, created, previousContent };
     });
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (window.location.hash) {
+      const targetId = decodeURIComponent(window.location.hash.slice(1));
+      document.getElementById(targetId)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 
     return () => {
       document.title = originalTitle;
@@ -238,14 +246,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
           </p>
 
           {/* Author Byline */}
-          <div className="flex items-center gap-3.5 p-4 bg-white rounded-xl border border-[#E8E8E8]">
-            <img
-              src={post.author.avatar}
-              alt={post.author.name}
-              className="w-11 h-11 rounded-full object-cover border border-[#E8E8E8]"
-              loading="lazy"
-              referrerPolicy="no-referrer"
-            />
+          <div className="p-4 bg-white rounded-xl border border-[#E8E8E8]">
             <div>
               <div className="text-sm font-bold text-[#111111]">
                 {post.author.name}

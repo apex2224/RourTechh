@@ -6,6 +6,7 @@ import {
 } from "firebase/firestore";
 import { BlogPost } from "@/types";
 import { db, hasFirestoreConfig } from "@/lib/firebase";
+import { sortBlogPostsNewestFirst } from "@/lib/blogOrdering";
 
 function isExpectedAbort(error: unknown): boolean {
   if (!error || typeof error !== "object") return false;
@@ -26,7 +27,9 @@ export async function loadPublishedBlogPosts(): Promise<BlogPost[] | null> {
       query(collection(db, "articles"), where("status", "==", "published")),
     );
 
-    return publishedArticles.docs.map((article) => article.data() as BlogPost);
+    return sortBlogPostsNewestFirst(
+      publishedArticles.docs.map((article) => article.data() as BlogPost),
+    );
   } catch (error) {
     if (isExpectedAbort(error)) return null;
     throw error;

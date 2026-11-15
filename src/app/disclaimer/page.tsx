@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { absoluteSiteUrl } from "@/lib/siteConfig";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Disclaimer | RouR Tech",
   description: "Important information about RouR Tech website content and service results.",
   alternates: { canonical: absoluteSiteUrl("/disclaimer") },
 };
 
-export default function DisclaimerPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("disclaimer", defaultMetadata);
+}
+
+export default async function DisclaimerPage() {
+  const pageSeo = await getPageSeo("disclaimer");
   return (
     <LegalPage
       title="Disclaimer"
+      pageH1={getPageH1(pageSeo, "Disclaimer")}
       description="Important information about the content and claims published on this website."
       sections={[
         {

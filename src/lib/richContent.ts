@@ -1,15 +1,98 @@
 import {
+  Extension,
   type Extensions,
   type JSONContent,
 } from "@tiptap/core";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Image from "@tiptap/extension-image";
 import { MarkdownManager } from "@tiptap/markdown";
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import { Plugin } from "@tiptap/pm/state";
 import { common, createLowlight } from "lowlight";
 import StarterKit from "@tiptap/starter-kit";
 import { TableKit } from "@tiptap/extension-table";
+import {
+  assignHeadingIds,
+  markMarkdownHeadingAnchors,
+  normalizeHeadingAnchors,
+} from "@/lib/headingIds";
 
 export const lowlight = createLowlight(common);
+
+const HeadingIdExtension = Extension.create({
+  name: "headingId",
+
+  addGlobalAttributes() {
+    return [
+      {
+        types: ["heading"],
+        attributes: {
+          id: {
+            default: null,
+            parseHTML: (element) => element.getAttribute("id"),
+            renderHTML: (attributes) =>
+              typeof attributes.id === "string" ? { id: attributes.id } : {},
+          },
+          idGenerated: {
+            default: false,
+            parseHTML: (element) =>
+              element.getAttribute("data-heading-id-generated") === "true",
+            renderHTML: (attributes) =>
+              attributes.idGenerated === true
+                ? { "data-heading-id-generated": "true" }
+                : {},
+          },
+        },
+      },
+    ];
+  },
+
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        appendTransaction: (_transactions, _oldState, newState) => {
+          const headings: Array<{
+            node: ProseMirrorNode;
+            position: number;
+          }> = [];
+          newState.doc.descendants((node, position) => {
+            if (
+              node.type.name === "heading" &&
+              (node.attrs.level === 2 || node.attrs.level === 3)
+            ) {
+              headings.push({ node, position });
+            }
+          });
+
+          const assignments = assignHeadingIds(
+            headings.map(({ node }) => ({
+              text: node.textContent,
+              id: node.attrs.id,
+              generated: node.attrs.idGenerated,
+            })),
+          );
+          const transaction = newState.tr;
+
+          headings.forEach(({ node, position }, index) => {
+            const assignment = assignments[index];
+            if (
+              node.attrs.id !== assignment.id ||
+              node.attrs.idGenerated !== assignment.generated
+            ) {
+              transaction.setNodeMarkup(position, undefined, {
+                ...node.attrs,
+                id: assignment.id,
+                idGenerated: assignment.generated,
+              });
+            }
+          });
+
+          return transaction.docChanged ? transaction : null;
+        },
+      }),
+    ];
+  },
+});
 
 export const richTextExtensions: Extensions = [
   StarterKit.configure({
@@ -19,6 +102,7 @@ export const richTextExtensions: Extensions = [
       HTMLAttributes: { rel: "noopener noreferrer" },
     },
   }),
+  HeadingIdExtension,
   CodeBlockLowlight.configure({ lowlight }),
   Image.configure({ allowBase64: false }),
   TableKit.configure({
@@ -40,7 +124,12 @@ export function createEmptyRichDocument(): JSONContent {
 }
 
 export function markdownToRichDocument(markdown: string): JSONContent {
-  return markdownManager.parse(markdown);
+  const { markdown: markedMarkdown, anchorIds } =
+    markMarkdownHeadingAnchors(markdown);
+  return normalizeHeadingAnchors(
+    markdownManager.parse(markedMarkdown),
+    anchorIds,
+  );
 }
 
 export function isRichDocument(value: unknown): value is JSONContent {
@@ -91,6 +180,8 @@ export function isRichDocument(value: unknown): value is JSONContent {
 export function safeLinkHref(value: string): string | null {
   const href = value.trim();
   if (!href || /\s/.test(href)) return null;
+
+  if (href.startsWith("#") && href.length > 1) return href;
 
   if (href.startsWith("/") && !href.startsWith("//") && !href.startsWith("/\\")) {
     return href;
