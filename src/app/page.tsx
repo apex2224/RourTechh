@@ -3,8 +3,11 @@ import { Hero } from "@/components/Hero";
 import HomeClient from "@/components/HomeClient";
 import { absoluteSiteUrl, SITE_URL, siteConfig } from "@/lib/siteConfig";
 import { loadPublishedBlogPostsForServer } from "@/lib/serverBlogPosts";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Independent Web Development Company in Kangra, Himachal Pradesh | RouR Tech",
   description:
     "RouR Tech is an independent web development company based in Kangra, Himachal Pradesh, building websites, web applications, e-commerce platforms, and custom software.",
@@ -37,6 +40,18 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const blogPosts = await loadPublishedBlogPostsForServer(3);
-  return <HomeClient hero={<Hero />} blogPosts={blogPosts} />;
+  const [blogPosts, pageSeo] = await Promise.all([
+    loadPublishedBlogPostsForServer(3),
+    getPageSeo("home"),
+  ]);
+  return (
+    <HomeClient
+      hero={<Hero h1={getPageH1(pageSeo, "Digital products that are clear, fast, and built to last.")} />}
+      blogPosts={blogPosts}
+    />
+  );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("home", defaultMetadata);
 }

@@ -7,7 +7,7 @@ import { Footer } from "./Footer";
 import { ContactSection } from "./ContactSection";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function ContactPageClient() {
+export default function ContactPageClient({ pageH1 }: { pageH1?: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialService = searchParams.get("service") || "";
@@ -44,6 +44,8 @@ export default function ContactPageClient() {
         {/* Embedded Contact Section */}
         <ContactSection
           prefilledService={initialService}
+          heading={pageH1 || "Let's build something exceptional together."}
+          headingLevel="h1"
           onInquirySubmitted={() => {}}
         />
       </main>

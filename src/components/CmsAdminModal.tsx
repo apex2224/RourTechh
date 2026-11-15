@@ -22,6 +22,7 @@ import { isAdminUser } from "@/lib/adminAuthorization";
 import { BlogFeaturedImage } from "@/components/BlogFeaturedImage";
 import RichBlogEditor from "@/components/RichBlogEditor";
 import RichArticleContent from "@/components/RichArticleContent";
+import { PageSeoPanel } from "@/components/PageSeoPanel";
 import {
   getFirestoreBlogImageId,
   getFirestoreBlogImageUrl,
@@ -31,6 +32,10 @@ import {
 import { SITE_URL } from "@/lib/siteConfig";
 import { initialBlogPosts } from "@/data/blogData";
 import { getErrorCode } from "@/lib/errorCode";
+import {
+  ensureHeadingIds,
+  normalizeHeadingAnchors,
+} from "@/lib/headingIds";
 import {
   createEmptyRichDocument,
   isRichDocument,
@@ -54,6 +59,7 @@ import {
   Save,
   ArrowRight,
   Home,
+  Search,
 } from "lucide-react";
 
 import { BlogPost, InquiryRecord, ServiceId } from "../types";
@@ -105,7 +111,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
   onUpdatePosts,
 }) => {
   const [activeTab, setActiveTab] = useState<
-    "articles" | "inquiries" | "seo-sitemap"
+    "articles" | "inquiries" | "page-seo" | "seo-sitemap"
   >("articles");
   const [currentUser, setCurrentUser] = useState<
     import("firebase/auth").User | null
@@ -516,7 +522,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
 
     setContentJson(
       isRichDocument(p.contentJson)
-        ? p.contentJson
+        ? normalizeHeadingAnchors(p.contentJson)
         : markdownToRichDocument(p.content),
     );
 
@@ -550,7 +556,10 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       .map((tag) => tag.trim())
       .filter(Boolean);
 
-    const articleText = richDocumentToPlainText(contentJson);
+    const normalizedContentJson = ensureHeadingIds(
+      normalizeHeadingAnchors(contentJson),
+    );
+    const articleText = richDocumentToPlainText(normalizedContentJson);
 
     return {
       id,
@@ -579,7 +588,7 @@ export const CmsAdminModal: React.FC<CmsAdminModalProps> = ({
       excerpt:
         excerpt.trim() || articleText.slice(0, 160) + "...",
       content: editingPost?.content ?? "",
-      contentJson,
+      contentJson: normalizedContentJson,
       status,
       ...(relatedServiceId
         ? { relatedServiceId: relatedServiceId as ServiceId }
@@ -902,7 +911,7 @@ Sitemap: ${SITE_URL}/sitemap.xml
     >
       <div className="absolute inset-0" onClick={requestClose} />
 
-      <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-[#E8E8E8] max-h-[92vh] overflow-hidden z-10 flex flex-col">
+      <div className="relative w-full max-w-7xl bg-white rounded-2xl shadow-2xl border border-[#E8E8E8] max-h-[92vh] overflow-hidden z-10 flex flex-col">
         {/* Top Bar of CMS */}
 
         <div className="px-6 py-4 border-b border-[#E8E8E8] bg-[#F8F8F6] flex items-center justify-between">
@@ -939,7 +948,7 @@ Sitemap: ${SITE_URL}/sitemap.xml
 
         {/* Navigation Tabs */}
 
-        <div className="px-6 border-b border-[#E8E8E8] bg-white flex items-center gap-6 text-xs font-semibold">
+        <div className="overflow-x-auto px-6 border-b border-[#E8E8E8] bg-white flex items-center gap-6 text-xs font-semibold">
           <button
             onClick={() => setActiveTab("articles")}
             className={`py-3.5 border-b-2 transition-colors cursor-pointer flex items-center gap-2 ${
@@ -971,8 +980,20 @@ Sitemap: ${SITE_URL}/sitemap.xml
           </button>
 
           <button
+            onClick={() => setActiveTab("page-seo")}
+            className={`py-3.5 border-b-2 transition-colors cursor-pointer flex shrink-0 items-center gap-2 ${
+              activeTab === "page-seo"
+                ? "border-[#FF5B4D] text-[#111111]"
+                : "border-transparent text-[#666666] hover:text-[#111111]"
+            }`}
+          >
+            <Search className="w-4 h-4" />
+            <span>Page SEO</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab("seo-sitemap")}
-            className={`py-3.5 border-b-2 transition-colors cursor-pointer flex items-center gap-2 ${
+            className={`py-3.5 border-b-2 transition-colors cursor-pointer flex shrink-0 items-center gap-2 ${
               activeTab === "seo-sitemap"
                 ? "border-[#FF5B4D] text-[#111111]"
                 : "border-transparent text-[#666666] hover:text-[#111111]"
@@ -1658,6 +1679,10 @@ Sitemap: ${SITE_URL}/sitemap.xml
                 </div>
               )}
             </div>
+          )}
+
+          {activeTab === "page-seo" && currentUser && (
+            <PageSeoPanel user={currentUser} />
           )}
 
           {/* TAB 3: SEO, SITEMAP & ROBOTS */}

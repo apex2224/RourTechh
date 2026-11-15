@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { absoluteSiteUrl } from "@/lib/siteConfig";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Terms & Conditions | RouR Tech",
   description: "Terms for using the RouR Tech website and engaging our services.",
   alternates: { canonical: absoluteSiteUrl("/terms-and-conditions") },
 };
 
-export default function TermsAndConditionsPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("terms-and-conditions", defaultMetadata);
+}
+
+export default async function TermsAndConditionsPage() {
+  const pageSeo = await getPageSeo("terms-and-conditions");
   return (
     <LegalPage
       title="Terms & Conditions"
+      pageH1={getPageH1(pageSeo, "Terms & Conditions")}
       description="These terms apply to your use of the RouR Tech website and our professional services."
       sections={[
         {

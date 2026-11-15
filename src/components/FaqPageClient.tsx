@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function FaqPageClient() {
+export default function FaqPageClient({ pageH1 }: { pageH1?: string }) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -63,7 +63,7 @@ export default function FaqPageClient() {
                 →
               </li>
               <li className="text-[#111111] font-semibold" aria-current="page">
-                Frequently Asked Questions
+                {pageH1 || "Frequently Asked Questions"}
               </li>
             </ol>
           </div>

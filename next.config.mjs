@@ -8,7 +8,6 @@ const nextConfig = {
         source: "/:path*",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
           {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
@@ -23,13 +22,13 @@ const nextConfig = {
               "default-src 'self'",
               "base-uri 'self'",
               "object-src 'none'",
-              "frame-ancestors 'self'",
+              "frame-ancestors 'self' https://rourtech.com https://www.rourtech.com",
               "img-src 'self' data: blob: https: http:",
               "style-src 'self' 'unsafe-inline'",
               "font-src 'self' data:",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms",
               "connect-src 'self' https://*.firebaseio.com https://*.firebaseapp.com https://*.googleapis.com https://*.gstatic.com https://*.clarity.ms https://clarity.ms",
-              "frame-src 'self' https://*.firebaseapp.com",
+              "frame-src 'self' https://rourtech.com https://www.rourtech.com https://*.firebaseapp.com",
               "upgrade-insecure-requests",
             ].join("; "),
           },

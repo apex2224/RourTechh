@@ -5,10 +5,13 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { absoluteSiteUrl, SITE_URL, siteConfig } from "@/lib/siteConfig";
 import { serializeStructuredData } from "@/lib/structuredData";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
 const pageUrl = absoluteSiteUrl("/web-development-company-in-kangra");
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Web Development Company in Kangra, Himachal Pradesh | RouR Tech",
   description:
     "RouR Tech is based in Kangra, Himachal Pradesh, and provides remote web development, UI/UX design, e-commerce, and software services to clients in India and worldwide.",
@@ -30,6 +33,10 @@ export const metadata: Metadata = {
       "Remote web development and digital services from RouR Tech, based in Kangra, Himachal Pradesh.",
   },
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("kangra-web-development", defaultMetadata);
+}
 
 const services = [
   {
@@ -93,13 +100,14 @@ const faqs = [
   },
 ];
 
-export default function KangraWebDevelopmentPage() {
+export default async function KangraWebDevelopmentPage() {
+  const pageSeo = await getPageSeo("kangra-web-development");
   const jsonLdService = {
     "@context": "https://schema.org",
     "@type": "Service",
     "@id": `${pageUrl}#service`,
     name: "Remote Web Development Services in Kangra",
-    description: metadata.description,
+    description: pageSeo?.metaDescription || defaultMetadata.description,
     url: pageUrl,
     provider: { "@id": `${SITE_URL}/#organization` },
     areaServed: [
@@ -167,7 +175,10 @@ export default function KangraWebDevelopmentPage() {
                 Based in Kangra · Working remotely
               </p>
               <h1 className="font-display text-4xl font-extrabold leading-tight tracking-tight text-[#111111] sm:text-5xl md:text-6xl">
-                Web Development Company in Kangra, Himachal Pradesh
+                {getPageH1(
+                  pageSeo,
+                  "Web Development Company in Kangra, Himachal Pradesh",
+                )}
               </h1>
               <p className="mt-6 max-w-3xl text-base leading-relaxed text-[#555555] sm:text-lg">
                 RouR Tech is an independent web development company based in

@@ -1,18 +1,27 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 import { absoluteSiteUrl } from "@/lib/siteConfig";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Privacy Requests & Data Deletion | RouR Tech",
   description:
     "How to submit a privacy, correction, consent-withdrawal, or deletion request to RouR Tech.",
   alternates: { canonical: absoluteSiteUrl("/data-deletion") },
 };
 
-export default function DataDeletionPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("data-deletion", defaultMetadata);
+}
+
+export default async function DataDeletionPage() {
+  const pageSeo = await getPageSeo("data-deletion");
   return (
     <LegalPage
       title="Privacy Requests & Data Deletion"
+      pageH1={getPageH1(pageSeo, "Privacy Requests & Data Deletion")}
       label="Privacy & User Rights"
       description="You can ask us to review a request about personal information, subject to applicable law and verification."
       sections={[

@@ -3,11 +3,13 @@ import BlogListingClient from "@/components/BlogListingClient";
 import { initialBlogPosts } from "@/data/blogData";
 import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
 import { serializeStructuredData } from "@/lib/structuredData";
+import { sortBlogPostsNewestFirst } from "@/lib/blogOrdering";
 import { loadPublishedBlogPostsForServer } from "@/lib/serverBlogPosts";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
+const defaultMetadata: Metadata = {
   title: "Engineering Blog & Technical Insights — RouR Tech",
   description:
     "Architectural notes, technical SEO strategies, Core Web Vitals blueprints, and modern web application development insights from RouR Tech engineers.",
@@ -30,15 +32,24 @@ export const metadata: Metadata = {
   },
 };
 
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("blog", defaultMetadata);
+}
+
 export default async function BlogListingPage() {
-  const serverPosts = await loadPublishedBlogPostsForServer();
+  const [serverPosts, pageSeo] = await Promise.all([
+    loadPublishedBlogPostsForServer(),
+    getPageSeo("blog"),
+  ]);
   const postsBySlug = new Map(
     initialBlogPosts
       .filter((post) => post.status === "published")
       .map((post) => [post.slug, post]),
   );
   serverPosts.forEach((post) => postsBySlug.set(post.slug, post));
-  const publishedPosts = Array.from(postsBySlug.values());
+  const publishedPosts = sortBlogPostsNewestFirst(
+    Array.from(postsBySlug.values()),
+  );
 
   const jsonLdBlog = {
     "@context": "https://schema.org",
@@ -96,7 +107,13 @@ export default async function BlogListingPage() {
           __html: serializeStructuredData(jsonLdBreadcrumb),
         }}
       />
-      <BlogListingClient initialPosts={publishedPosts} />
+      <BlogListingClient
+        initialPosts={publishedPosts}
+        pageH1={getPageH1(
+          pageSeo,
+          "Engineering Notes, Technical SEO & Systems Design",
+        )}
+      />
     </>
   );
 }

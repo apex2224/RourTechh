@@ -31,9 +31,13 @@ import { serializeStructuredData } from "@/lib/structuredData";
 
 interface ServicePageTemplateProps {
   service: ServiceItem;
+  pageH1?: string;
 }
 
-export const ServicePageTemplate: React.FC<ServicePageTemplateProps> = ({ service }) => {
+export const ServicePageTemplate: React.FC<ServicePageTemplateProps> = ({
+  service,
+  pageH1,
+}) => {
   const router = useRouter();
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
@@ -173,7 +177,7 @@ export const ServicePageTemplate: React.FC<ServicePageTemplateProps> = ({ servic
               </li>
               <li className="text-[#888888] font-bold">/</li>
               <li className="text-[#111111] font-semibold truncate" aria-current="page">
-                {service.title}
+                {pageH1 || service.title}
               </li>
             </ol>
           </div>

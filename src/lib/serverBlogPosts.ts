@@ -1,4 +1,5 @@
 import { BlogPost } from "@/types";
+import { sortBlogPostsNewestFirst } from "@/lib/blogOrdering";
 
 const DATABASE_ID = "default";
 const PUBLISHED_POSTS_LIMIT = 1000;
@@ -186,7 +187,7 @@ export async function loadPublishedBlogPostsForServer(
         const response = await fetch(endpoint, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            next: { revalidate: 3600 },
+            cache: "no-store",
             body: JSON.stringify({
                 structuredQuery: {
                     from: [{ collectionId: "articles" }],
@@ -236,19 +237,21 @@ export async function loadPublishedBlogPostsForServer(
             };
         }>;
 
-        return rows.flatMap((row) => {
-            const document = row.document;
-            if (!document) return [];
+        return sortBlogPostsNewestFirst(
+            rows.flatMap((row) => {
+                const document = row.document;
+                if (!document) return [];
 
-            const documentId = document.name?.split("/").pop() ?? "";
-            const post = normalizeBlogPost(
-                decodeFirestoreFields(document.fields ?? {}),
-                documentId,
-                true,
-            );
+                const documentId = document.name?.split("/").pop() ?? "";
+                const post = normalizeBlogPost(
+                    decodeFirestoreFields(document.fields ?? {}),
+                    documentId,
+                    true,
+                );
 
-            return post ? [post] : [];
-        });
+                return post ? [post] : [];
+            }),
+        );
     } catch (error) {
         console.error("Firestore blog listing lookup failed:", error);
         return [];

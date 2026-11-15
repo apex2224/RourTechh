@@ -3,8 +3,11 @@ import FaqPageClient from "@/components/FaqPageClient";
 import { faqData } from "@/data/faqData";
 import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
 import { serializeStructuredData } from "@/lib/structuredData";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Frequently Asked Questions | RouR Tech",
   description:
     "Answers about project scope, web development, design, technical SEO, pricing discussions, and post-launch support.",
@@ -27,7 +30,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function FaqPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("faq", defaultMetadata);
+}
+
+export default async function FaqPage() {
+  const pageSeo = await getPageSeo("faq");
   const jsonLdFaq = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -74,7 +82,9 @@ export default function FaqPage() {
           __html: serializeStructuredData(jsonLdBreadcrumb),
         }}
       />
-      <FaqPageClient />
+      <FaqPageClient
+        pageH1={getPageH1(pageSeo, "Frequently Asked Questions")}
+      />
     </>
   );
 }

@@ -41,6 +41,20 @@ firebase deploy --only firestore --project ourtech-f58d4
 The CMS is available at `/admin`. Email/Password and Google sign-in are both
 restricted to the configured UID.
 
+The admin CMS includes a **Page SEO** tab for updating the H1, SEO title, meta
+description, focus-keyword note, and social-sharing title and description for
+the listed pages. Blog articles remain editable in the Articles tab. Page SEO
+values are read from Firestore at request time, so content changes do not need
+a new app build after the feature and Firestore rules have been deployed. The
+site must run as a Next.js Node.js app; a static export cannot apply these
+server-rendered metadata updates.
+
+Deploy the updated page SEO access rules to the configured Firebase project:
+
+```bash
+firebase deploy --only firestore:rules --project ourtech-f58d4
+```
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More

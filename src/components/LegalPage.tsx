@@ -13,6 +13,7 @@ interface LegalPageProps {
   title: string;
   label?: string;
   description?: string;
+  pageH1?: string;
   sections: LegalSection[];
 }
 
@@ -20,6 +21,7 @@ export function LegalPage({
   title,
   label = "Legal & Governance",
   description,
+  pageH1,
   sections,
 }: LegalPageProps) {
   return (
@@ -48,7 +50,7 @@ export function LegalPage({
                 {label}
               </span>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-[#111111] font-display">
-                {title}
+                {pageH1 || title}
               </h1>
               {description ? (
                 <p className="mt-3 text-sm text-[#666666]">{description}</p>

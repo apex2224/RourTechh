@@ -14,6 +14,8 @@ import { siteConfig } from "@/lib/siteConfig";
 interface ContactSectionProps {
   prefilledService?: string;
   onWhatsAppClick?: () => void;
+  heading?: string;
+  headingLevel?: "h1" | "h2";
 
   onInquirySubmitted?: (inquiry: InquiryRecord) => void;
 }
@@ -75,9 +77,11 @@ async function sendLeadNotification(inquiry: InquiryRecord): Promise<void> {
 export const ContactSection: React.FC<ContactSectionProps> = ({
   prefilledService,
   onWhatsAppClick,
-
+  heading = "Let's build something exceptional together.",
+  headingLevel = "h2",
   onInquirySubmitted,
 }) => {
+  const Heading = headingLevel;
   const [name, setName] = useState("");
 
   const [email, setEmail] = useState("");
@@ -255,9 +259,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 Initiate Project Discovery
               </div>
 
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111111] font-display text-balance">
-                Let&apos;s build something exceptional together.
-              </h2>
+              <Heading className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#111111] font-display text-balance">
+                {heading}
+              </Heading>
 
               <p className="text-base text-[#555555] mt-4 leading-relaxed">
                 Tell us about your goals, timeframe, and budget. Use the form to

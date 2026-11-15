@@ -11,8 +11,11 @@ import {
 } from "lucide-react";
 import { absoluteSiteUrl, SITE_URL } from "@/lib/siteConfig";
 import { serializeStructuredData } from "@/lib/structuredData";
+import { getPageH1, getPageMetadata, getPageSeo } from "@/lib/serverPageSeo";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+const defaultMetadata: Metadata = {
   title: "Careers | RouR Tech",
   description:
     "Recruitment status and application details are awaiting confirmation from RouR Tech.",
@@ -39,7 +42,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CareersPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageMetadata("careers", defaultMetadata);
+}
+
+export default async function CareersPage() {
+  const pageSeo = await getPageSeo("careers");
   const jsonLdBreadcrumb = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -119,7 +127,7 @@ export default function CareersPage() {
               <span>Join RouR Tech</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#111111] font-display tracking-tight leading-[1.1] mb-6">
-              Build High-Performance Digital Products With Us
+              {getPageH1(pageSeo, "Build High-Performance Digital Products With Us")}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-[#555555] leading-relaxed max-w-3xl font-body mb-8">
               We are always interested in connecting with passionate front-end engineers, full-stack developers, UI/UX designers, and technical SEO specialists who care deeply about code craft, speed, and real-world impact.

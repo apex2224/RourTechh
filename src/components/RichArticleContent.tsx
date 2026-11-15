@@ -1,7 +1,16 @@
 "use client";
 
-import { createElement, useMemo, type ReactNode } from "react";
+import {
+  createElement,
+  useMemo,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 import type { JSONContent } from "@tiptap/core";
+import {
+  ensureHeadingIds,
+  normalizeHeadingAnchors,
+} from "@/lib/headingIds";
 import {
   isRichDocument,
   lowlight,
@@ -132,7 +141,9 @@ function renderNode(node: JSONContent, key: string): ReactNode {
             : level === 3
               ? "my-6 text-xl font-bold text-[#111111]"
               : "my-5 text-lg font-bold text-[#111111]";
-      return ReactHeading(level, key, className, children);
+      const id =
+        typeof node.attrs?.id === "string" ? node.attrs.id : undefined;
+      return ReactHeading(level, key, className, children, id);
     }
     case "bulletList":
       return (
@@ -244,10 +255,11 @@ function ReactHeading(
   key: string,
   className: string,
   children: ReactNode,
+  id?: string,
 ): ReactNode {
   return createElement(
     `h${level}`,
-    { key, className },
+    { key, className, id },
     children,
   );
 }
@@ -259,14 +271,45 @@ export default function RichArticleContent({
 }: RichArticleContentProps) {
   const document = useMemo(() => {
     if (contentJson !== undefined && contentJson !== null) {
-      if (isRichDocument(contentJson)) return contentJson;
+      if (isRichDocument(contentJson)) {
+        return ensureHeadingIds(normalizeHeadingAnchors(contentJson));
+      }
       console.error("Ignoring malformed rich-text article content.");
     }
-    return markdownToRichDocument(legacyContent);
+    return ensureHeadingIds(markdownToRichDocument(legacyContent));
   }, [contentJson, legacyContent]);
 
+  const handleFragmentClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (!(event.target instanceof Element)) return;
+    const anchor = event.target.closest<HTMLAnchorElement>('a[href^="#"]');
+    const href = anchor?.getAttribute("href");
+    if (!anchor || !href) return;
+
+    let id: string;
+    try {
+      id = decodeURIComponent(href.slice(1));
+    } catch {
+      return;
+    }
+    const target = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>("[id]"),
+    ).find((element) => element.id === id);
+    if (!target) return;
+
+    event.preventDefault();
+    target.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+      block: "start",
+    });
+  };
+
   return (
-    <div className={className}>
+    <div
+      className={["rich-article-content", className].filter(Boolean).join(" ")}
+      onClick={handleFragmentClick}
+    >
       {(document.content ?? []).map((node, index) =>
         renderNode(node, `article-node-${index}`),
       )}
